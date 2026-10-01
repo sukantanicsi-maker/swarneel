@@ -1,0 +1,258 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f5f7fa;
+
+    color: #222;
+
+}
+
+
+/* HEADER */
+
+header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e3c72,
+            #2a5298
+        );
+
+    color: white;
+
+    padding: 30px 40px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+header h1 {
+
+    margin: 0;
+
+    font-size: 32px;
+
+}
+
+
+header p {
+
+    margin-top: 8px;
+
+    opacity: 0.9;
+
+}
+
+
+#status {
+
+    background: rgba(255,255,255,0.15);
+
+    padding: 10px 15px;
+
+    border-radius: 8px;
+
+}
+
+
+/* CARDS */
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(250px, 1fr)
+        );
+
+    gap: 20px;
+
+    padding: 30px 40px;
+
+}
+
+
+.card {
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,0.08);
+
+}
+
+
+.icon {
+
+    font-size: 40px;
+
+}
+
+
+.card h3 {
+
+    margin: 0 0 8px 0;
+
+    color: #555;
+
+}
+
+
+.value {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+}
+
+
+.purchase .value {
+
+    color: #159447;
+
+}
+
+
+.records .value {
+
+    color: #2a5298;
+
+}
+
+
+/* TABLE */
+
+.table-section {
+
+    background: white;
+
+    margin: 0 40px 40px;
+
+    padding: 25px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,0.08);
+
+}
+
+
+.table-section h2 {
+
+    margin-top: 0;
+
+}
+
+
+.table-container {
+
+    overflow-x: auto;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+
+th {
+
+    background: #2a5298;
+
+    color: white;
+
+    padding: 12px;
+
+    text-align: left;
+
+}
+
+
+td {
+
+    padding: 11px;
+
+    border-bottom:
+        1px solid #ddd;
+
+}
+
+
+tr:hover {
+
+    background: #f5f7fa;
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+
+        padding: 25px;
+
+    }
+
+
+    .cards {
+
+        padding: 20px;
+
+    }
+
+
+    .table-section {
+
+        margin: 0 20px 20px;
+
+        padding: 15px;
+
+    }
+
+}
