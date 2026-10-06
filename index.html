@@ -3,329 +3,307 @@
 
 <head>
 
-  <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-  <title>Stock & Expense Dashboard</title>
-
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f9;
-      color: #102a43;
-    }
-
-
-    .container {
-      width: 100%;
-      max-width: 1600px;
-      margin: auto;
-      padding: 28px 22px;
-    }
-
-
-    h1 {
-      margin: 0 0 28px;
-      font-size: 32px;
-      color: #102a43;
-    }
-
-
-    /* =========================
-       BIG SUMMARY CARDS
-    ========================= */
-
-    .main-summary {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-
-    .big-card {
-      padding: 22px 28px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-      min-height: 100px;
-    }
-
-
-    .big-card.expense {
-      background: #fde9e9;
-      border-left: 6px solid #e57373;
-    }
-
-
-    .big-card.credit {
-      background: #e8f7ee;
-      border-left: 6px solid #43b174;
-    }
-
-
-    .card-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      color: #4b5563;
-      margin-bottom: 8px;
-    }
-
-
-    .big-value {
-      font-size: 29px;
-      font-weight: bold;
-    }
-
-
-    .expense .big-value {
-      color: #c0392b;
-    }
-
-
-    .credit .big-value {
-      color: #008f4c;
-    }
-
-
-    /* =========================
-       KPI CARDS
-    ========================= */
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-
-    .kpi-card {
-      background: white;
-      border-radius: 12px;
-      padding: 17px 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-      min-width: 0;
-    }
-
-
-    .kpi-title {
-      font-size: 12px;
-      color: #52606d;
-      text-transform: uppercase;
-      margin-bottom: 7px;
-
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-
-    .kpi-value {
-      font-size: 20px;
-      font-weight: bold;
-      color: #008f4c;
-    }
-
-
-    /* =========================
-       PERIOD SELECTOR
-    ========================= */
-
-    .period-box {
-      background: white;
-      border-radius: 15px;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-    }
-
-
-    .period-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-
-    .period-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-
-    select {
-      padding: 9px 14px;
-      border: 1px solid #ccd3da;
-      border-radius: 8px;
-      background: white;
-      font-size: 14px;
-      min-width: 150px;
-      color: #263238;
-      cursor: pointer;
-    }
-
-
-    /* =========================
-       DATE INPUTS
-    ========================= */
-
-    .date-inputs {
-      display: none;
-      margin-top: 16px;
-      gap: 15px;
-      align-items: end;
-      flex-wrap: wrap;
-    }
-
-
-    .date-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-
-    .date-field label {
-      font-size: 12px;
-      color: #52606d;
-      font-weight: bold;
-    }
-
-
-    input[type="date"] {
-      padding: 9px 11px;
-      border: 1px solid #ccd3da;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       STATUS
-    ========================= */
-
-    .status {
-      margin-top: 8px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #52606d;
-      word-break: break-word;
-    }
-
-
-    .status.error {
-      color: #c0392b;
-    }
-
-
-    .status.success {
-      color: #008f4c;
-    }
-
-
-    .loading {
-      color: #1976d2;
-    }
-
-
-    .refresh-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 7px;
-      background: #1976d2;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-
-    .refresh-btn:hover {
-      background: #125ea8;
-    }
-
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 1100px) {
-
-      .kpi-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-    }
-
-
-    @media (max-width: 700px) {
-
-      .container {
-        padding: 20px 14px;
-      }
-
-
-      h1 {
-        font-size: 25px;
-        margin-bottom: 20px;
-      }
-
-
-      .main-summary {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-
-      .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-
-
-      .period-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-
-      select {
-        width: 100%;
-      }
-
-
-      .big-card {
-        padding: 18px 20px;
-      }
-
-
-      .big-value {
-        font-size: 25px;
-      }
-
-    }
-
-
-    @media (max-width: 400px) {
-
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Stock & Expense Dashboard</title>
+
+
+<style>
+
+/* =========================================================
+   BASIC
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f9;
+  color: #102a43;
+}
+
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin: auto;
+  padding: 28px 22px;
+}
+
+h1 {
+  margin: 0 0 28px;
+  font-size: 32px;
+  color: #102a43;
+}
+
+
+/* =========================================================
+   BIG SUMMARY
+========================================================= */
+
+.main-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.big-card {
+  padding: 22px 28px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  min-height: 100px;
+}
+
+.big-card.expense {
+  background: #fde9e9;
+  border-left: 6px solid #e57373;
+}
+
+.big-card.credit {
+  background: #e8f7ee;
+  border-left: 6px solid #43b174;
+}
+
+.card-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.big-value {
+  font-size: 29px;
+  font-weight: bold;
+}
+
+.expense .big-value {
+  color: #c0392b;
+}
+
+.credit .big-value {
+  color: #008f4c;
+}
+
+
+/* =========================================================
+   KPI CARDS
+========================================================= */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 17px 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+  min-width: 0;
+}
+
+.kpi-title {
+  font-size: 12px;
+  color: #52606d;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #008f4c;
+}
+
+
+/* =========================================================
+   PERIOD SELECTOR
+========================================================= */
+
+.period-box {
+  background: white;
+  border-radius: 15px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+.period-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.period-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+select {
+  padding: 9px 14px;
+  border: 1px solid #ccd3da;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  min-width: 150px;
+  color: #263238;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   CUSTOM DATE
+========================================================= */
+
+.date-inputs {
+  display: none;
+  margin-top: 16px;
+  gap: 15px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-field label {
+  font-size: 12px;
+  color: #52606d;
+  font-weight: bold;
+}
+
+input[type="date"] {
+  padding: 9px 11px;
+  border: 1px solid #ccd3da;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #52606d;
+  word-break: break-word;
+}
+
+.status.success {
+  color: #008f4c;
+}
+
+.status.error {
+  color: #c0392b;
+}
+
+.status.loading {
+  color: #1976d2;
+}
+
+
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
+.refresh-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 7px;
+  background: #1976d2;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.refresh-btn:hover {
+  background: #125ea8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .container {
+    padding: 20px 14px;
+  }
+
+  h1 {
+    font-size: 25px;
+    margin-bottom: 20px;
+  }
+
+  .main-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .period-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  select {
+    width: 100%;
+  }
+
+  .big-card {
+    padding: 18px 20px;
+  }
+
+  .big-value {
+    font-size: 25px;
+  }
+
+}
+
+
+@media (max-width: 400px) {
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>
 
 </head>
 
@@ -336,425 +314,430 @@
 <div class="container">
 
 
-  <h1>
-    Stock & Expense Dashboard
-  </h1>
+<!-- =======================================================
+     TITLE
+======================================================== -->
+
+<h1>
+  Stock & Expense Dashboard
+</h1>
 
 
-  <!-- =====================================================
-       OVERALL SUMMARY
-  ====================================================== -->
 
-  <div class="main-summary">
+<!-- =======================================================
+     OVERALL SUMMARY
+======================================================== -->
+
+<div class="main-summary">
 
 
-    <div class="big-card expense">
+  <div class="big-card expense">
 
-      <div class="card-title">
-        Total Expenditure
-      </div>
-
-      <div
-        class="big-value"
-        id="overallExpense">
-
-        ₹0.00
-
-      </div>
-
+    <div class="card-title">
+      Total Expenditure
     </div>
-
-
-    <div class="big-card credit">
-
-      <div class="card-title">
-        Total Credit
-      </div>
-
-      <div
-        class="big-value"
-        id="overallCredit">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       OVERALL KPI
-  ====================================================== -->
-
-  <div class="kpi-grid">
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Total Buy
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallBuying">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Cash Credit
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallCash">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Employee
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallEmployee">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Cooking
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallCooking">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Miscellaneous
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallMisc">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Supro Cars
-      </div>
-
-      <div
-        class="kpi-value"
-        id="overallSupro">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       PERIOD SELECTOR
-  ====================================================== -->
-
-  <div class="period-box">
-
-
-    <div class="period-header">
-
-
-      <div class="period-title">
-        Last Date Summary
-      </div>
-
-
-      <select id="periodSelect">
-
-        <option value="latest">
-          Latest Date
-        </option>
-
-        <option value="7">
-          Last 7 Days
-        </option>
-
-        <option value="15">
-          Last 15 Days
-        </option>
-
-        <option value="custom">
-          Select Date
-        </option>
-
-      </select>
-
-
-    </div>
-
-
 
     <div
-      class="date-inputs"
-      id="dateInputs">
+      class="big-value"
+      id="overallExpense">
 
-
-      <div class="date-field">
-
-        <label>
-          From Date
-        </label>
-
-        <input
-          type="date"
-          id="fromDate">
-
-      </div>
-
-
-      <div class="date-field">
-
-        <label>
-          To Date
-        </label>
-
-        <input
-          type="date"
-          id="toDate">
-
-      </div>
-
+      ₹0.00
 
     </div>
+
+  </div>
+
+
+  <div class="big-card credit">
+
+    <div class="card-title">
+      Total Credit
+    </div>
+
+    <div
+      class="big-value"
+      id="overallCredit">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     OVERALL KPI
+======================================================== -->
+
+<div class="kpi-grid">
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Total Buy
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallBuying">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Cash Credit
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallCash">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Employee
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallEmployee">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Cooking
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallCooking">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Miscellaneous
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallMisc">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Supro Cars
+    </div>
+
+    <div
+      class="kpi-value"
+      id="overallSupro">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     PERIOD SELECTOR
+======================================================== -->
+
+<div class="period-box">
+
+
+  <div class="period-header">
+
+
+    <div class="period-title">
+      Last Date Summary
+    </div>
+
+
+    <select id="periodSelect">
+
+      <option value="latest">
+        Latest Date
+      </option>
+
+      <option value="7">
+        Last 7 Days
+      </option>
+
+      <option value="15">
+        Last 15 Days
+      </option>
+
+      <option value="custom">
+        Select Date
+      </option>
+
+    </select>
 
 
   </div>
 
 
-
-  <!-- =====================================================
-       PERIOD SUMMARY
-  ====================================================== -->
-
-  <div class="main-summary">
-
-
-    <div class="big-card expense">
-
-      <div class="card-title">
-        Total Expenditure
-      </div>
-
-      <div
-        class="big-value"
-        id="periodExpense">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="big-card credit">
-
-      <div class="card-title">
-        Total Credit
-      </div>
-
-      <div
-        class="big-value"
-        id="periodCredit">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       PERIOD KPI
-  ====================================================== -->
-
-  <div class="kpi-grid">
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Total Buy
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodBuying">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Cash Credit
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodCash">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Employee
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodEmployee">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Cooking
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodCooking">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Miscellaneous
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodMisc">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Supro Cars
-      </div>
-
-      <div
-        class="kpi-value"
-        id="periodSupro">
-
-        ₹0.00
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       STATUS
-  ====================================================== -->
 
   <div
-    id="status"
-    class="status loading">
+    class="date-inputs"
+    id="dateInputs">
 
-    Loading data...
+
+    <div class="date-field">
+
+      <label>
+        From Date
+      </label>
+
+      <input
+        type="date"
+        id="fromDate">
+
+    </div>
+
+
+    <div class="date-field">
+
+      <label>
+        To Date
+      </label>
+
+      <input
+        type="date"
+        id="toDate">
+
+    </div>
+
 
   </div>
 
 
-  <button
-    class="refresh-btn"
-    onclick="loadAllData()">
+</div>
 
-    Refresh Data
 
-  </button>
+
+<!-- =======================================================
+     PERIOD SUMMARY
+======================================================== -->
+
+<div class="main-summary">
+
+
+  <div class="big-card expense">
+
+    <div class="card-title">
+      Total Expenditure
+    </div>
+
+    <div
+      class="big-value"
+      id="periodExpense">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="big-card credit">
+
+    <div class="card-title">
+      Total Credit
+    </div>
+
+    <div
+      class="big-value"
+      id="periodCredit">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     PERIOD KPI
+======================================================== -->
+
+<div class="kpi-grid">
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Total Buy
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodBuying">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Cash Credit
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodCash">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Employee
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodEmployee">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Cooking
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodCooking">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Miscellaneous
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodMisc">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+  <div class="kpi-card">
+
+    <div class="kpi-title">
+      Supro Cars
+    </div>
+
+    <div
+      class="kpi-value"
+      id="periodSupro">
+
+      ₹0.00
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     STATUS
+======================================================== -->
+
+<div
+  id="status"
+  class="status loading">
+
+  Loading data...
+
+</div>
+
+
+<button
+  class="refresh-btn"
+  onclick="loadAllData()">
+
+  Refresh Data
+
+</button>
 
 
 </div>
@@ -774,20 +757,8 @@ const SHEET_ID =
 
 
 /* =========================================================
-   SHEET CONFIGURATION
-=========================================================
-
-   IMPORTANT:
-
-   Row 3 = Header
-   Row 4 onwards = Data
-
-   Column B = Date
-   Column D = Amount
-
-   Therefore we don't depend on the amount header name.
+   SHEETS
 ========================================================= */
-
 
 const sources = [
 
@@ -826,7 +797,7 @@ const sources = [
 
 
 /* =========================================================
-   GLOBAL DATA
+   DATA STORAGE
 ========================================================= */
 
 let allData = {
@@ -898,7 +869,7 @@ function parseDate(value) {
 
 
   /*
-     DD/MM/YYYY
+    DD/MM/YYYY
   */
 
   let match =
@@ -930,7 +901,7 @@ function parseDate(value) {
 
 
   /*
-     YYYY-MM-DD
+    YYYY-MM-DD
   */
 
   match =
@@ -952,8 +923,7 @@ function parseDate(value) {
 
 
   /*
-     Google Date format
-     Date(2026,7,1)
+    Google Date format
   */
 
   match =
@@ -975,7 +945,7 @@ function parseDate(value) {
 
 
   /*
-     Normal Date
+    Normal JavaScript date
   */
 
   const d =
@@ -1006,9 +976,7 @@ function parseDate(value) {
 function dateOnly(date) {
 
   if (!date) {
-
     return null;
-
   }
 
 
@@ -1029,34 +997,20 @@ function dateOnly(date) {
 function dateKey(date) {
 
   if (!date) {
-
     return "";
-
   }
 
 
-  const year =
-    date.getFullYear();
-
-
-  const month =
+  return (
+    date.getFullYear() +
+    "-" +
     String(
       date.getMonth() + 1
-    ).padStart(2, "0");
-
-
-  const day =
+    ).padStart(2, "0") +
+    "-" +
     String(
       date.getDate()
-    ).padStart(2, "0");
-
-
-  return (
-    year +
-    "-" +
-    month +
-    "-" +
-    day
+    ).padStart(2, "0")
   );
 
 }
@@ -1090,8 +1044,7 @@ function parseAmount(value) {
 
 
   /*
-     Handle negative values
-     like (1000)
+    (1000) = -1000
   */
 
   if (
@@ -1129,14 +1082,26 @@ async function fetchSheet(source) {
 
 
   /*
-     We request only B:D.
+    IMPORTANT:
 
-     B = Date
-     C = Vendor/Particular/etc.
-     D = Amount
+    We do NOT look for headers.
 
-     Row 3 is header.
+    We directly ask Google Sheets:
+
+    B = Date
+    D = Amount
+
+    offset 3 means:
+
+    Row 1 → ignored
+    Row 2 → ignored
+    Row 3 → header ignored
+    Row 4 → first data row
   */
+
+
+  const query =
+    "select B,D where B is not null offset 3";
 
 
   const url =
@@ -1144,11 +1109,13 @@ async function fetchSheet(source) {
     SHEET_ID +
     "/gviz/tq" +
     "?tqx=out:json" +
-    "&headers=1" +
-    "&range=B3:D" +
     "&sheet=" +
     encodeURIComponent(
       source.sheet
+    ) +
+    "&tq=" +
+    encodeURIComponent(
+      query
     );
 
 
@@ -1176,7 +1143,7 @@ async function fetchSheet(source) {
 
 
   /*
-     Extract JSON from GViz response
+    Extract JSON
   */
 
   const start =
@@ -1207,7 +1174,9 @@ async function fetchSheet(source) {
 
 
   const json =
-    JSON.parse(jsonText);
+    JSON.parse(
+      jsonText
+    );
 
 
   if (
@@ -1230,11 +1199,14 @@ async function fetchSheet(source) {
 
 
   /*
-     Because range = B3:D:
+    Query:
 
-     index 0 = B = Date
-     index 1 = C
-     index 2 = D = Amount
+    SELECT B,D
+
+    So:
+
+    cells[0] = Date
+    cells[1] = Amount
   */
 
 
@@ -1251,7 +1223,7 @@ async function fetchSheet(source) {
 
 
       const amountCell =
-        cells[2];
+        cells[1];
 
 
       if (!dateCell) {
@@ -1262,24 +1234,41 @@ async function fetchSheet(source) {
 
 
       /*
-         For date use formatted value
-         when available.
+        Date value
       */
 
-      let dateValue =
+      const dateValue =
         dateCell.f ||
         dateCell.v ||
         "";
 
 
-      let amountValue =
-        amountCell
-          ? (
-              amountCell.v !== undefined
-                ? amountCell.v
-                : amountCell.f
-            )
-          : "";
+      /*
+        Amount value
+      */
+
+      let amountValue = "";
+
+
+      if (amountCell) {
+
+        if (
+          amountCell.v !== undefined
+        ) {
+
+          amountValue =
+            amountCell.v;
+
+        }
+
+        else {
+
+          amountValue =
+            amountCell.f || "";
+
+        }
+
+      }
 
 
       const date =
@@ -1322,7 +1311,7 @@ async function fetchSheet(source) {
 
 
 /* =========================================================
-   LOAD ALL DATA
+   LOAD ALL SHEETS
 ========================================================= */
 
 async function loadAllData() {
@@ -1338,12 +1327,12 @@ async function loadAllData() {
     "status loading";
 
 
-  status.innerHTML =
+  status.textContent =
     "Loading data from Google Sheets...";
 
 
   /*
-     Reset data
+    Reset
   */
 
   allData = {
@@ -1365,7 +1354,7 @@ async function loadAllData() {
 
 
   /*
-     Load all six sheets
+    Load all sheets
   */
 
   await Promise.all(
@@ -1388,7 +1377,7 @@ async function loadAllData() {
 
 
           /*
-             Find latest date
+            Find latest date
           */
 
           data.forEach(
@@ -1435,17 +1424,18 @@ async function loadAllData() {
 
 
   /*
-     Update overall cards
+    Update overall
   */
 
   updateOverall();
 
 
   /*
-     Set latest date
+    Set latest date
   */
 
   if (latestDate) {
+
 
     const latest =
       dateKey(
@@ -1468,14 +1458,14 @@ async function loadAllData() {
 
 
   /*
-     Update period cards
+    Update period
   */
 
   updatePeriod();
 
 
   /*
-     Status
+    Status
   */
 
   if (
@@ -1513,7 +1503,7 @@ async function loadAllData() {
 
 
 /* =========================================================
-   SUM DATA
+   SUM
 ========================================================= */
 
 function sumData(data) {
@@ -1584,15 +1574,7 @@ function updateOverall() {
 
 
   /*
-     Total Expenditure:
-
-     Buying
-     + Employee
-     + Cooking
-     + Misc
-     + Supro Cars
-
-     Cash Flow is NOT included.
+    Total expenditure excludes Cash Flow.
   */
 
   const expenditure =
@@ -1691,10 +1673,9 @@ function getPeriodRange() {
   }
 
 
-
-  /* =========================
-     LATEST DATE
-  ========================= */
+  /*
+    Latest Date
+  */
 
   if (
     type === "latest"
@@ -1717,10 +1698,9 @@ function getPeriodRange() {
   }
 
 
-
-  /* =========================
-     LAST 7 DAYS
-  ========================= */
+  /*
+    Last 7 Days
+  */
 
   if (
     type === "7"
@@ -1753,10 +1733,9 @@ function getPeriodRange() {
   }
 
 
-
-  /* =========================
-     LAST 15 DAYS
-  ========================= */
+  /*
+    Last 15 Days
+  */
 
   if (
     type === "15"
@@ -1789,10 +1768,9 @@ function getPeriodRange() {
   }
 
 
-
-  /* =========================
-     CUSTOM
-  ========================= */
+  /*
+    Custom
+  */
 
   if (
     type === "custom"
@@ -1865,7 +1843,7 @@ function getPeriodRange() {
 
 
 /* =========================================================
-   FILTER DATA
+   FILTER
 ========================================================= */
 
 function filterData(
@@ -1883,6 +1861,7 @@ function filterData(
 
   return data.filter(
     item => {
+
 
       const d =
         dateOnly(
@@ -2053,7 +2032,7 @@ function updatePeriod() {
 
 
 /* =========================================================
-   RESET PERIOD CARDS
+   RESET PERIOD
 ========================================================= */
 
 function resetPeriodCards() {
@@ -2092,9 +2071,7 @@ function resetPeriodCards() {
    DISPLAY DATE
 ========================================================= */
 
-function formatDisplayDate(
-  date
-) {
+function formatDisplayDate(date) {
 
 
   if (!date) {
@@ -2118,7 +2095,7 @@ function formatDisplayDate(
 
 
 /* =========================================================
-   PERIOD SELECT CHANGE
+   PERIOD SELECT
 ========================================================= */
 
 document.getElementById(
@@ -2160,7 +2137,7 @@ document.getElementById(
 
 
 /* =========================================================
-   CUSTOM DATE CHANGE
+   DATE CHANGE
 ========================================================= */
 
 document.getElementById(
