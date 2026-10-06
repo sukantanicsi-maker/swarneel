@@ -1,1689 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Stock & Expense Dashboard</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f9;
-      color: #102a43;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1600px;
-      margin: auto;
-      padding: 28px 22px;
-    }
-
-    h1 {
-      margin: 0 0 28px;
-      font-size: 32px;
-      color: #102a43;
-    }
-
-    /* =========================
-       TOP SUMMARY
-    ========================= */
-
-    .main-summary {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .big-card {
-      padding: 22px 28px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-      min-height: 100px;
-    }
-
-    .big-card.expense {
-      background: #fde9e9;
-      border-left: 6px solid #e57373;
-    }
-
-    .big-card.credit {
-      background: #e8f7ee;
-      border-left: 6px solid #43b174;
-    }
-
-    .card-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      color: #4b5563;
-      margin-bottom: 8px;
-    }
-
-    .big-value {
-      font-size: 29px;
-      font-weight: bold;
-    }
-
-    .expense .big-value {
-      color: #c0392b;
-    }
-
-    .credit .big-value {
-      color: #008f4c;
-    }
-
-    /* =========================
-       KPI CARDS
-    ========================= */
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: white;
-      border-radius: 12px;
-      padding: 17px 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-      min-width: 0;
-    }
-
-    .kpi-title {
-      font-size: 12px;
-      color: #52606d;
-      text-transform: uppercase;
-      margin-bottom: 7px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .kpi-value {
-      font-size: 20px;
-      font-weight: bold;
-      color: #008f4c;
-    }
-
-    /* =========================
-       PERIOD SELECTOR
-    ========================= */
-
-    .period-box {
-      background: white;
-      border-radius: 15px;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-    }
-
-    .period-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .period-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    select {
-      padding: 9px 14px;
-      border: 1px solid #ccd3da;
-      border-radius: 8px;
-      background: white;
-      font-size: 14px;
-      min-width: 135px;
-      color: #263238;
-      cursor: pointer;
-    }
-
-    .date-inputs {
-      display: none;
-      margin-top: 16px;
-      gap: 15px;
-      align-items: end;
-      flex-wrap: wrap;
-    }
-
-    .date-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .date-field label {
-      font-size: 12px;
-      color: #52606d;
-      font-weight: bold;
-    }
-
-    input[type="date"] {
-      padding: 9px 11px;
-      border: 1px solid #ccd3da;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    /* =========================
-       STATUS
-    ========================= */
-
-    .status {
-      margin-top: 8px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #52606d;
-      word-break: break-word;
-    }
-
-    .status.error {
-      color: #c0392b;
-    }
-
-    .refresh-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 7px;
-      background: #1976d2;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .refresh-btn:hover {
-      background: #125ea8;
-    }
-
-    .loading {
-      color: #1976d2;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 1100px) {
-      .kpi-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 700px) {
-      .container {
-        padding: 20px 14px;
-      }
-
-      h1 {
-        font-size: 25px;
-        margin-bottom: 20px;
-      }
-
-      .main-summary {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-
-      .period-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      select {
-        width: 100%;
-      }
-
-      .big-card {
-        padding: 18px 20px;
-      }
-
-      .big-value {
-        font-size: 25px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock & Expense Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f9;color:#102a43}
+.container{width:100%;max-width:1600px;margin:auto;padding:28px 22px}
+h1{margin:0 0 28px;font-size:32px}
+.main-summary{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.big-card{padding:22px 28px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.08);min-height:100px}
+.big-card.expense{background:#fde9e9;border-left:6px solid #e57373}
+.big-card.credit{background:#e8f7ee;border-left:6px solid #43b174}
+.card-title{font-size:13px;text-transform:uppercase;color:#4b5563;margin-bottom:8px}
+.big-value{font-size:29px;font-weight:bold}
+.expense .big-value{color:#c0392b}
+.credit .big-value{color:#008f4c}
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:12px;padding:17px 14px;box-shadow:0 4px 12px rgba(0,0,0,.07);min-width:0}
+.kpi-title{font-size:12px;color:#52606d;text-transform:uppercase;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-value{font-size:20px;font-weight:bold;color:#008f4c}
+.period-box{background:#fff;border-radius:15px;padding:18px 20px;margin-bottom:18px;box-shadow:0 4px 12px rgba(0,0,0,.07)}
+.period-header{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.period-title{font-size:20px;font-weight:bold}
+select{padding:9px 14px;border:1px solid #ccd3da;border-radius:8px;background:#fff;font-size:14px;min-width:135px;color:#263238;cursor:pointer}
+.date-inputs{display:none;margin-top:16px;gap:15px;align-items:flex-end;flex-wrap:wrap}
+.date-field{display:flex;flex-direction:column;gap:6px}
+.date-field label{font-size:12px;color:#52606d;font-weight:bold}
+input[type=date]{padding:9px 11px;border:1px solid #ccd3da;border-radius:8px;font-size:14px}
+.status{margin-top:8px;font-size:13px;line-height:1.6;color:#52606d;word-break:break-word}
+.status.error{color:#c0392b}
+.status.loading{color:#1976d2}
+.refresh-btn{margin-top:10px;padding:10px 20px;border:none;border-radius:7px;background:#1976d2;color:#fff;font-size:14px;cursor:pointer}
+.refresh-btn:hover{background:#125ea8}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){
+.container{padding:20px 14px}
+h1{font-size:25px;margin-bottom:20px}
+.main-summary{grid-template-columns:1fr;gap:12px}
+.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+.period-header{align-items:flex-start;flex-direction:column}
+select{width:100%}
+.big-card{padding:18px 20px}
+.big-value{font-size:25px}}
+@media(max-width:400px){.kpi-grid{grid-template-columns:1fr}}
+</style>
 </head>
-
 <body>
-
 <div class="container">
+<h1>Stock & Expense Dashboard</h1>
 
-  <h1>Stock & Expense Dashboard</h1>
-
-  <!-- =========================
-       OVERALL SUMMARY
-  ========================== -->
-
-  <div class="main-summary">
-
-    <div class="big-card expense">
-      <div class="card-title">Total Expenditure</div>
-      <div class="big-value" id="overallExpense">₹0.00</div>
-    </div>
-
-    <div class="big-card credit">
-      <div class="card-title">Total Credit</div>
-      <div class="big-value" id="overallCredit">₹0.00</div>
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       OVERALL KPI
-  ========================== -->
-
-  <div class="kpi-grid">
-
-    <div class="kpi-card">
-      <div class="kpi-title">Total Buy</div>
-      <div class="kpi-value" id="overallBuying">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Cash Credit</div>
-      <div class="kpi-value" id="overallCash">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Employee</div>
-      <div class="kpi-value" id="overallEmployee">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Cooking</div>
-      <div class="kpi-value" id="overallCooking">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Miscellaneous</div>
-      <div class="kpi-value" id="overallMisc">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Supro Cars</div>
-      <div class="kpi-value" id="overallSupro">₹0.00</div>
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       PERIOD SELECTOR
-  ========================== -->
-
-  <div class="period-box">
-
-    <div class="period-header">
-
-      <div class="period-title">
-        Last Date Summary
-      </div>
-
-      <select id="periodSelect">
-        <option value="latest">Latest Date</option>
-        <option value="7">Last 7 Days</option>
-        <option value="15">Last 15 Days</option>
-        <option value="custom">Select Date</option>
-      </select>
-
-    </div>
-
-    <div class="date-inputs" id="dateInputs">
-
-      <div class="date-field">
-        <label>From Date</label>
-        <input type="date" id="fromDate">
-      </div>
-
-      <div class="date-field">
-        <label>To Date</label>
-        <input type="date" id="toDate">
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       PERIOD SUMMARY
-  ========================== -->
-
-  <div class="main-summary">
-
-    <div class="big-card expense">
-      <div class="card-title">Total Expenditure</div>
-      <div class="big-value" id="periodExpense">₹0.00</div>
-    </div>
-
-    <div class="big-card credit">
-      <div class="card-title">Total Credit</div>
-      <div class="big-value" id="periodCredit">₹0.00</div>
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       PERIOD KPI
-  ========================== -->
-
-  <div class="kpi-grid">
-
-    <div class="kpi-card">
-      <div class="kpi-title">Total Buy</div>
-      <div class="kpi-value" id="periodBuying">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Cash Credit</div>
-      <div class="kpi-value" id="periodCash">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Employee</div>
-      <div class="kpi-value" id="periodEmployee">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Cooking</div>
-      <div class="kpi-value" id="periodCooking">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Miscellaneous</div>
-      <div class="kpi-value" id="periodMisc">₹0.00</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">Supro Cars</div>
-      <div class="kpi-value" id="periodSupro">₹0.00</div>
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       STATUS
-  ========================== -->
-
-  <div id="status" class="status loading">
-    Loading data...
-  </div>
-
-  <button class="refresh-btn" onclick="loadAllData()">
-    Refresh Data
-  </button>
-
+<!-- OVERALL -->
+<div class="main-summary">
+  <div class="big-card expense"><div class="card-title">Total Expenditure</div><div class="big-value" id="overallExpense">₹0.00</div></div>
+  <div class="big-card credit"><div class="card-title">Total Credit</div><div class="big-value" id="overallCredit">₹0.00</div></div>
+</div>
+<div class="kpi-grid">
+  <div class="kpi-card"><div class="kpi-title">Total Buy</div><div class="kpi-value" id="overallBuying">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Cash Credit</div><div class="kpi-value" id="overallCash">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Employee</div><div class="kpi-value" id="overallEmployee">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Cooking</div><div class="kpi-value" id="overallCooking">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Miscellaneous</div><div class="kpi-value" id="overallMisc">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Supro Cars</div><div class="kpi-value" id="overallSupro">₹0.00</div></div>
 </div>
 
+<!-- PERIOD SELECTOR -->
+<div class="period-box">
+  <div class="period-header">
+    <div class="period-title">Last Date Summary</div>
+    <select id="periodSelect">
+      <option value="latest">Latest Date</option>
+      <option value="7">Last 7 Days</option>
+      <option value="15">Last 15 Days</option>
+      <option value="custom">Select Date</option>
+    </select>
+  </div>
+  <div class="date-inputs" id="dateInputs">
+    <div class="date-field"><label>From Date</label><input type="date" id="fromDate"></div>
+    <div class="date-field"><label>To Date</label><input type="date" id="toDate"></div>
+  </div>
+</div>
+
+<!-- PERIOD -->
+<div class="main-summary">
+  <div class="big-card expense"><div class="card-title">Total Expenditure</div><div class="big-value" id="periodExpense">₹0.00</div></div>
+  <div class="big-card credit"><div class="card-title">Total Credit</div><div class="big-value" id="periodCredit">₹0.00</div></div>
+</div>
+<div class="kpi-grid">
+  <div class="kpi-card"><div class="kpi-title">Total Buy</div><div class="kpi-value" id="periodBuying">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Cash Credit</div><div class="kpi-value" id="periodCash">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Employee</div><div class="kpi-value" id="periodEmployee">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Cooking</div><div class="kpi-value" id="periodCooking">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Miscellaneous</div><div class="kpi-value" id="periodMisc">₹0.00</div></div>
+  <div class="kpi-card"><div class="kpi-title">Supro Cars</div><div class="kpi-value" id="periodSupro">₹0.00</div></div>
+</div>
+
+<div id="status" class="status loading">Loading data...</div>
+<button class="refresh-btn" onclick="loadAllData()">Refresh Data</button>
+</div>
 
 <script>
+const SHEET_ID = "1MSDmtDcmmKTt6ykUQh9XOnq0tfsipn2A";
 
-  /* =========================================================
-     GOOGLE SHEET
-  ========================================================= */
+const sources = [
+  { key: "buying",   sheet: "Buying",     amountColumn: "Buying_Price" },
+  { key: "cash",     sheet: "Cash_Flows", amountColumn: "Amount_Credit" },
+  { key: "employee", sheet: "Employee",   amountColumn: "Amount" },
+  { key: "cooking",  sheet: "Cooking",    amountColumn: "Amount" },
+  { key: "misc",     sheet: "MISC",       amountColumn: "Amount" },
+  { key: "supro",    sheet: "Supro_Cars", amountColumn: "Amount" }
+];
 
-  const SHEET_ID =
-    "1MSDmtDcmmKTt6ykUQh9XOnq0tfsipn2A";
+const emptyData = () => ({ buying: [], cash: [], employee: [], cooking: [], misc: [], supro: [] });
+let allData = emptyData();
+let latestDate = null;
 
+const $ = id => document.getElementById(id);
+const setText = (id, v) => { $(id).textContent = v; };
 
-  /* =========================================================
-     SHEET CONFIGURATION
-  ========================================================= */
+function money(v) {
+  return "₹" + (Number(v) || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
-  const sources = [
+function normalizeHeader(v) {
+  return String(v || "").trim().toLowerCase().replace(/\s+/g, "").replace(/_/g, "");
+}
 
-    {
-      key: "buying",
-      sheet: "Buying",
-      amountColumn: "Buying_Price"
-    },
-
-    {
-      key: "cash",
-      sheet: "Cash_Flows",
-      amountColumn: "Amount_Credit"
-    },
-
-    {
-      key: "employee",
-      sheet: "Employee",
-      amountColumn: "Amount"
-    },
-
-    {
-      key: "cooking",
-      sheet: "Cooking",
-      amountColumn: "Amount"
-    },
-
-    {
-      key: "misc",
-      sheet: "MISC",
-      amountColumn: "Amount"
-    },
-
-    {
-      key: "supro",
-      sheet: "Supro_Cars",
-      amountColumn: "Amount"
-    }
-
-  ];
-
-
-  /* =========================================================
-     GLOBAL DATA
-  ========================================================= */
-
-  let allData = {
-
-    buying: [],
-    cash: [],
-    employee: [],
-    cooking: [],
-    misc: [],
-    supro: []
-
+/* ---------- CSV parser ---------- */
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cell = "", q = false;
+  const pushRow = () => {
+    row.push(cell); cell = "";
+    if (row.some(v => String(v).trim() !== "")) rows.push(row);
+    row = [];
   };
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i + 1];
+    if (c === '"' && q && n === '"') { cell += '"'; i++; }
+    else if (c === '"') q = !q;
+    else if (c === "," && !q) { row.push(cell); cell = ""; }
+    else if ((c === "\n" || c === "\r") && !q) { if (c === "\r" && n === "\n") i++; pushRow(); }
+    else cell += c;
+  }
+  if (cell !== "" || row.length) pushRow();
+  return rows;
+}
 
+/* ---------- Dates ---------- */
+function dateOnly(d) { return d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null; }
 
-  let latestDate = null;
+function dateKey(d) {
+  if (!d) return "";
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
 
+function parseDate(value) {
+  if (value === null || value === undefined) return null;
+  const s = String(value).trim();
+  if (!s) return null;
+  let m;
 
-  /* =========================================================
-     FORMAT MONEY
-  ========================================================= */
+  // Date(2026,7,1)  (month is 0-based)
+  if ((m = s.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)$/)))
+    return new Date(+m[1], +m[2], +m[3]);
 
-  function money(value) {
+  // YYYY-MM-DD
+  if ((m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)))
+    return new Date(+m[1], +m[2] - 1, +m[3]);
 
-    const number = Number(value) || 0;
-
-    return "₹" + number.toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-
+  // DD/MM/YYYY or DD-MM-YYYY (India format)
+  if ((m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/))) {
+    let a = +m[1], b = +m[2], day = a, month = b;
+    if (b > 12 && a <= 12) { month = a; day = b; }
+    return new Date(+m[3], month - 1, day);
   }
 
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : dateOnly(d);
+}
 
-  /* =========================================================
-     NORMALIZE HEADER
-  ========================================================= */
+function parseAmount(value) {
+  if (value === null || value === undefined || value === "") return 0;
+  let s = String(value).trim().replace(/[₹$,\s]/g, "");
+  if (s.startsWith("(") && s.endsWith(")")) s = "-" + s.slice(1, -1);
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
 
-  function normalizeHeader(value) {
+/* ---------- Fetch one sheet ---------- */
+async function fetchSheet(source) {
+  // headers=0 => Google will NOT guess headers, we find the header row ourselves
+  const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID +
+    "/gviz/tq?tqx=out:csv&headers=0&sheet=" + encodeURIComponent(source.sheet);
 
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, "")
-      .replace(/_/g, "");
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
 
+  const text = await res.text();
+  const t = text.trim().toLowerCase();
+  if (t.startsWith("<!doctype") || t.startsWith("<html"))
+    throw new Error("Google Sheet is not publicly accessible");
+
+  const rows = parseCSV(text);
+  if (!rows.length) throw new Error("No data found");
+
+  // Auto-detect header row: the row that has both "Date" and the amount column
+  const amountKey = normalizeHeader(source.amountColumn);
+  const hIdx = rows.findIndex(r => {
+    const n = r.map(normalizeHeader);
+    return n.includes("date") && n.includes(amountKey);
+  });
+
+  if (hIdx === -1)
+    throw new Error("Header row (Date + " + source.amountColumn + ") not found. First rows: " +
+      rows.slice(0, 3).map(r => r.slice(0, 6).join(",")).join(" / "));
+
+  const nh = rows[hIdx].map(normalizeHeader);
+  const dateIndex = nh.indexOf("date");
+  const amountIndex = nh.indexOf(amountKey);
+
+  const result = [];
+  for (let i = hIdx + 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || !row.length) continue;
+    const date = parseDate(row[dateIndex]);
+    if (!date) continue;
+    result.push({ date: dateOnly(date), amount: parseAmount(row[amountIndex]) });
   }
-
-
-  /* =========================================================
-     CSV PARSER
-     ========================================================= */
-
-  function parseCSV(text) {
-
-    const rows = [];
-
-    let row = [];
-    let cell = "";
-
-    let insideQuotes = false;
-
-    for (let i = 0; i < text.length; i++) {
-
-      const char = text[i];
-      const next = text[i + 1];
-
-
-      if (char === '"' && insideQuotes && next === '"') {
-
-        cell += '"';
-        i++;
-
-      }
-
-      else if (char === '"') {
-
-        insideQuotes = !insideQuotes;
-
-      }
-
-      else if (char === "," && !insideQuotes) {
-
-        row.push(cell);
-        cell = "";
-
-      }
-
-      else if (
-        (char === "\n" || char === "\r") &&
-        !insideQuotes
-      ) {
-
-        if (char === "\r" && next === "\n") {
-          i++;
-        }
-
-        row.push(cell);
-        cell = "";
-
-        if (row.some(v => String(v).trim() !== "")) {
-          rows.push(row);
-        }
-
-        row = [];
-
-      }
-
-      else {
-
-        cell += char;
-
-      }
-
-    }
-
-
-    if (cell !== "" || row.length > 0) {
-
-      row.push(cell);
-
-      if (row.some(v => String(v).trim() !== "")) {
-        rows.push(row);
-      }
-
-    }
-
-
-    return rows;
-
-  }
-
-
-  /* =========================================================
-     PARSE DATE
-  ========================================================= */
-
-  function parseDate(value) {
-
-    if (value === null || value === undefined) {
-      return null;
-    }
-
-    let str = String(value).trim();
-
-    if (!str) {
-      return null;
-    }
-
-
-    /*
-      Google Sheets may sometimes return:
-      Date(2026,9,6)
-    */
-
-    let match = str.match(
-      /^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)$/
-    );
-
-    if (match) {
-
-      return new Date(
-        Number(match[1]),
-        Number(match[2]),
-        Number(match[3])
-      );
-
-    }
-
-
-    /*
-      YYYY-MM-DD
-    */
-
-    match = str.match(
-      /^(\d{4})-(\d{1,2})-(\d{1,2})$/
-    );
-
-    if (match) {
-
-      return new Date(
-        Number(match[1]),
-        Number(match[2]) - 1,
-        Number(match[3])
-      );
-
-    }
-
-
-    /*
-      DD/MM/YYYY or DD-MM-YYYY
-
-      Since this dashboard is being used in India,
-      ambiguous dates are treated as DD/MM/YYYY.
-    */
-
-    match = str.match(
-      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
-    );
-
-    if (match) {
-
-      let first = Number(match[1]);
-      let second = Number(match[2]);
-      let year = Number(match[3]);
-
-      let day;
-      let month;
-
-      /*
-        If first > 12, it must be day.
-        If second > 12, first must be month.
-        Otherwise use DD/MM/YYYY.
-      */
-
-      if (first > 12) {
-
-        day = first;
-        month = second;
-
-      }
-
-      else if (second > 12) {
-
-        month = first;
-        day = second;
-
-      }
-
-      else {
-
-        day = first;
-        month = second;
-
-      }
-
-      return new Date(
-        year,
-        month - 1,
-        day
-      );
-
-    }
-
-
-    /*
-      Try normal JavaScript date parsing
-    */
-
-    const d = new Date(str);
-
-    if (!isNaN(d.getTime())) {
-
-      return new Date(
-        d.getFullYear(),
-        d.getMonth(),
-        d.getDate()
-      );
-
-    }
-
-    return null;
-
-  }
-
-
-  /* =========================================================
-     NORMALIZE DATE
-  ========================================================= */
-
-  function dateOnly(date) {
-
-    if (!date) return null;
-
-    return new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-  }
-
-
-  /* =========================================================
-     DATE KEY
-  ========================================================= */
-
-  function dateKey(date) {
-
-    if (!date) return "";
-
-    const y = date.getFullYear();
-
-    const m = String(
-      date.getMonth() + 1
-    ).padStart(2, "0");
-
-    const d = String(
-      date.getDate()
-    ).padStart(2, "0");
-
-    return `${y}-${m}-${d}`;
-
-  }
-
-
-  /* =========================================================
-     PARSE AMOUNT
-  ========================================================= */
-
-  function parseAmount(value) {
-
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      return 0;
-    }
-
-
-    let str = String(value)
-      .trim()
-      .replace(/₹/g, "")
-      .replace(/\$/g, "")
-      .replace(/,/g, "")
-      .replace(/\s/g, "");
-
-
-    /*
-      Handle brackets as negative:
-      (1000) = -1000
-    */
-
-    if (
-      str.startsWith("(") &&
-      str.endsWith(")")
-    ) {
-
-      str = "-" + str.slice(1, -1);
-
-    }
-
-
-    const number = parseFloat(str);
-
-    return isNaN(number) ? 0 : number;
-
-  }
-
-
-  /* =========================================================
-     FETCH ONE SHEET
-  ========================================================= */
-
-  async function fetchSheet(source) {
-
-    const url =
-      "https://docs.google.com/spreadsheets/d/" +
-      SHEET_ID +
-      "/gviz/tq?tqx=out:csv&headers=1&sheet=" +
-      encodeURIComponent(source.sheet);
-
-
-    const response = await fetch(url, {
-      cache: "no-store"
-    });
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        "HTTP " + response.status
-      );
-
-    }
-
-
-    const text = await response.text();
-
-
-    /*
-      If Google returns an HTML error page,
-      the sheet is probably not publicly accessible.
-    */
-
-    if (
-      text.trim().startsWith("<!DOCTYPE") ||
-      text.trim().startsWith("<html")
-    ) {
-
-      throw new Error(
-        "Google Sheet is not publicly accessible"
-      );
-
-    }
-
-
-    const rows = parseCSV(text);
-
-
-    if (!rows.length) {
-
-      throw new Error(
-        "No data found"
-      );
-
-    }
-
-
-    /* First row = actual headers */
-
-    const headers = rows[0];
-
-
-    const normalizedHeaders =
-      headers.map(normalizeHeader);
-
-
-    /*
-      Find Date column
-    */
-
-    const dateIndex =
-      normalizedHeaders.indexOf(
-        normalizeHeader("Date")
-      );
-
-
-    if (dateIndex === -1) {
-
-      throw new Error(
-        "Date header not found. Headers found: " +
-        headers.join(" | ")
-      );
-
-    }
-
-
-    /*
-      Find amount column
-    */
-
-    const amountIndex =
-      normalizedHeaders.indexOf(
-        normalizeHeader(source.amountColumn)
-      );
-
-
-    if (amountIndex === -1) {
-
-      throw new Error(
-        source.amountColumn +
-        " header not found. Headers found: " +
-        headers.join(" | ")
-      );
-
-    }
-
-
-    const result = [];
-
-
-    /*
-      Process all rows
-    */
-
-    for (let i = 1; i < rows.length; i++) {
-
-      const row = rows[i];
-
-
-      if (!row || row.length === 0) {
-        continue;
-      }
-
-
-      const date =
-        parseDate(row[dateIndex]);
-
-
-      if (!date) {
-        continue;
-      }
-
-
-      const amount =
-        parseAmount(row[amountIndex]);
-
-
-      result.push({
-
-        date: dateOnly(date),
-
-        amount: amount
-
+  return result;
+}
+
+/* ---------- Load all ---------- */
+async function loadAllData() {
+  const status = $("status");
+  status.className = "status loading";
+  status.textContent = "Loading data from Google Sheets...";
+
+  allData = emptyData();
+  latestDate = null;
+  const errors = [];
+
+  await Promise.all(sources.map(async s => {
+    try {
+      const data = await fetchSheet(s);
+      allData[s.key] = data;
+      // latest date = latest date that actually has an amount
+      data.forEach(it => {
+        if (it.amount !== 0 && (!latestDate || it.date > latestDate)) latestDate = it.date;
       });
-
+    } catch (e) {
+      errors.push(s.sheet + ": " + e.message);
     }
+  }));
 
+  updateOverall();
 
-    return result;
-
+  if (latestDate) {
+    $("fromDate").value = dateKey(latestDate);
+    $("toDate").value = dateKey(latestDate);
   }
 
+  updatePeriod();
 
-  /* =========================================================
-     LOAD ALL DATA
-  ========================================================= */
-
-  async function loadAllData() {
-
-    const status =
-      document.getElementById("status");
-
-
-    status.className = "status loading";
-
-    status.innerHTML =
-      "Loading data from Google Sheets...";
-
-
-    /*
-      Reset data
-    */
-
-    allData = {
-
-      buying: [],
-      cash: [],
-      employee: [],
-      cooking: [],
-      misc: [],
-      supro: []
-
-    };
-
-
-    latestDate = null;
-
-
-    const errors = [];
-
-
-    /*
-      Load all sheets simultaneously
-    */
-
-    await Promise.all(
-
-      sources.map(async source => {
-
-        try {
-
-          const data =
-            await fetchSheet(source);
-
-
-          allData[source.key] = data;
-
-
-          /*
-            Find latest date
-          */
-
-          data.forEach(item => {
-
-            if (
-              !latestDate ||
-              item.date > latestDate
-            ) {
-
-              latestDate = item.date;
-
-            }
-
-          });
-
-        }
-
-        catch (error) {
-
-          errors.push(
-            source.sheet +
-            ": " +
-            error.message
-          );
-
-        }
-
-      })
-
-    );
-
-
-    /*
-      Update overall dashboard
-    */
-
-    updateOverall();
-
-
-    /*
-      Set date defaults
-    */
-
-    if (latestDate) {
-
-      const latestKey =
-        dateKey(latestDate);
-
-
-      document.getElementById(
-        "fromDate"
-      ).value = latestKey;
-
-
-      document.getElementById(
-        "toDate"
-      ).value = latestKey;
-
-    }
-
-
-    /*
-      Update period dashboard
-    */
-
-    updatePeriod();
-
-
-    /*
-      Status
-    */
-
-    if (errors.length === 0) {
-
-      status.className = "status";
-
-      status.innerHTML =
-        "Data loaded successfully. " +
-        "Latest Date: <b>" +
-        formatDisplayDate(latestDate) +
-        "</b>";
-
-    }
-
-    else {
-
-      status.className =
-        "status error";
-
-      status.innerHTML =
-        "Data loaded with warning: " +
-        errors.join(" | ");
-
-    }
-
+  if (!errors.length) {
+    status.className = "status";
+    status.innerHTML = "Data loaded successfully. Latest Date: <b>" + formatDisplayDate(latestDate) + "</b>";
+  } else {
+    status.className = "status error";
+    status.textContent = "Data loaded with warning: " + errors.join(" | ");
   }
+}
 
+/* ---------- Calculations ---------- */
+const sumData = data => data.reduce((t, it) => t + (Number(it.amount) || 0), 0);
 
-  /* =========================================================
-     SUM ARRAY
-  ========================================================= */
+function totals(getData) {
+  const buying = sumData(getData(allData.buying));
+  const cash = sumData(getData(allData.cash));
+  const employee = sumData(getData(allData.employee));
+  const cooking = sumData(getData(allData.cooking));
+  const misc = sumData(getData(allData.misc));
+  const supro = sumData(getData(allData.supro));
+  return { buying, cash, employee, cooking, misc, supro, expense: buying + employee + cooking + misc + supro };
+}
 
-  function sumData(data) {
+function render(prefix, t) {
+  setText(prefix + "Expense", money(t.expense));
+  setText(prefix + "Credit", money(t.cash));
+  setText(prefix + "Buying", money(t.buying));
+  setText(prefix + "Cash", money(t.cash));
+  setText(prefix + "Employee", money(t.employee));
+  setText(prefix + "Cooking", money(t.cooking));
+  setText(prefix + "Misc", money(t.misc));
+  setText(prefix + "Supro", money(t.supro));
+}
 
-    return data.reduce(
-      (total, item) =>
-        total + (Number(item.amount) || 0),
-      0
-    );
+function updateOverall() {
+  render("overall", totals(d => d));
+}
 
+function getPeriodRange() {
+  const type = $("periodSelect").value;
+  if (type === "custom") {
+    const f = $("fromDate").value, t = $("toDate").value;
+    if (!f || !t) return null;
+    return { from: parseDate(f), to: parseDate(t) };
   }
+  if (!latestDate) return null;
+  const to = dateOnly(latestDate);
+  const from = new Date(to);
+  if (type === "7") from.setDate(from.getDate() - 6);
+  else if (type === "15") from.setDate(from.getDate() - 14);
+  return { from: dateOnly(from), to };
+}
 
-
-  /* =========================================================
-     OVERALL DASHBOARD
-  ========================================================= */
-
-  function updateOverall() {
-
-    const buying =
-      sumData(allData.buying);
-
-    const cash =
-      sumData(allData.cash);
-
-    const employee =
-      sumData(allData.employee);
-
-    const cooking =
-      sumData(allData.cooking);
-
-    const misc =
-      sumData(allData.misc);
-
-    const supro =
-      sumData(allData.supro);
-
-
-    const expenditure =
-      buying +
-      employee +
-      cooking +
-      misc +
-      supro;
-
-
-    /*
-      Main cards
-    */
-
-    document.getElementById(
-      "overallExpense"
-    ).textContent = money(expenditure);
-
-
-    document.getElementById(
-      "overallCredit"
-    ).textContent = money(cash);
-
-
-    /*
-      KPI cards
-    */
-
-    document.getElementById(
-      "overallBuying"
-    ).textContent = money(buying);
-
-
-    document.getElementById(
-      "overallCash"
-    ).textContent = money(cash);
-
-
-    document.getElementById(
-      "overallEmployee"
-    ).textContent = money(employee);
-
-
-    document.getElementById(
-      "overallCooking"
-    ).textContent = money(cooking);
-
-
-    document.getElementById(
-      "overallMisc"
-    ).textContent = money(misc);
-
-
-    document.getElementById(
-      "overallSupro"
-    ).textContent = money(supro);
-
+function updatePeriod() {
+  const range = getPeriodRange();
+  if (!range) {
+    render("period", { expense: 0, cash: 0, buying: 0, employee: 0, cooking: 0, misc: 0, supro: 0 });
+    return;
   }
-
-
-  /* =========================================================
-     GET PERIOD RANGE
-  ========================================================= */
-
-  function getPeriodRange() {
-
-    const type =
-      document.getElementById(
-        "periodSelect"
-      ).value;
-
-
-    if (!latestDate) {
-
-      return null;
-
-    }
-
-
-    /*
-      Latest Date
-    */
-
-    if (type === "latest") {
-
-      return {
-
-        from: dateOnly(latestDate),
-
-        to: dateOnly(latestDate)
-
-      };
-
-    }
-
-
-    /*
-      Last 7 Days
-    */
-
-    if (type === "7") {
-
-      const from =
-        new Date(latestDate);
-
-      from.setDate(
-        from.getDate() - 6
-      );
-
-
-      return {
-
-        from: dateOnly(from),
-
-        to: dateOnly(latestDate)
-
-      };
-
-    }
-
-
-    /*
-      Last 15 Days
-    */
-
-    if (type === "15") {
-
-      const from =
-        new Date(latestDate);
-
-      from.setDate(
-        from.getDate() - 14
-      );
-
-
-      return {
-
-        from: dateOnly(from),
-
-        to: dateOnly(latestDate)
-
-      };
-
-    }
-
-
-    /*
-      Custom Date
-    */
-
-    if (type === "custom") {
-
-      const fromValue =
-        document.getElementById(
-          "fromDate"
-        ).value;
-
-
-      const toValue =
-        document.getElementById(
-          "toDate"
-        ).value;
-
-
-      if (!fromValue || !toValue) {
-
-        return null;
-
-      }
-
-
-      const fromParts =
-        fromValue.split("-");
-
-
-      const toParts =
-        toValue.split("-");
-
-
-      const from =
-        new Date(
-          Number(fromParts[0]),
-          Number(fromParts[1]) - 1,
-          Number(fromParts[2])
-        );
-
-
-      const to =
-        new Date(
-          Number(toParts[0]),
-          Number(toParts[1]) - 1,
-          Number(toParts[2])
-        );
-
-
-      return {
-
-        from: dateOnly(from),
-
-        to: dateOnly(to)
-
-      };
-
-    }
-
-
-    return null;
-
-  }
-
-
-  /* =========================================================
-     FILTER BY PERIOD
-  ========================================================= */
-
-  function filterData(data, range) {
-
-    if (!range) {
-      return [];
-    }
-
-
-    return data.filter(item => {
-
-      const d =
-        dateOnly(item.date);
-
-
-      return (
-        d >= range.from &&
-        d <= range.to
-      );
-
-    });
-
-  }
-
-
-  /* =========================================================
-     PERIOD DASHBOARD
-  ========================================================= */
-
-  function updatePeriod() {
-
-    const range =
-      getPeriodRange();
-
-
-    if (!range) {
-
-      resetPeriodCards();
-
-      return;
-
-    }
-
-
-    const buying =
-      sumData(
-        filterData(
-          allData.buying,
-          range
-        )
-      );
-
-
-    const cash =
-      sumData(
-        filterData(
-          allData.cash,
-          range
-        )
-      );
-
-
-    const employee =
-      sumData(
-        filterData(
-          allData.employee,
-          range
-        )
-      );
-
-
-    const cooking =
-      sumData(
-        filterData(
-          allData.cooking,
-          range
-        )
-      );
-
-
-    const misc =
-      sumData(
-        filterData(
-          allData.misc,
-          range
-        )
-      );
-
-
-    const supro =
-      sumData(
-        filterData(
-          allData.supro,
-          range
-        )
-      );
-
-
-    const expenditure =
-      buying +
-      employee +
-      cooking +
-      misc +
-      supro;
-
-
-    /*
-      Main period cards
-    */
-
-    document.getElementById(
-      "periodExpense"
-    ).textContent = money(expenditure);
-
-
-    document.getElementById(
-      "periodCredit"
-    ).textContent = money(cash);
-
-
-    /*
-      Period KPI
-    */
-
-    document.getElementById(
-      "periodBuying"
-    ).textContent = money(buying);
-
-
-    document.getElementById(
-      "periodCash"
-    ).textContent = money(cash);
-
-
-    document.getElementById(
-      "periodEmployee"
-    ).textContent = money(employee);
-
-
-    document.getElementById(
-      "periodCooking"
-    ).textContent = money(cooking);
-
-
-    document.getElementById(
-      "periodMisc"
-    ).textContent = money(misc);
-
-
-    document.getElementById(
-      "periodSupro"
-    ).textContent = money(supro);
-
-  }
-
-
-  /* =========================================================
-     RESET PERIOD CARDS
-  ========================================================= */
-
-  function resetPeriodCards() {
-
-    const ids = [
-
-      "periodExpense",
-      "periodCredit",
-      "periodBuying",
-      "periodCash",
-      "periodEmployee",
-      "periodCooking",
-      "periodMisc",
-      "periodSupro"
-
-    ];
-
-
-    ids.forEach(id => {
-
-      document.getElementById(
-        id
-      ).textContent = "₹0.00";
-
-    });
-
-  }
-
-
-  /* =========================================================
-     FORMAT DISPLAY DATE
-  ========================================================= */
-
-  function formatDisplayDate(date) {
-
-    if (!date) {
-      return "-";
-    }
-
-
-    return date.toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     PERIOD SELECT CHANGE
-  ========================================================= */
-
-  document.getElementById(
-    "periodSelect"
-  ).addEventListener(
-    "change",
-    function() {
-
-      const dateInputs =
-        document.getElementById(
-          "dateInputs"
-        );
-
-
-      if (this.value === "custom") {
-
-        dateInputs.style.display =
-          "flex";
-
-      }
-
-      else {
-
-        dateInputs.style.display =
-          "none";
-
-      }
-
-
-      updatePeriod();
-
-    }
-  );
-
-
-  /* =========================================================
-     CUSTOM DATE CHANGE
-  ========================================================= */
-
-  document.getElementById(
-    "fromDate"
-  ).addEventListener(
-    "change",
-    updatePeriod
-  );
-
-
-  document.getElementById(
-    "toDate"
-  ).addEventListener(
-    "change",
-    updatePeriod
-  );
-
-
-  /* =========================================================
-     START
-  ========================================================= */
-
-  loadAllData();
-
+  render("period", totals(d => d.filter(it => it.date >= range.from && it.date <= range.to)));
+}
+
+function formatDisplayDate(d) {
+  return d ? d.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "-";
+}
+
+/* ---------- Events ---------- */
+$("periodSelect").addEventListener("change", function () {
+  $("dateInputs").style.display = this.value === "custom" ? "flex" : "none";
+  updatePeriod();
+});
+$("fromDate").addEventListener("change", updatePeriod);
+$("toDate").addEventListener("change", updatePeriod);
+
+loadAllData();
 </script>
-
 </body>
 </html>
