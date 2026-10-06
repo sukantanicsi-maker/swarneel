@@ -8,14 +8,9 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>Stock & Expense Dashboard</title>
-
+<title>Stock Dashboard</title>
 
 <style>
-
-/* =========================
-   BASIC
-========================= */
 
 * {
     box-sizing: border-box;
@@ -41,7 +36,7 @@ h1 {
 
 
 /* =========================
-   DASHBOARD
+   DASHBOARD GRID
 ========================= */
 
 .dashboard {
@@ -56,7 +51,7 @@ h1 {
 
 
 /* =========================
-   CARD
+   CARDS
 ========================= */
 
 .card {
@@ -99,7 +94,6 @@ h1 {
     font-weight: bold;
 
     color: #198754;
-
 }
 
 
@@ -157,7 +151,7 @@ h1 {
 
 
 /* =========================
-   BUTTON
+   REFRESH BUTTON
 ========================= */
 
 button {
@@ -207,106 +201,118 @@ button:hover {
 <div class="dashboard">
 
 
-<!-- TOTAL BUY -->
+    <!-- BUYING -->
 
-<div class="card">
+    <div class="card">
 
-    <div class="card-title">
-        Total Buy
+        <div class="card-title">
+            Total Buy
+        </div>
+
+        <div
+            class="amount"
+            id="totalBuying">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
-    <div
-        class="amount"
-        id="totalBuying">
-        ₹0.00
+
+    <!-- CASH FLOW -->
+
+    <div class="card">
+
+        <div class="card-title">
+            Cash Credit
+        </div>
+
+        <div
+            class="amount"
+            id="totalCashFlow">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
-</div>
 
+    <!-- EMPLOYEE -->
 
-<!-- CASH CREDIT -->
+    <div class="card">
 
-<div class="card">
+        <div class="card-title">
+            Employee
+        </div>
 
-    <div class="card-title">
-        Cash Credit
+        <div
+            class="amount"
+            id="totalEmployee">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
-    <div
-        class="amount"
-        id="totalCashFlow">
-        ₹0.00
+
+    <!-- COOKING -->
+
+    <div class="card">
+
+        <div class="card-title">
+            Cooking
+        </div>
+
+        <div
+            class="amount"
+            id="totalCooking">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
-</div>
 
+    <!-- MISC -->
 
-<!-- EMPLOYEE -->
+    <div class="card">
 
-<div class="card">
+        <div class="card-title">
+            Miscellaneous
+        </div>
 
-    <div class="card-title">
-        Employee
+        <div
+            class="amount"
+            id="totalMisc">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
-    <div
-        class="amount"
-        id="totalEmployee">
-        ₹0.00
+
+    <!-- SUPRO CARS -->
+
+    <div class="card">
+
+        <div class="card-title">
+            Supro Cars
+        </div>
+
+        <div
+            class="amount"
+            id="totalSuproCars">
+
+            ₹0.00
+
+        </div>
+
     </div>
-
-</div>
-
-
-<!-- COOKING -->
-
-<div class="card">
-
-    <div class="card-title">
-        Cooking
-    </div>
-
-    <div
-        class="amount"
-        id="totalCooking">
-        ₹0.00
-    </div>
-
-</div>
-
-
-<!-- MISC -->
-
-<div class="card">
-
-    <div class="card-title">
-        Miscellaneous
-    </div>
-
-    <div
-        class="amount"
-        id="totalMisc">
-        ₹0.00
-    </div>
-
-</div>
-
-
-<!-- SUPRO CARS -->
-
-<div class="card">
-
-    <div class="card-title">
-        Supro Cars
-    </div>
-
-    <div
-        class="amount"
-        id="totalSuproCars">
-        ₹0.00
-    </div>
-
-</div>
 
 
 </div>
@@ -325,15 +331,15 @@ button:hover {
     <div
         class="grand-total"
         id="grandTotal">
+
         ₹0.00
+
     </div>
 
 </div>
 
 
-<!-- =========================
-     STATUS
-========================= -->
+<!-- STATUS -->
 
 <div
     class="status"
@@ -344,9 +350,7 @@ button:hover {
 </div>
 
 
-<!-- =========================
-     REFRESH BUTTON
-========================= -->
+<!-- REFRESH -->
 
 <button onclick="loadAllData()">
 
@@ -416,7 +420,7 @@ const sources = [
 
 
 // =====================================================
-// FORMAT MONEY
+// FORMAT CURRENCY
 // =====================================================
 
 function formatMoney(value) {
@@ -435,16 +439,13 @@ function formatMoney(value) {
 
 
 // =====================================================
-// GET TOTAL FROM GOOGLE SHEET
+// GET TOTAL FROM ONE GOOGLE SHEET
 // =====================================================
 
 async function getSheetTotal(
     sheetName,
     columnName
 ) {
-
-
-    // Google Sheets GViz URL
 
     const url =
 
@@ -457,8 +458,6 @@ async function getSheetTotal(
         encodeURIComponent(sheetName);
 
 
-    // Get data
-
     const response =
         await fetch(url);
 
@@ -466,7 +465,7 @@ async function getSheetTotal(
     if (!response.ok) {
 
         throw new Error(
-            "Unable to access sheet: " +
+            "Cannot access sheet: " +
             sheetName
         );
 
@@ -477,23 +476,21 @@ async function getSheetTotal(
         await response.text();
 
 
-    // Google response contains
-    // some extra text before JSON
+    // ---------------------------------------------
+    // Convert Google GViz response to JSON
+    // ---------------------------------------------
 
     const start =
         text.indexOf("{");
 
-
     const end =
         text.lastIndexOf("}") + 1;
-
 
     const jsonText =
         text.substring(
             start,
             end
         );
-
 
     const data =
         JSON.parse(jsonText);
@@ -502,14 +499,13 @@ async function getSheetTotal(
     const columns =
         data.table.cols;
 
-
     const rows =
         data.table.rows;
 
 
-    // =================================================
-    // FIND REQUIRED COLUMN
-    // =================================================
+    // ---------------------------------------------
+    // FIND COLUMN INDEX
+    // ---------------------------------------------
 
     let columnIndex = -1;
 
@@ -519,7 +515,6 @@ async function getSheetTotal(
         i < columns.length;
         i++
     ) {
-
 
         const label =
             (
@@ -541,9 +536,9 @@ async function getSheetTotal(
     }
 
 
-    // =================================================
+    // ---------------------------------------------
     // COLUMN NOT FOUND
-    // =================================================
+    // ---------------------------------------------
 
     if (columnIndex === -1) {
 
@@ -551,7 +546,7 @@ async function getSheetTotal(
 
             "'" +
             columnName +
-            "' column not found in '" +
+            "' not found in '" +
             sheetName +
             "' sheet."
 
@@ -560,23 +555,20 @@ async function getSheetTotal(
     }
 
 
-    // =================================================
+    // ---------------------------------------------
     // CALCULATE TOTAL
-    // =================================================
+    // ---------------------------------------------
 
     let total = 0;
 
 
     rows.forEach(row => {
 
-
         if (
             !row.c ||
             !row.c[columnIndex]
         ) {
-
             return;
-
         }
 
 
@@ -588,13 +580,11 @@ async function getSheetTotal(
             value === null ||
             value === undefined
         ) {
-
             return;
-
         }
 
 
-        // Convert to text
+        // Convert to string
 
         value =
             String(value);
@@ -612,8 +602,6 @@ async function getSheetTotal(
                 ""
             );
 
-
-        // Convert to number
 
         const number =
             parseFloat(value);
@@ -634,7 +622,7 @@ async function getSheetTotal(
 
 
 // =====================================================
-// LOAD ALL SHEETS
+// LOAD ALL 6 SHEETS
 // =====================================================
 
 async function loadAllData() {
@@ -647,10 +635,8 @@ async function loadAllData() {
 
 
     status.innerText =
-        "Loading data from Google Sheets...";
+        "Loading data...";
 
-
-    // Start Grand Total
 
     let grandTotal = 0;
 
@@ -658,9 +644,9 @@ async function loadAllData() {
     try {
 
 
-        // =================================================
-        // LOAD EACH SHEET
-        // =================================================
+        // ---------------------------------------------
+        // PROCESS ALL SOURCES
+        // ---------------------------------------------
 
         for (
             const source of sources
@@ -689,17 +675,15 @@ async function loadAllData() {
         }
 
 
-        // =================================================
+        // ---------------------------------------------
         // SHOW GRAND TOTAL
-        // =================================================
+        // ---------------------------------------------
 
         document.getElementById(
             "grandTotal"
         ).innerText =
             formatMoney(grandTotal);
 
-
-        // Status
 
         status.innerText =
             "All data updated successfully.";
@@ -723,7 +707,7 @@ async function loadAllData() {
 
 
 // =====================================================
-// AUTOMATICALLY LOAD DATA
+// LOAD DATA WHEN PAGE OPENS
 // =====================================================
 
 loadAllData();
