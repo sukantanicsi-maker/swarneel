@@ -1,296 +1,684 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Stock Dashboard</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Stock & Expense Dashboard</title>
+
 
 <style>
-    * {
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
 
-    body {
-        margin: 0;
-        background: #f4f6f9;
-        padding: 30px;
-    }
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-    .container {
-        max-width: 1100px;
-        margin: auto;
-    }
+body {
+    margin: 0;
+    padding: 30px;
+    background: #f4f6f9;
+    color: #222;
+}
 
-    h1 {
-        color: #222;
-        margin-bottom: 25px;
-    }
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
 
-    .card {
-        background: white;
-        width: 320px;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+h1 {
+    margin-bottom: 30px;
+}
 
-    .card-title {
-        color: #777;
-        font-size: 16px;
-        margin-bottom: 12px;
-    }
 
-    .total {
-        font-size: 34px;
-        font-weight: bold;
-        color: #198754;
-    }
+/* =========================
+   DASHBOARD GRID
+========================= */
 
-    .status {
-        margin-top: 20px;
-        color: #666;
-    }
+.dashboard {
 
-    button {
-        margin-top: 20px;
-        padding: 10px 18px;
-        border: none;
-        border-radius: 8px;
-        background: #0d6efd;
-        color: white;
-        cursor: pointer;
-    }
+    display: grid;
+
+    grid-template-columns:
+    repeat(auto-fit, minmax(250px, 1fr));
+
+    gap: 20px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+    0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card-title {
+
+    color: #777;
+
+    font-size: 15px;
+
+    margin-bottom: 12px;
+}
+
+.amount {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    color: #198754;
+}
+
+
+/* =========================
+   GRAND TOTAL
+========================= */
+
+.grand-card {
+
+    background: #212529;
+
+    color: white;
+
+    padding: 30px;
+
+    margin-top: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+    0 4px 15px rgba(0,0,0,0.15);
+}
+
+.grand-title {
+
+    font-size: 16px;
+
+    margin-bottom: 12px;
+
+    opacity: .8;
+}
+
+.grand-total {
+
+    font-size: 38px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+
+    margin-top: 25px;
+
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+button {
+
+    margin-top: 20px;
+
+    padding: 11px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #0d6efd;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+button:hover {
+
+    background: #0b5ed7;
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-    <h1>Stock Dashboard</h1>
 
-    <div class="card">
+<h1>
+    Stock & Expense Dashboard
+</h1>
 
-        <div class="card-title">
-            TOTAL BUY
-        </div>
 
-        <div class="total" id="totalBuy">
-            ₹0.00
-        </div>
+<div class="dashboard">
 
+
+<!-- BUYING -->
+
+<div class="card">
+
+    <div class="card-title">
+        TOTAL BUY
     </div>
 
-    <div class="status" id="status">
-        Loading...
+    <div
+        class="amount"
+        id="totalBuying">
+        ₹0.00
     </div>
-
-    <button onclick="loadBuyingData()">
-        Refresh
-    </button>
 
 </div>
 
 
+<!-- CASH FLOW -->
+
+<div class="card">
+
+    <div class="card-title">
+        CASH CREDIT
+    </div>
+
+    <div
+        class="amount"
+        id="totalCashFlow">
+        ₹0.00
+    </div>
+
+</div>
+
+
+<!-- EMPLOYEE -->
+
+<div class="card">
+
+    <div class="card-title">
+        EMPLOYEE
+    </div>
+
+    <div
+        class="amount"
+        id="totalEmployee">
+        ₹0.00
+    </div>
+
+</div>
+
+
+<!-- COOKING -->
+
+<div class="card">
+
+    <div class="card-title">
+        COOKING
+    </div>
+
+    <div
+        class="amount"
+        id="totalCooking">
+        ₹0.00
+    </div>
+
+</div>
+
+
+<!-- MISC -->
+
+<div class="card">
+
+    <div class="card-title">
+        MISCELLANEOUS
+    </div>
+
+    <div
+        class="amount"
+        id="totalMisc">
+        ₹0.00
+    </div>
+
+</div>
+
+
+<!-- SURPO CARS -->
+
+<div class="card">
+
+    <div class="card-title">
+        SURPO CARS
+    </div>
+
+    <div
+        class="amount"
+        id="totalSurpoCars">
+        ₹0.00
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- GRAND TOTAL -->
+
+<div class="grand-card">
+
+    <div class="grand-title">
+        GRAND TOTAL
+    </div>
+
+    <div
+        class="grand-total"
+        id="grandTotal">
+        ₹0.00
+    </div>
+
+</div>
+
+
+<div
+    class="status"
+    id="status">
+
+    Loading data...
+
+</div>
+
+
+<button onclick="loadAllData()">
+
+    Refresh Data
+
+</button>
+
+
+</div>
+
+
+
 <script>
+
+
+// =====================================================
+// GOOGLE SPREADSHEET
+// =====================================================
 
 const SHEET_ID =
 "1MSDmtDcmmKTt6ykUQh9XOnq0tfsipn2A";
 
-const SHEET_NAME =
-"Buying";
 
-const PRICE_COLUMN =
-"Buying_Price";
+// =====================================================
+// SHEET + COLUMN CONFIGURATION
+// =====================================================
+
+const sources = [
+
+    {
+        sheet: "Buying",
+        column: "Buying_Price",
+        element: "totalBuying"
+    },
+
+    {
+        sheet: "Cash_Flows",
+        column: "Amount_Credit",
+        element: "totalCashFlow"
+    },
+
+    {
+        sheet: "Employee",
+        column: "Amount",
+        element: "totalEmployee"
+    },
+
+    {
+        sheet: "Cooking",
+        column: "Amount",
+        element: "totalCooking"
+    },
+
+    {
+        sheet: "MISC",
+        column: "Amount",
+        element: "totalMisc"
+    },
+
+    {
+        sheet: "Surpo_Cars",
+        column: "Amount",
+        element: "totalSurpoCars"
+    }
+
+];
 
 
-async function loadBuyingData() {
+
+// =====================================================
+// FORMAT MONEY
+// =====================================================
+
+function formatMoney(value) {
+
+    return "₹" +
+        value.toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+}
+
+
+
+// =====================================================
+// GET TOTAL FROM GOOGLE SHEET
+// =====================================================
+
+async function getSheetTotal(
+    sheetName,
+    columnName
+) {
+
+
+    const url =
+
+        "https://docs.google.com/spreadsheets/d/" +
+
+        SHEET_ID +
+
+        "/gviz/tq?tqx=out:json&sheet=" +
+
+        encodeURIComponent(sheetName);
+
+
+    const response =
+        await fetch(url);
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Unable to access " +
+            sheetName
+        );
+
+    }
+
+
+    const text =
+        await response.text();
+
+
+    // Google JSON wrapper remove
+
+    const start =
+        text.indexOf("{");
+
+
+    const end =
+        text.lastIndexOf("}") + 1;
+
+
+    const jsonText =
+        text.substring(
+            start,
+            end
+        );
+
+
+    const data =
+        JSON.parse(jsonText);
+
+
+    const columns =
+        data.table.cols;
+
+
+    const rows =
+        data.table.rows;
+
+
+    // =================================================
+    // FIND COLUMN
+    // =================================================
+
+    let columnIndex = -1;
+
+
+    for (
+        let i = 0;
+        i < columns.length;
+        i++
+    ) {
+
+
+        const label =
+            (
+                columns[i].label || ""
+            ).trim();
+
+
+        if (
+            label.toLowerCase() ===
+            columnName.toLowerCase()
+        ) {
+
+            columnIndex = i;
+
+            break;
+
+        }
+
+    }
+
+
+    if (columnIndex === -1) {
+
+        throw new Error(
+
+            columnName +
+            " column not found in " +
+            sheetName
+
+        );
+
+    }
+
+
+    // =================================================
+    // TOTAL
+    // =================================================
+
+    let total = 0;
+
+
+    rows.forEach(row => {
+
+
+        if (
+            !row.c ||
+            !row.c[columnIndex]
+        ) {
+
+            return;
+
+        }
+
+
+        let value =
+            row.c[columnIndex].v;
+
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return;
+
+        }
+
+
+        value =
+            String(value);
+
+
+        // Remove currency symbols,
+        // commas and spaces
+
+        value =
+            value.replace(
+                /[₹,$\s]/g,
+                ""
+            );
+
+
+        const number =
+            parseFloat(value);
+
+
+        if (!isNaN(number)) {
+
+            total += number;
+
+        }
+
+    });
+
+
+    return total;
+
+}
+
+
+
+// =====================================================
+// LOAD ALL DATA
+// =====================================================
+
+async function loadAllData() {
+
 
     const status =
-        document.getElementById("status");
+        document.getElementById(
+            "status"
+        );
 
-    status.innerText = "Loading data...";
+
+    status.innerText =
+        "Loading data from Google Sheets...";
+
+
+    let grandTotal = 0;
+
 
     try {
 
-        // Google Sheet URL
-        const url =
-        "https://docs.google.com/spreadsheets/d/" +
-        SHEET_ID +
-        "/gviz/tq?tqx=out:json&sheet=" +
-        encodeURIComponent(SHEET_NAME);
 
-
-        const response =
-            await fetch(url);
-
-        const text =
-            await response.text();
-
-
-        // Convert Google response to JSON
-        const start =
-            text.indexOf("{");
-
-        const end =
-            text.lastIndexOf("}") + 1;
-
-        const json =
-            text.substring(start, end);
-
-        const data =
-            JSON.parse(json);
-
-
-        // Get columns
-        const columns =
-            data.table.cols;
-
-
-        // Get rows
-        const rows =
-            data.table.rows;
-
-
-        // ----------------------------------
-        // FIND Buying_Price COLUMN
-        // ----------------------------------
-
-        let priceColumnIndex = -1;
+        // =============================================
+        // LOAD ALL 6 SHEETS
+        // =============================================
 
         for (
-            let i = 0;
-            i < columns.length;
-            i++
+            const source of sources
         ) {
 
-            const columnName =
-                (columns[i].label || "")
-                .trim();
 
-            if (
-                columnName.toLowerCase() ===
-                PRICE_COLUMN.toLowerCase()
-            ) {
-
-                priceColumnIndex = i;
-
-                break;
-            }
-        }
-
-
-        // Column not found
-        if (priceColumnIndex === -1) {
-
-            status.innerText =
-                "Buying_Price column not found.";
-
-            console.log(
-                "Columns found:",
-                columns
-            );
-
-            return;
-        }
-
-
-        // ----------------------------------
-        // TOTAL BUYING PRICE
-        // ----------------------------------
-
-        let totalBuy = 0;
-
-
-        for (
-            let i = 0;
-            i < rows.length;
-            i++
-        ) {
-
-            const cell =
-                rows[i].c[priceColumnIndex];
-
-
-            if (
-                !cell ||
-                cell.v === null ||
-                cell.v === undefined
-            ) {
-                continue;
-            }
-
-
-            let value =
-                cell.v;
-
-
-            // Convert to text
-            value =
-                String(value);
-
-
-            // Remove currency symbols,
-            // commas and spaces
-            value =
-                value.replace(
-                    /[₹,$\s]/g,
-                    ""
+            const total =
+                await getSheetTotal(
+                    source.sheet,
+                    source.column
                 );
 
 
-            const price =
-                parseFloat(value);
+            // Show individual total
+
+            document.getElementById(
+                source.element
+            ).innerText =
+                formatMoney(total);
 
 
-            if (!isNaN(price)) {
+            // Add to grand total
 
-                totalBuy =
-                    totalBuy + price;
+            grandTotal += total;
 
-            }
         }
 
 
-        // ----------------------------------
-        // SHOW TOTAL ON DASHBOARD
-        // ----------------------------------
+        // =============================================
+        // SHOW GRAND TOTAL
+        // =============================================
 
         document.getElementById(
-            "totalBuy"
+            "grandTotal"
         ).innerText =
-            "₹" +
-            totalBuy.toLocaleString(
-                "en-IN",
-                {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }
-            );
+            formatMoney(grandTotal);
 
 
         status.innerText =
-            "Buying data loaded successfully.";
+            "All data updated successfully.";
 
 
     }
     catch (error) {
 
+
         console.error(error);
 
+
         status.innerText =
-            "Error loading Google Sheet.";
+            "Error: " +
+            error.message;
+
 
     }
+
 }
 
 
-// Automatically load when page opens
-loadBuyingData();
+
+// =====================================================
+// AUTO LOAD
+// =====================================================
+
+loadAllData();
+
 
 </script>
 
+
 </body>
+
 </html>
