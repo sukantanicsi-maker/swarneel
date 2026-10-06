@@ -43,7 +43,7 @@ h1 {
 
 
 /* =========================================================
-   BIG SUMMARY
+   BIG SUMMARY CARDS
 ========================================================= */
 
 .main-summary {
@@ -748,48 +748,63 @@ input[type="date"] {
 
 
 /* =========================================================
-   GOOGLE SHEET ID
+   CURRENT GOOGLE SPREADSHEET
 ========================================================= */
 
 const SHEET_ID =
-  "1MSDmtDcmmKTt6ykUQh9XOnq0tfsipn2A";
+  "1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
 
 
 
 /* =========================================================
-   SHEETS
+   EXACT SHEET GIDS
+=========================================================
+
+   Buying       = 2093020950
+   Cash_Flows   = 2100593426
+   Employee     = 1620505158
+   Cooking      = 1987654808
+   MISC         = 1505058386
+   Supro_Cars   = 1580668395
+
 ========================================================= */
 
 const sources = [
 
   {
     key: "buying",
-    sheet: "Buying"
+    name: "Buying",
+    gid: "2093020950"
   },
 
   {
     key: "cash",
-    sheet: "Cash_Flows"
+    name: "Cash_Flows",
+    gid: "2100593426"
   },
 
   {
     key: "employee",
-    sheet: "Employee"
+    name: "Employee",
+    gid: "1620505158"
   },
 
   {
     key: "cooking",
-    sheet: "Cooking"
+    name: "Cooking",
+    gid: "1987654808"
   },
 
   {
     key: "misc",
-    sheet: "MISC"
+    name: "MISC",
+    gid: "1505058386"
   },
 
   {
     key: "supro",
-    sheet: "Supro_Cars"
+    name: "Supro_Cars",
+    gid: "1580668395"
   }
 
 ];
@@ -867,12 +882,42 @@ function parseDate(value) {
   }
 
 
-
   /*
-    DD/MM/YYYY
+     Google GViz Date format:
+
+     Date(2026,7,1)
+
+     NOTE:
+     Google month is zero-based.
   */
 
   let match =
+    str.match(
+      /^Date\(\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*\)$/
+    );
+
+
+  if (match) {
+
+    return new Date(
+      Number(match[1]),
+      Number(match[2]),
+      Number(match[3])
+    );
+
+  }
+
+
+
+  /*
+     DD/MM/YYYY
+
+     Example:
+
+     01/08/2026
+  */
+
+  match =
     str.match(
       /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
     );
@@ -901,7 +946,7 @@ function parseDate(value) {
 
 
   /*
-    YYYY-MM-DD
+     YYYY-MM-DD
   */
 
   match =
@@ -923,29 +968,7 @@ function parseDate(value) {
 
 
   /*
-    Google Date format
-  */
-
-  match =
-    str.match(
-      /^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)$/
-    );
-
-
-  if (match) {
-
-    return new Date(
-      Number(match[1]),
-      Number(match[2]),
-      Number(match[3])
-    );
-
-  }
-
-
-
-  /*
-    Normal JavaScript date
+     Normal JavaScript Date
   */
 
   const d =
@@ -976,7 +999,9 @@ function parseDate(value) {
 function dateOnly(date) {
 
   if (!date) {
+
     return null;
+
   }
 
 
@@ -997,20 +1022,34 @@ function dateOnly(date) {
 function dateKey(date) {
 
   if (!date) {
+
     return "";
+
   }
 
 
-  return (
-    date.getFullYear() +
-    "-" +
+  const year =
+    date.getFullYear();
+
+
+  const month =
     String(
       date.getMonth() + 1
-    ).padStart(2, "0") +
-    "-" +
+    ).padStart(2, "0");
+
+
+  const day =
     String(
       date.getDate()
-    ).padStart(2, "0")
+    ).padStart(2, "0");
+
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
   );
 
 }
@@ -1044,7 +1083,11 @@ function parseAmount(value) {
 
 
   /*
-    (1000) = -1000
+     Negative amount:
+
+     (1000)
+     becomes
+     -1000
   */
 
   if (
@@ -1075,28 +1118,33 @@ function parseAmount(value) {
 
 
 /* =========================================================
-   FETCH ONE SHEET
+   FETCH ONE SHEET USING EXACT GID
 ========================================================= */
 
 async function fetchSheet(source) {
 
 
   /*
-    IMPORTANT:
+     IMPORTANT
 
-    We do NOT look for headers.
+     We are NOT using:
 
-    We directly ask Google Sheets:
+     sheet name detection
+     header detection
+     amount header detection
 
-    B = Date
-    D = Amount
+     We directly select:
 
-    offset 3 means:
+     B = Date
+     D = Amount
 
-    Row 1 → ignored
-    Row 2 → ignored
-    Row 3 → header ignored
-    Row 4 → first data row
+     And skip:
+
+     Row 1
+     Row 2
+     Row 3
+
+     Therefore first actual data row is Row 4.
   */
 
 
@@ -1109,14 +1157,21 @@ async function fetchSheet(source) {
     SHEET_ID +
     "/gviz/tq" +
     "?tqx=out:json" +
-    "&sheet=" +
+    "&gid=" +
     encodeURIComponent(
-      source.sheet
+      source.gid
     ) +
     "&tq=" +
     encodeURIComponent(
       query
     );
+
+
+  console.log(
+    "Loading:",
+    source.name,
+    url
+  );
 
 
   const response =
@@ -1143,8 +1198,11 @@ async function fetchSheet(source) {
 
 
   /*
-    Extract JSON
+     GViz response is:
+
+     google.visualization.Query.setResponse({...});
   */
+
 
   const start =
     text.indexOf("{");
@@ -1180,33 +1238,32 @@ async function fetchSheet(source) {
 
 
   if (
-    !json.table ||
-    !json.table.rows
+    !json.table
   ) {
 
     throw new Error(
-      "No data returned"
+      "Google Sheets returned no table"
     );
 
   }
 
 
   const rows =
-    json.table.rows;
+    json.table.rows || [];
 
 
   const result = [];
 
 
   /*
-    Query:
+     Because query is:
 
-    SELECT B,D
+     SELECT B,D
 
-    So:
+     the returned columns are:
 
-    cells[0] = Date
-    cells[1] = Amount
+     cells[0] = Date
+     cells[1] = Amount
   */
 
 
@@ -1234,17 +1291,19 @@ async function fetchSheet(source) {
 
 
       /*
-        Date value
+         Date
+
+         Prefer formatted value first.
       */
 
       const dateValue =
-        dateCell.f ||
-        dateCell.v ||
-        "";
+        dateCell.f !== undefined
+          ? dateCell.f
+          : dateCell.v;
 
 
       /*
-        Amount value
+         Amount
       */
 
       let amountValue = "";
@@ -1261,10 +1320,12 @@ async function fetchSheet(source) {
 
         }
 
-        else {
+        else if (
+          amountCell.f !== undefined
+        ) {
 
           amountValue =
-            amountCell.f || "";
+            amountCell.f;
 
         }
 
@@ -1276,6 +1337,10 @@ async function fetchSheet(source) {
           dateValue
         );
 
+
+      /*
+         Ignore invalid date rows.
+      */
 
       if (!date) {
 
@@ -1304,6 +1369,13 @@ async function fetchSheet(source) {
   );
 
 
+  console.log(
+    source.name +
+    " loaded rows:",
+    result.length
+  );
+
+
   return result;
 
 }
@@ -1311,7 +1383,7 @@ async function fetchSheet(source) {
 
 
 /* =========================================================
-   LOAD ALL SHEETS
+   LOAD ALL SIX SHEETS
 ========================================================= */
 
 async function loadAllData() {
@@ -1332,7 +1404,7 @@ async function loadAllData() {
 
 
   /*
-    Reset
+     Reset
   */
 
   allData = {
@@ -1354,7 +1426,7 @@ async function loadAllData() {
 
 
   /*
-    Load all sheets
+     Load all six sheets simultaneously.
   */
 
   await Promise.all(
@@ -1377,7 +1449,7 @@ async function loadAllData() {
 
 
           /*
-            Find latest date
+             Find latest date
           */
 
           data.forEach(
@@ -1404,13 +1476,13 @@ async function loadAllData() {
 
 
           console.error(
-            source.sheet,
+            source.name,
             error
           );
 
 
           errors.push(
-            source.sheet +
+            source.name +
             ": " +
             error.message
           );
@@ -1424,14 +1496,14 @@ async function loadAllData() {
 
 
   /*
-    Update overall
+     Update overall cards
   */
 
   updateOverall();
 
 
   /*
-    Set latest date
+     Set latest date in custom date fields
   */
 
   if (latestDate) {
@@ -1458,14 +1530,14 @@ async function loadAllData() {
 
 
   /*
-    Update period
+     Update period cards
   */
 
   updatePeriod();
 
 
   /*
-    Status
+     Status
   */
 
   if (
@@ -1503,7 +1575,7 @@ async function loadAllData() {
 
 
 /* =========================================================
-   SUM
+   SUM DATA
 ========================================================= */
 
 function sumData(data) {
@@ -1537,11 +1609,19 @@ function sumData(data) {
 function updateOverall() {
 
 
+  /*
+     Buying
+  */
+
   const buying =
     sumData(
       allData.buying
     );
 
+
+  /*
+     Cash Flow
+  */
 
   const cash =
     sumData(
@@ -1549,11 +1629,19 @@ function updateOverall() {
     );
 
 
+  /*
+     Employee
+  */
+
   const employee =
     sumData(
       allData.employee
     );
 
+
+  /*
+     Cooking
+  */
 
   const cooking =
     sumData(
@@ -1561,11 +1649,19 @@ function updateOverall() {
     );
 
 
+  /*
+     Miscellaneous
+  */
+
   const misc =
     sumData(
       allData.misc
     );
 
+
+  /*
+     Supro Cars
+  */
 
   const supro =
     sumData(
@@ -1574,7 +1670,9 @@ function updateOverall() {
 
 
   /*
-    Total expenditure excludes Cash Flow.
+     Total Expenditure
+
+     Cash Flow is NOT included.
   */
 
   const expenditure =
@@ -1585,6 +1683,10 @@ function updateOverall() {
     supro;
 
 
+
+  /*
+     BIG CARDS
+  */
 
   document.getElementById(
     "overallExpense"
@@ -1601,6 +1703,10 @@ function updateOverall() {
       cash
     );
 
+
+  /*
+     KPI CARDS
+  */
 
   document.getElementById(
     "overallBuying"
@@ -1674,7 +1780,7 @@ function getPeriodRange() {
 
 
   /*
-    Latest Date
+     LATEST DATE
   */
 
   if (
@@ -1699,7 +1805,16 @@ function getPeriodRange() {
 
 
   /*
-    Last 7 Days
+     LAST 7 DAYS
+
+     Latest date included.
+
+     Example:
+
+     Latest = 31/08/2026
+
+     From = 25/08/2026
+     To   = 31/08/2026
   */
 
   if (
@@ -1734,7 +1849,7 @@ function getPeriodRange() {
 
 
   /*
-    Last 15 Days
+     LAST 15 DAYS
   */
 
   if (
@@ -1769,7 +1884,7 @@ function getPeriodRange() {
 
 
   /*
-    Custom
+     CUSTOM DATE
   */
 
   if (
@@ -1843,7 +1958,7 @@ function getPeriodRange() {
 
 
 /* =========================================================
-   FILTER
+   FILTER DATA BY DATE
 ========================================================= */
 
 function filterData(
@@ -1901,6 +2016,10 @@ function updatePeriod() {
   }
 
 
+  /*
+     Buying
+  */
+
   const buying =
     sumData(
       filterData(
@@ -1909,6 +2028,10 @@ function updatePeriod() {
       )
     );
 
+
+  /*
+     Cash
+  */
 
   const cash =
     sumData(
@@ -1919,6 +2042,10 @@ function updatePeriod() {
     );
 
 
+  /*
+     Employee
+  */
+
   const employee =
     sumData(
       filterData(
@@ -1927,6 +2054,10 @@ function updatePeriod() {
       )
     );
 
+
+  /*
+     Cooking
+  */
 
   const cooking =
     sumData(
@@ -1937,6 +2068,10 @@ function updatePeriod() {
     );
 
 
+  /*
+     Miscellaneous
+  */
+
   const misc =
     sumData(
       filterData(
@@ -1945,6 +2080,10 @@ function updatePeriod() {
       )
     );
 
+
+  /*
+     Supro Cars
+  */
 
   const supro =
     sumData(
@@ -1955,6 +2094,10 @@ function updatePeriod() {
     );
 
 
+  /*
+     Period expenditure
+  */
+
   const expenditure =
     buying +
     employee +
@@ -1963,6 +2106,10 @@ function updatePeriod() {
     supro;
 
 
+
+  /*
+     BIG CARDS
+  */
 
   document.getElementById(
     "periodExpense"
@@ -1979,6 +2126,10 @@ function updatePeriod() {
       cash
     );
 
+
+  /*
+     KPI
+  */
 
   document.getElementById(
     "periodBuying"
@@ -2032,7 +2183,7 @@ function updatePeriod() {
 
 
 /* =========================================================
-   RESET PERIOD
+   RESET PERIOD CARDS
 ========================================================= */
 
 function resetPeriodCards() {
@@ -2068,10 +2219,12 @@ function resetPeriodCards() {
 
 
 /* =========================================================
-   DISPLAY DATE
+   FORMAT DATE FOR DISPLAY
 ========================================================= */
 
-function formatDisplayDate(date) {
+function formatDisplayDate(
+  date
+) {
 
 
   if (!date) {
@@ -2095,7 +2248,7 @@ function formatDisplayDate(date) {
 
 
 /* =========================================================
-   PERIOD SELECT
+   PERIOD SELECT CHANGE
 ========================================================= */
 
 document.getElementById(
@@ -2137,7 +2290,7 @@ document.getElementById(
 
 
 /* =========================================================
-   DATE CHANGE
+   CUSTOM DATE CHANGE
 ========================================================= */
 
 document.getElementById(
@@ -2158,7 +2311,7 @@ document.getElementById(
 
 
 /* =========================================================
-   START
+   START DASHBOARD
 ========================================================= */
 
 loadAllData();
