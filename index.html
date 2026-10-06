@@ -13,6 +13,10 @@
 
 <style>
 
+/* =========================
+   BASIC
+========================= */
+
 * {
     box-sizing: border-box;
     font-family: Arial, sans-serif;
@@ -32,11 +36,12 @@ body {
 
 h1 {
     margin-bottom: 30px;
+    font-size: 28px;
 }
 
 
 /* =========================
-   DASHBOARD GRID
+   DASHBOARD
 ========================= */
 
 .dashboard {
@@ -64,6 +69,16 @@ h1 {
 
     box-shadow:
     0 4px 15px rgba(0,0,0,0.08);
+
+    transition: 0.2s;
+}
+
+.card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+    0 6px 20px rgba(0,0,0,0.12);
 }
 
 .card-title {
@@ -73,6 +88,8 @@ h1 {
     font-size: 15px;
 
     margin-bottom: 12px;
+
+    text-transform: uppercase;
 }
 
 .amount {
@@ -82,6 +99,7 @@ h1 {
     font-weight: bold;
 
     color: #198754;
+
 }
 
 
@@ -111,12 +129,14 @@ h1 {
 
     margin-bottom: 12px;
 
-    opacity: .8;
+    opacity: 0.8;
+
+    text-transform: uppercase;
 }
 
 .grand-total {
 
-    font-size: 38px;
+    font-size: 40px;
 
     font-weight: bold;
 }
@@ -180,15 +200,19 @@ button:hover {
 </h1>
 
 
+<!-- =========================
+     DASHBOARD CARDS
+========================= -->
+
 <div class="dashboard">
 
 
-<!-- BUYING -->
+<!-- TOTAL BUY -->
 
 <div class="card">
 
     <div class="card-title">
-        TOTAL BUY
+        Total Buy
     </div>
 
     <div
@@ -200,12 +224,12 @@ button:hover {
 </div>
 
 
-<!-- CASH FLOW -->
+<!-- CASH CREDIT -->
 
 <div class="card">
 
     <div class="card-title">
-        CASH CREDIT
+        Cash Credit
     </div>
 
     <div
@@ -222,7 +246,7 @@ button:hover {
 <div class="card">
 
     <div class="card-title">
-        EMPLOYEE
+        Employee
     </div>
 
     <div
@@ -239,7 +263,7 @@ button:hover {
 <div class="card">
 
     <div class="card-title">
-        COOKING
+        Cooking
     </div>
 
     <div
@@ -256,7 +280,7 @@ button:hover {
 <div class="card">
 
     <div class="card-title">
-        MISCELLANEOUS
+        Miscellaneous
     </div>
 
     <div
@@ -268,17 +292,17 @@ button:hover {
 </div>
 
 
-<!-- SURPO CARS -->
+<!-- SUPRO CARS -->
 
 <div class="card">
 
     <div class="card-title">
-        SURPO CARS
+        Supro Cars
     </div>
 
     <div
         class="amount"
-        id="totalSurpoCars">
+        id="totalSuproCars">
         ₹0.00
     </div>
 
@@ -288,12 +312,14 @@ button:hover {
 </div>
 
 
-<!-- GRAND TOTAL -->
+<!-- =========================
+     GRAND TOTAL
+========================= -->
 
 <div class="grand-card">
 
     <div class="grand-title">
-        GRAND TOTAL
+        Grand Total
     </div>
 
     <div
@@ -305,14 +331,22 @@ button:hover {
 </div>
 
 
+<!-- =========================
+     STATUS
+========================= -->
+
 <div
     class="status"
     id="status">
 
-    Loading data...
+    Loading data from Google Sheets...
 
 </div>
 
+
+<!-- =========================
+     REFRESH BUTTON
+========================= -->
 
 <button onclick="loadAllData()">
 
@@ -329,7 +363,7 @@ button:hover {
 
 
 // =====================================================
-// GOOGLE SPREADSHEET
+// GOOGLE SPREADSHEET ID
 // =====================================================
 
 const SHEET_ID =
@@ -373,13 +407,12 @@ const sources = [
     },
 
     {
-        sheet: "Surpo_Cars",
+        sheet: "Supro_Cars",
         column: "Amount",
-        element: "totalSurpoCars"
+        element: "totalSuproCars"
     }
 
 ];
-
 
 
 // =====================================================
@@ -389,6 +422,7 @@ const sources = [
 function formatMoney(value) {
 
     return "₹" +
+
         value.toLocaleString(
             "en-IN",
             {
@@ -398,7 +432,6 @@ function formatMoney(value) {
         );
 
 }
-
 
 
 // =====================================================
@@ -411,6 +444,8 @@ async function getSheetTotal(
 ) {
 
 
+    // Google Sheets GViz URL
+
     const url =
 
         "https://docs.google.com/spreadsheets/d/" +
@@ -422,6 +457,8 @@ async function getSheetTotal(
         encodeURIComponent(sheetName);
 
 
+    // Get data
+
     const response =
         await fetch(url);
 
@@ -429,7 +466,7 @@ async function getSheetTotal(
     if (!response.ok) {
 
         throw new Error(
-            "Unable to access " +
+            "Unable to access sheet: " +
             sheetName
         );
 
@@ -440,7 +477,8 @@ async function getSheetTotal(
         await response.text();
 
 
-    // Google JSON wrapper remove
+    // Google response contains
+    // some extra text before JSON
 
     const start =
         text.indexOf("{");
@@ -470,7 +508,7 @@ async function getSheetTotal(
 
 
     // =================================================
-    // FIND COLUMN
+    // FIND REQUIRED COLUMN
     // =================================================
 
     let columnIndex = -1;
@@ -503,13 +541,19 @@ async function getSheetTotal(
     }
 
 
+    // =================================================
+    // COLUMN NOT FOUND
+    // =================================================
+
     if (columnIndex === -1) {
 
         throw new Error(
 
+            "'" +
             columnName +
-            " column not found in " +
-            sheetName
+            "' column not found in '" +
+            sheetName +
+            "' sheet."
 
         );
 
@@ -517,7 +561,7 @@ async function getSheetTotal(
 
 
     // =================================================
-    // TOTAL
+    // CALCULATE TOTAL
     // =================================================
 
     let total = 0;
@@ -550,12 +594,17 @@ async function getSheetTotal(
         }
 
 
+        // Convert to text
+
         value =
             String(value);
 
 
-        // Remove currency symbols,
-        // commas and spaces
+        // Remove:
+        // ₹
+        // $
+        // comma
+        // spaces
 
         value =
             value.replace(
@@ -563,6 +612,8 @@ async function getSheetTotal(
                 ""
             );
 
+
+        // Convert to number
 
         const number =
             parseFloat(value);
@@ -582,9 +633,8 @@ async function getSheetTotal(
 }
 
 
-
 // =====================================================
-// LOAD ALL DATA
+// LOAD ALL SHEETS
 // =====================================================
 
 async function loadAllData() {
@@ -600,15 +650,17 @@ async function loadAllData() {
         "Loading data from Google Sheets...";
 
 
+    // Start Grand Total
+
     let grandTotal = 0;
 
 
     try {
 
 
-        // =============================================
-        // LOAD ALL 6 SHEETS
-        // =============================================
+        // =================================================
+        // LOAD EACH SHEET
+        // =================================================
 
         for (
             const source of sources
@@ -630,22 +682,24 @@ async function loadAllData() {
                 formatMoney(total);
 
 
-            // Add to grand total
+            // Add to Grand Total
 
             grandTotal += total;
 
         }
 
 
-        // =============================================
+        // =================================================
         // SHOW GRAND TOTAL
-        // =============================================
+        // =================================================
 
         document.getElementById(
             "grandTotal"
         ).innerText =
             formatMoney(grandTotal);
 
+
+        // Status
 
         status.innerText =
             "All data updated successfully.";
@@ -668,9 +722,8 @@ async function loadAllData() {
 }
 
 
-
 // =====================================================
-// AUTO LOAD
+// AUTOMATICALLY LOAD DATA
 // =====================================================
 
 loadAllData();
