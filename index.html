@@ -110,181 +110,195 @@
   </div>
 
 
-<script>
+  <script>
 
-  // =====================================
-  // GOOGLE SHEET
-  // =====================================
+    // ==========================================
+    // GOOGLE SHEET SETTINGS
+    // ==========================================
 
-  const SHEET_ID =
-    "12yHqIhFQZyEwYJlmBfscDmaXZpp2lXQK";
+    const SHEET_ID =
+      "1MSDmtDcmmKTt6ykUQh9XOnq0tfsipn2A";
 
-  const SHEET_NAME =
-    "buy_stock";
+    const SHEET_NAME =
+      "Buying";
 
-
-  // =====================================
-  // LOAD DATA
-  // =====================================
-
-  async function loadData() {
-
-    const status =
-      document.getElementById("status");
-
-    status.innerText =
-      "Loading data...";
-
-    try {
-
-      const url =
-        `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
-
-      const response =
-        await fetch(url);
-
-      const text =
-        await response.text();
+    const AMOUNT_COLUMN =
+      "Buying_Price";
 
 
-      // Google JSON wrapper remove
-      const jsonText =
-        text.substring(
-          text.indexOf("{"),
-          text.lastIndexOf("}") + 1
-        );
+    // ==========================================
+    // LOAD DATA FROM GOOGLE SHEET
+    // ==========================================
 
+    async function loadData() {
 
-      const data =
-        JSON.parse(jsonText);
+      const status =
+        document.getElementById("status");
 
+      status.innerText =
+        "Loading data...";
 
-      const columns =
-        data.table.cols;
+      try {
 
-      const rows =
-        data.table.rows;
+        const url =
+          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
+        const response =
+          await fetch(url);
 
-      // =====================================
-      // FIND Total_Cost_Buy COLUMN
-      // =====================================
-
-      let amountColumn = -1;
-
-      columns.forEach((column, index) => {
-
-        if (
-          column.label &&
-          column.label.trim().toLowerCase() ===
-          "total_cost_buy"
-        ) {
-
-          amountColumn = index;
-
+        if (!response.ok) {
+          throw new Error("Google Sheet could not be accessed.");
         }
 
-      });
+        const text =
+          await response.text();
 
 
-      // Column not found
-      if (amountColumn === -1) {
-
-        status.innerText =
-          "ERROR: Total_Cost_Buy column not found.";
-
-        return;
-      }
+        // Google Sheets JSON wrapper remove
+        const jsonText =
+          text.substring(
+            text.indexOf("{"),
+            text.lastIndexOf("}") + 1
+          );
 
 
-      // =====================================
-      // CALCULATE TOTAL BUY
-      // =====================================
-
-      let totalBuy = 0;
+        const data =
+          JSON.parse(jsonText);
 
 
-      rows.forEach(row => {
+        const columns =
+          data.table.cols;
 
-        if (
-          !row.c ||
-          !row.c[amountColumn]
-        ) {
+        const rows =
+          data.table.rows;
+
+
+        // ==========================================
+        // FIND Buying_Price COLUMN
+        // ==========================================
+
+        let amountColumn = -1;
+
+        columns.forEach((column, index) => {
+
+          if (
+            column.label &&
+            column.label.trim().toLowerCase() ===
+            AMOUNT_COLUMN.toLowerCase()
+          ) {
+
+            amountColumn = index;
+
+          }
+
+        });
+
+
+        // ==========================================
+        // COLUMN NOT FOUND
+        // ==========================================
+
+        if (amountColumn === -1) {
+
+          status.innerText =
+            "ERROR: Buying_Price column not found.";
+
+          console.error(
+            "Available columns:",
+            columns.map(c => c.label)
+          );
+
           return;
         }
 
 
-        let value =
-          row.c[amountColumn].v;
+        // ==========================================
+        // CALCULATE TOTAL BUY
+        // ==========================================
+
+        let totalBuy = 0;
 
 
-        // Remove ₹, comma, spaces
-        if (
-          typeof value === "string"
-        ) {
+        rows.forEach(row => {
 
+          if (
+            !row.c ||
+            !row.c[amountColumn]
+          ) {
+            return;
+          }
+
+
+          let value =
+            row.c[amountColumn].v;
+
+
+          // Convert to string
+          value =
+            String(value);
+
+
+          // Remove ₹, commas and spaces
           value =
             value.replace(
               /[₹,\s]/g,
               ""
             );
 
-        }
+
+          const amount =
+            parseFloat(value);
 
 
-        const amount =
-          parseFloat(value);
+          if (!isNaN(amount)) {
 
+            totalBuy += amount;
 
-        if (!isNaN(amount)) {
-
-          totalBuy += amount;
-
-        }
-
-      });
-
-
-      // =====================================
-      // DISPLAY TOTAL
-      // =====================================
-
-      document.getElementById(
-        "totalBuy"
-      ).innerText =
-        "₹" +
-        totalBuy.toLocaleString(
-          "en-IN",
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
           }
-        );
+
+        });
 
 
-      status.innerText =
-        "Data updated successfully.";
+        // ==========================================
+        // DISPLAY TOTAL
+        // ==========================================
+
+        document.getElementById(
+          "totalBuy"
+        ).innerText =
+          "₹" +
+          totalBuy.toLocaleString(
+            "en-IN",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          );
 
 
-    } catch (error) {
+        status.innerText =
+          "Data updated successfully.";
 
-      console.error(error);
 
-      status.innerText =
-        "Unable to load Google Sheet data.";
+      } catch (error) {
+
+        console.error(error);
+
+        status.innerText =
+          "Unable to load Google Sheet data. Please check the Sheet sharing permission.";
+
+      }
 
     }
 
-  }
 
+    // ==========================================
+    // LOAD DATA WHEN PAGE OPENS
+    // ==========================================
 
-  // =====================================
-  // AUTO LOAD
-  // =====================================
+    loadData();
 
-  loadData();
-
-</script>
+  </script>
 
 </body>
 </html>
