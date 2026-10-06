@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
   <title>Stock & Expense Dashboard</title>
+
 
   <style>
 
     * {
       box-sizing: border-box;
     }
+
 
     body {
       margin: 0;
@@ -19,12 +25,14 @@
       color: #102a43;
     }
 
+
     .container {
       width: 100%;
       max-width: 1600px;
       margin: auto;
       padding: 28px 22px;
     }
+
 
     h1 {
       margin: 0 0 28px;
@@ -44,6 +52,7 @@
       margin-bottom: 18px;
     }
 
+
     .big-card {
       padding: 22px 28px;
       border-radius: 15px;
@@ -51,15 +60,18 @@
       min-height: 100px;
     }
 
+
     .big-card.expense {
       background: #fde9e9;
       border-left: 6px solid #e57373;
     }
 
+
     .big-card.credit {
       background: #e8f7ee;
       border-left: 6px solid #43b174;
     }
+
 
     .card-title {
       font-size: 13px;
@@ -68,14 +80,17 @@
       margin-bottom: 8px;
     }
 
+
     .big-value {
       font-size: 29px;
       font-weight: bold;
     }
 
+
     .expense .big-value {
       color: #c0392b;
     }
+
 
     .credit .big-value {
       color: #008f4c;
@@ -93,6 +108,7 @@
       margin-bottom: 24px;
     }
 
+
     .kpi-card {
       background: white;
       border-radius: 12px;
@@ -100,6 +116,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.07);
       min-width: 0;
     }
+
 
     .kpi-title {
       font-size: 12px;
@@ -111,6 +128,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
 
     .kpi-value {
       font-size: 20px;
@@ -131,6 +149,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.07);
     }
 
+
     .period-header {
       display: flex;
       align-items: center;
@@ -138,10 +157,12 @@
       gap: 15px;
     }
 
+
     .period-title {
       font-size: 20px;
       font-weight: bold;
     }
+
 
     select {
       padding: 9px 14px;
@@ -167,17 +188,20 @@
       flex-wrap: wrap;
     }
 
+
     .date-field {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
+
     .date-field label {
       font-size: 12px;
       color: #52606d;
       font-weight: bold;
     }
+
 
     input[type="date"] {
       padding: 9px 11px;
@@ -199,13 +223,21 @@
       word-break: break-word;
     }
 
+
     .status.error {
       color: #c0392b;
     }
 
+
     .status.success {
       color: #008f4c;
     }
+
+
+    .loading {
+      color: #1976d2;
+    }
+
 
     .refresh-btn {
       margin-top: 10px;
@@ -218,12 +250,9 @@
       cursor: pointer;
     }
 
+
     .refresh-btn:hover {
       background: #125ea8;
-    }
-
-    .loading {
-      color: #1976d2;
     }
 
 
@@ -246,33 +275,40 @@
         padding: 20px 14px;
       }
 
+
       h1 {
         font-size: 25px;
         margin-bottom: 20px;
       }
+
 
       .main-summary {
         grid-template-columns: 1fr;
         gap: 12px;
       }
 
+
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
       }
+
 
       .period-header {
         align-items: flex-start;
         flex-direction: column;
       }
 
+
       select {
         width: 100%;
       }
 
+
       .big-card {
         padding: 18px 20px;
       }
+
 
       .big-value {
         font-size: 25px;
@@ -296,10 +332,13 @@
 
 <body>
 
+
 <div class="container">
 
 
-  <h1>Stock & Expense Dashboard</h1>
+  <h1>
+    Stock & Expense Dashboard
+  </h1>
 
 
   <!-- =====================================================
@@ -307,6 +346,7 @@
   ====================================================== -->
 
   <div class="main-summary">
+
 
     <div class="big-card expense">
 
@@ -317,7 +357,9 @@
       <div
         class="big-value"
         id="overallExpense">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -332,10 +374,13 @@
       <div
         class="big-value"
         id="overallCredit">
+
         ₹0.00
+
       </div>
 
     </div>
+
 
   </div>
 
@@ -357,7 +402,9 @@
       <div
         class="kpi-value"
         id="overallBuying">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -372,7 +419,9 @@
       <div
         class="kpi-value"
         id="overallCash">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -387,7 +436,9 @@
       <div
         class="kpi-value"
         id="overallEmployee">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -402,7 +453,9 @@
       <div
         class="kpi-value"
         id="overallCooking">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -417,7 +470,9 @@
       <div
         class="kpi-value"
         id="overallMisc">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -432,7 +487,9 @@
       <div
         class="kpi-value"
         id="overallSupro">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -448,7 +505,9 @@
 
   <div class="period-box">
 
+
     <div class="period-header">
+
 
       <div class="period-title">
         Last Date Summary
@@ -475,7 +534,9 @@
 
       </select>
 
+
     </div>
+
 
 
     <div
@@ -511,6 +572,7 @@
 
     </div>
 
+
   </div>
 
 
@@ -531,7 +593,9 @@
       <div
         class="big-value"
         id="periodExpense">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -546,7 +610,9 @@
       <div
         class="big-value"
         id="periodCredit">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -572,7 +638,9 @@
       <div
         class="kpi-value"
         id="periodBuying">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -587,7 +655,9 @@
       <div
         class="kpi-value"
         id="periodCash">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -602,7 +672,9 @@
       <div
         class="kpi-value"
         id="periodEmployee">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -617,7 +689,9 @@
       <div
         class="kpi-value"
         id="periodCooking">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -632,7 +706,9 @@
       <div
         class="kpi-value"
         id="periodMisc">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -647,7 +723,9 @@
       <div
         class="kpi-value"
         id="periodSupro">
+
         ₹0.00
+
       </div>
 
     </div>
@@ -696,60 +774,51 @@ const SHEET_ID =
 
 
 /* =========================================================
-   IMPORTANT
-   Your actual header is in ROW 3.
-
-   Therefore:
-   A3:Z
-   is used for every sheet.
-
-   Row 3 becomes the header row.
-========================================================= */
-
-const HEADER_RANGE = "A3:Z";
-
-
-
-/* =========================================================
    SHEET CONFIGURATION
+=========================================================
+
+   IMPORTANT:
+
+   Row 3 = Header
+   Row 4 onwards = Data
+
+   Column B = Date
+   Column D = Amount
+
+   Therefore we don't depend on the amount header name.
 ========================================================= */
+
 
 const sources = [
 
   {
     key: "buying",
-    sheet: "Buying",
-    amountColumn: "Buying_Price"
+    sheet: "Buying"
   },
 
   {
     key: "cash",
-    sheet: "Cash_Flows",
-    amountColumn: "Amount_Credit"
+    sheet: "Cash_Flows"
   },
 
   {
     key: "employee",
-    sheet: "Employee",
-    amountColumn: "Amount"
+    sheet: "Employee"
   },
 
   {
     key: "cooking",
-    sheet: "Cooking",
-    amountColumn: "Amount"
+    sheet: "Cooking"
   },
 
   {
     key: "misc",
-    sheet: "MISC",
-    amountColumn: "Amount"
+    sheet: "MISC"
   },
 
   {
     key: "supro",
-    sheet: "Supro_Cars",
-    amountColumn: "Amount"
+    sheet: "Supro_Cars"
   }
 
 ];
@@ -800,26 +869,11 @@ function money(value) {
 
 
 /* =========================================================
-   NORMALIZE HEADER
-========================================================= */
-
-function normalizeHeader(value) {
-
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/_/g, "");
-
-}
-
-
-
-/* =========================================================
-   PARSE DATE
+   DATE PARSER
 ========================================================= */
 
 function parseDate(value) {
+
 
   if (
     value === null ||
@@ -842,9 +896,9 @@ function parseDate(value) {
   }
 
 
+
   /*
      DD/MM/YYYY
-     DD-MM-YYYY
   */
 
   let match =
@@ -874,6 +928,7 @@ function parseDate(value) {
   }
 
 
+
   /*
      YYYY-MM-DD
   */
@@ -893,6 +948,7 @@ function parseDate(value) {
     );
 
   }
+
 
 
   /*
@@ -917,8 +973,9 @@ function parseDate(value) {
   }
 
 
+
   /*
-     Normal JavaScript date
+     Normal Date
   */
 
   const d =
@@ -949,7 +1006,9 @@ function parseDate(value) {
 function dateOnly(date) {
 
   if (!date) {
+
     return null;
+
   }
 
 
@@ -970,7 +1029,9 @@ function dateOnly(date) {
 function dateKey(date) {
 
   if (!date) {
+
     return "";
+
   }
 
 
@@ -1008,6 +1069,7 @@ function dateKey(date) {
 
 function parseAmount(value) {
 
+
   if (
     value === null ||
     value === undefined ||
@@ -1028,7 +1090,8 @@ function parseAmount(value) {
 
 
   /*
-     (1000) = -1000
+     Handle negative values
+     like (1000)
   */
 
   if (
@@ -1066,13 +1129,15 @@ async function fetchSheet(source) {
 
 
   /*
-     GViz is being used here.
+     We request only B:D.
 
-     This is NOT "Publish to CSV".
+     B = Date
+     C = Vendor/Particular/etc.
+     D = Amount
 
-     We are simply reading the Google Sheet
-     through Google's GViz endpoint.
+     Row 3 is header.
   */
+
 
   const url =
     "https://docs.google.com/spreadsheets/d/" +
@@ -1080,10 +1145,11 @@ async function fetchSheet(source) {
     "/gviz/tq" +
     "?tqx=out:json" +
     "&headers=1" +
-    "&range=" +
-    encodeURIComponent(HEADER_RANGE) +
+    "&range=B3:D" +
     "&sheet=" +
-    encodeURIComponent(source.sheet);
+    encodeURIComponent(
+      source.sheet
+    );
 
 
   const response =
@@ -1110,11 +1176,8 @@ async function fetchSheet(source) {
 
 
   /*
-     GViz returns something like:
-
-     google.visualization.Query.setResponse({...});
+     Extract JSON from GViz response
   */
-
 
   const start =
     text.indexOf("{");
@@ -1143,113 +1206,36 @@ async function fetchSheet(source) {
     );
 
 
-  const data =
+  const json =
     JSON.parse(jsonText);
 
 
   if (
-    !data.table ||
-    !data.table.cols
+    !json.table ||
+    !json.table.rows
   ) {
 
     throw new Error(
-      "No table data returned"
+      "No data returned"
     );
 
   }
 
-
-  const columns =
-    data.table.cols;
-
-
-  /*
-     Because we specified A3:Z and headers=1,
-     Row 3 is now treated as the header.
-
-     Therefore cols[].label should contain:
-
-     Date
-     Buying_Price
-     Amount
-     etc.
-  */
-
-
-  const headers =
-    columns.map(
-      col =>
-        col.label ||
-        col.id ||
-        ""
-    );
-
-
-  console.log(
-    source.sheet,
-    "Headers:",
-    headers
-  );
-
-
-  /* =====================================================
-     FIND DATE COLUMN
-  ===================================================== */
-
-  const dateIndex =
-    headers.findIndex(
-      h =>
-        normalizeHeader(h) ===
-        normalizeHeader("Date")
-    );
-
-
-  if (dateIndex === -1) {
-
-    throw new Error(
-      "Date column not found. Headers detected: " +
-      headers.join(" | ")
-    );
-
-  }
-
-
-
-  /* =====================================================
-     FIND AMOUNT COLUMN
-  ===================================================== */
-
-  const amountIndex =
-    headers.findIndex(
-      h =>
-        normalizeHeader(h) ===
-        normalizeHeader(
-          source.amountColumn
-        )
-    );
-
-
-  if (amountIndex === -1) {
-
-    throw new Error(
-      source.amountColumn +
-      " column not found. Headers detected: " +
-      headers.join(" | ")
-    );
-
-  }
-
-
-
-  /* =====================================================
-     PROCESS ROWS
-  ===================================================== */
 
   const rows =
-    data.table.rows || [];
+    json.table.rows;
 
 
   const result = [];
+
+
+  /*
+     Because range = B3:D:
+
+     index 0 = B = Date
+     index 1 = C
+     index 2 = D = Amount
+  */
 
 
   rows.forEach(
@@ -1261,43 +1247,45 @@ async function fetchSheet(source) {
 
 
       const dateCell =
-        cells[dateIndex];
+        cells[0];
 
 
       const amountCell =
-        cells[amountIndex];
+        cells[2];
 
 
-      let dateValue =
-        dateCell
-          ? dateCell.v
-          : "";
+      if (!dateCell) {
 
-
-      let amountValue =
-        amountCell
-          ? amountCell.v
-          : "";
-
-
-      /*
-         Sometimes formatted value is better
-         for date.
-      */
-
-      if (
-        dateCell &&
-        dateCell.f
-      ) {
-
-        dateValue =
-          dateCell.f;
+        return;
 
       }
 
 
+      /*
+         For date use formatted value
+         when available.
+      */
+
+      let dateValue =
+        dateCell.f ||
+        dateCell.v ||
+        "";
+
+
+      let amountValue =
+        amountCell
+          ? (
+              amountCell.v !== undefined
+                ? amountCell.v
+                : amountCell.f
+            )
+          : "";
+
+
       const date =
-        parseDate(dateValue);
+        parseDate(
+          dateValue
+        );
 
 
       if (!date) {
@@ -1334,7 +1322,7 @@ async function fetchSheet(source) {
 
 
 /* =========================================================
-   LOAD ALL SHEETS
+   LOAD ALL DATA
 ========================================================= */
 
 async function loadAllData() {
@@ -1355,7 +1343,7 @@ async function loadAllData() {
 
 
   /*
-     Reset
+     Reset data
   */
 
   allData = {
@@ -1388,7 +1376,7 @@ async function loadAllData() {
         try {
 
 
-          const result =
+          const data =
             await fetchSheet(
               source
             );
@@ -1396,14 +1384,14 @@ async function loadAllData() {
 
           allData[
             source.key
-          ] = result;
+          ] = data;
 
 
           /*
              Find latest date
           */
 
-          result.forEach(
+          data.forEach(
             item => {
 
               if (
@@ -1447,7 +1435,7 @@ async function loadAllData() {
 
 
   /*
-     Update overall
+     Update overall cards
   */
 
   updateOverall();
@@ -1480,7 +1468,7 @@ async function loadAllData() {
 
 
   /*
-     Update selected period
+     Update period cards
   */
 
   updatePeriod();
@@ -1534,12 +1522,17 @@ function sumData(data) {
     (
       total,
       item
-    ) =>
-      total +
-      (
-        Number(item.amount) ||
-        0
-      ),
+    ) => {
+
+      return (
+        total +
+        (
+          Number(item.amount) ||
+          0
+        )
+      );
+
+    },
     0
   );
 
@@ -1591,7 +1584,15 @@ function updateOverall() {
 
 
   /*
-     Expenditure does NOT include Cash Flows.
+     Total Expenditure:
+
+     Buying
+     + Employee
+     + Cooking
+     + Misc
+     + Supro Cars
+
+     Cash Flow is NOT included.
   */
 
   const expenditure =
@@ -1671,7 +1672,7 @@ function updateOverall() {
 
 
 /* =========================================================
-   GET PERIOD RANGE
+   PERIOD RANGE
 ========================================================= */
 
 function getPeriodRange() {
@@ -1790,7 +1791,7 @@ function getPeriodRange() {
 
 
   /* =========================
-     CUSTOM DATE
+     CUSTOM
   ========================= */
 
   if (
@@ -1883,7 +1884,6 @@ function filterData(
   return data.filter(
     item => {
 
-
       const d =
         dateOnly(
           item.date
@@ -1920,7 +1920,6 @@ function updatePeriod() {
     return;
 
   }
-
 
 
   const buying =
@@ -2054,7 +2053,7 @@ function updatePeriod() {
 
 
 /* =========================================================
-   RESET PERIOD
+   RESET PERIOD CARDS
 ========================================================= */
 
 function resetPeriodCards() {
@@ -2119,7 +2118,7 @@ function formatDisplayDate(
 
 
 /* =========================================================
-   PERIOD SELECT
+   PERIOD SELECT CHANGE
 ========================================================= */
 
 document.getElementById(
@@ -2161,7 +2160,7 @@ document.getElementById(
 
 
 /* =========================================================
-   DATE CHANGE
+   CUSTOM DATE CHANGE
 ========================================================= */
 
 document.getElementById(
@@ -2182,12 +2181,14 @@ document.getElementById(
 
 
 /* =========================================================
-   START DASHBOARD
+   START
 ========================================================= */
 
 loadAllData();
 
 </script>
 
+
 </body>
+
 </html>
