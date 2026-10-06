@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Stock Expenditure Dashboard</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -24,7 +29,7 @@ body {
     padding: 20px;
 }
 
-/* ================= HEADER ================= */
+/* HEADER */
 
 .header {
     background: white;
@@ -37,7 +42,6 @@ body {
 .header h1 {
     margin: 0;
     font-size: 26px;
-    color: #1f2937;
 }
 
 .header p {
@@ -46,7 +50,7 @@ body {
     font-size: 14px;
 }
 
-/* ================= SECTION ================= */
+/* SECTION */
 
 .section-title {
     font-size: 19px;
@@ -54,7 +58,7 @@ body {
     margin: 22px 0 12px;
 }
 
-/* ================= FILTER ================= */
+/* FILTER */
 
 .filter-box {
     background: white;
@@ -97,7 +101,7 @@ input[type="date"] {
     display: none !important;
 }
 
-/* ================= KPI ================= */
+/* KPI */
 
 .kpi-grid {
     display: grid;
@@ -127,7 +131,7 @@ input[type="date"] {
     word-break: break-word;
 }
 
-/* ================= MAIN TOTAL ================= */
+/* TOTAL */
 
 .total-grid {
     display: grid;
@@ -172,13 +176,7 @@ input[type="date"] {
     color: #15803d;
 }
 
-/* ================= PERIOD ================= */
-
-.period-summary {
-    margin-top: 20px;
-}
-
-/* ================= STATUS ================= */
+/* STATUS */
 
 .status {
     margin-top: 15px;
@@ -199,7 +197,7 @@ input[type="date"] {
     background: #fff5f5;
 }
 
-/* ================= FOOTER ================= */
+/* FOOTER */
 
 .footer {
     text-align: center;
@@ -208,15 +206,17 @@ input[type="date"] {
     margin: 25px 0 10px;
 }
 
-/* ================= TABLET ================= */
+/* TABLET */
 
 @media (max-width: 1100px) {
+
     .kpi-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
 }
 
-/* ================= MOBILE ================= */
+/* MOBILE */
 
 @media (max-width: 650px) {
 
@@ -267,9 +267,10 @@ input[type="date"] {
     .filter-item {
         width: 100%;
     }
+
 }
 
-/* ================= VERY SMALL ================= */
+/* VERY SMALL */
 
 @media (max-width: 380px) {
 
@@ -278,256 +279,482 @@ input[type="date"] {
     }
 
 }
+
 </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
-    <!-- HEADER -->
 
-    <div class="header">
-        <h1>Stock Expenditure Dashboard</h1>
-        <p>Buying, Credit & Expenditure Summary</p>
-    </div>
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1>Stock Expenditure Dashboard</h1>
+
+    <p>
+        Buying, Credit & Expenditure Summary
+    </p>
+
+</div>
 
 
-    <!-- OVERALL TOTAL -->
+<!-- OVERALL SUMMARY -->
 
-    <div class="section-title">Overall Summary</div>
+<div class="section-title">
+    Overall Summary
+</div>
 
-    <div class="total-grid">
 
-        <div class="total-card total-expense">
-            <div class="total-title">Total Expenditure</div>
-            <div class="total-value" id="overallExpenditure">
-                ₹0.00
-            </div>
+<div class="total-grid">
+
+    <div class="total-card total-expense">
+
+        <div class="total-title">
+            Total Expenditure
         </div>
 
-        <div class="total-card total-credit">
-            <div class="total-title">Total Credit</div>
-            <div class="total-value" id="overallCredit">
-                ₹0.00
-            </div>
-        </div>
+        <div class="total-value"
+             id="overallExpenditure">
 
-    </div>
-
-
-    <!-- OVERALL KPI -->
-
-    <div class="kpi-grid">
-
-        <div class="kpi-card">
-            <div class="kpi-title">Total Buy</div>
-            <div class="kpi-value" id="overallBuying">₹0.00</div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-title">Cash Credit</div>
-            <div class="kpi-value" id="overallCash">₹0.00</div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-title">Employee</div>
-            <div class="kpi-value" id="overallEmployee">₹0.00</div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-title">Cooking</div>
-            <div class="kpi-value" id="overallCooking">₹0.00</div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-title">Miscellaneous</div>
-            <div class="kpi-value" id="overallMisc">₹0.00</div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-title">Supro Cars</div>
-            <div class="kpi-value" id="overallSupro">₹0.00</div>
-        </div>
-
-    </div>
-
-
-    <!-- PERIOD FILTER -->
-
-    <div class="section-title">Last Date Summary</div>
-
-    <div class="filter-box">
-
-        <div class="filter-row">
-
-            <div class="filter-item">
-                <label>Select Period</label>
-
-                <select id="periodSelect">
-                    <option value="latest">Latest Date</option>
-                    <option value="7">Last 7 Days</option>
-                    <option value="15">Last 15 Days</option>
-                    <option value="custom">Select Date</option>
-                </select>
-            </div>
-
-
-            <div class="filter-item hidden" id="fromDateBox">
-
-                <label>From Date</label>
-
-                <input type="date" id="fromDate">
-
-            </div>
-
-
-            <div class="filter-item hidden" id="toDateBox">
-
-                <label>To Date</label>
-
-                <input type="date" id="toDate">
-
-            </div>
+            ₹0.00
 
         </div>
 
     </div>
 
 
-    <!-- PERIOD SUMMARY -->
+    <div class="total-card total-credit">
 
-    <div class="period-summary">
+        <div class="total-title">
+            Total Credit
+        </div>
 
-        <div class="total-grid">
+        <div class="total-value"
+             id="overallCredit">
 
-            <div class="total-card total-expense">
-
-                <div class="total-title">
-                    Period Expenditure
-                </div>
-
-                <div class="total-value" id="periodExpenditure">
-                    ₹0.00
-                </div>
-
-            </div>
-
-
-            <div class="total-card total-credit">
-
-                <div class="total-title">
-                    Period Credit
-                </div>
-
-                <div class="total-value" id="periodCredit">
-                    ₹0.00
-                </div>
-
-            </div>
+            ₹0.00
 
         </div>
 
+    </div>
 
-        <div class="kpi-grid">
+</div>
 
-            <div class="kpi-card">
-                <div class="kpi-title">Total Buy</div>
-                <div class="kpi-value" id="periodBuying">₹0.00</div>
-            </div>
 
-            <div class="kpi-card">
-                <div class="kpi-title">Cash Credit</div>
-                <div class="kpi-value" id="periodCash">₹0.00</div>
-            </div>
+<!-- OVERALL KPI -->
 
-            <div class="kpi-card">
-                <div class="kpi-title">Employee</div>
-                <div class="kpi-value" id="periodEmployee">₹0.00</div>
-            </div>
+<div class="kpi-grid">
 
-            <div class="kpi-card">
-                <div class="kpi-title">Cooking</div>
-                <div class="kpi-value" id="periodCooking">₹0.00</div>
-            </div>
 
-            <div class="kpi-card">
-                <div class="kpi-title">Miscellaneous</div>
-                <div class="kpi-value" id="periodMisc">₹0.00</div>
-            </div>
+    <div class="kpi-card">
 
-            <div class="kpi-card">
-                <div class="kpi-title">Supro Cars</div>
-                <div class="kpi-value" id="periodSupro">₹0.00</div>
-            </div>
+        <div class="kpi-title">
+            Total Buy
+        </div>
+
+        <div class="kpi-value"
+             id="overallBuying">
+
+            ₹0.00
 
         </div>
 
     </div>
 
 
-    <!-- STATUS -->
+    <div class="kpi-card">
 
-    <div class="status" id="status">
-        Loading data...
+        <div class="kpi-title">
+            Cash Credit
+        </div>
+
+        <div class="kpi-value"
+             id="overallCash">
+
+            ₹0.00
+
+        </div>
+
     </div>
 
 
-    <div class="footer">
-        Stock Dashboard
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Employee
+        </div>
+
+        <div class="kpi-value"
+             id="overallEmployee">
+
+            ₹0.00
+
+        </div>
+
     </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Cooking
+        </div>
+
+        <div class="kpi-value"
+             id="overallCooking">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Miscellaneous
+        </div>
+
+        <div class="kpi-value"
+             id="overallMisc">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Supro Cars
+        </div>
+
+        <div class="kpi-value"
+             id="overallSupro">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- PERIOD -->
+
+<div class="section-title">
+    Last Date Summary
+</div>
+
+
+<div class="filter-box">
+
+    <div class="filter-row">
+
+
+        <div class="filter-item">
+
+            <label>
+                Select Period
+            </label>
+
+            <select id="periodSelect">
+
+                <option value="latest">
+                    Latest Date
+                </option>
+
+                <option value="7">
+                    Last 7 Days
+                </option>
+
+                <option value="15">
+                    Last 15 Days
+                </option>
+
+                <option value="custom">
+                    Select Date
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-item hidden"
+             id="fromDateBox">
+
+            <label>
+                From Date
+            </label>
+
+            <input type="date"
+                   id="fromDate">
+
+        </div>
+
+
+        <div class="filter-item hidden"
+             id="toDateBox">
+
+            <label>
+                To Date
+            </label>
+
+            <input type="date"
+                   id="toDate">
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- PERIOD SUMMARY -->
+
+<div class="total-grid">
+
+
+    <div class="total-card total-expense">
+
+        <div class="total-title">
+            Period Expenditure
+        </div>
+
+        <div class="total-value"
+             id="periodExpenditure">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="total-card total-credit">
+
+        <div class="total-title">
+            Period Credit
+        </div>
+
+        <div class="total-value"
+             id="periodCredit">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="kpi-grid">
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Total Buy
+        </div>
+
+        <div class="kpi-value"
+             id="periodBuying">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Cash Credit
+        </div>
+
+        <div class="kpi-value"
+             id="periodCash">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Employee
+        </div>
+
+        <div class="kpi-value"
+             id="periodEmployee">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Cooking
+        </div>
+
+        <div class="kpi-value"
+             id="periodCooking">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Miscellaneous
+        </div>
+
+        <div class="kpi-value"
+             id="periodMisc">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-title">
+            Supro Cars
+        </div>
+
+        <div class="kpi-value"
+             id="periodSupro">
+
+            ₹0.00
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="status"
+     id="status">
+
+    Loading data...
+
+</div>
+
+
+<div class="footer">
+    Stock Dashboard
+</div>
+
 
 </div>
 
 
 <script>
 
-/* ============================================================
-   GOOGLE SHEET CONFIGURATION
-   ============================================================ */
+
+/* =========================================================
+   GOOGLE SHEET
+   ========================================================= */
 
 const SHEET_ID =
-    "1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
+"1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
 
+
+/* =========================================================
+   SHEET CONFIG
+   ========================================================= */
 
 const SHEETS = {
 
     buying: {
         gid: "2093020950",
-        name: "Buying"
+        name: "Buying",
+        amountHeaders: [
+            "buying_price",
+            "buying price"
+        ]
     },
 
     cash: {
         gid: "2100593426",
-        name: "Cash_Flows"
+        name: "Cash_Flows",
+        amountHeaders: [
+            "amount_credit",
+            "amount credit"
+        ]
     },
 
     employee: {
         gid: "1620505158",
-        name: "Employee"
+        name: "Employee",
+        amountHeaders: [
+            "amount"
+        ]
     },
 
     cooking: {
         gid: "1987654808",
-        name: "Cooking"
+        name: "Cooking",
+        amountHeaders: [
+            "amount"
+        ]
     },
 
     misc: {
         gid: "1505058386",
-        name: "MISC"
+        name: "MISC",
+        amountHeaders: [
+            "amount"
+        ]
     },
 
     supro: {
         gid: "1580668395",
-        name: "Supro_Cars"
+        name: "Supro_Cars",
+        amountHeaders: [
+            "amount"
+        ]
     }
 
 };
 
 
-/* ============================================================
-   DATA STORAGE
-   ============================================================ */
+/* =========================================================
+   DATA
+   ========================================================= */
 
 let DATA = {
 
@@ -541,29 +768,36 @@ let DATA = {
 };
 
 
-/* ============================================================
-   FORMAT MONEY
-   ============================================================ */
+/* =========================================================
+   MONEY
+   ========================================================= */
 
 function money(value) {
 
     value = Number(value) || 0;
 
-    return "₹" + value.toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    return "₹" +
+        value.toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
 
 }
 
 
-/* ============================================================
-   CLEAN NUMBER
-   ============================================================ */
+/* =========================================================
+   NUMBER
+   ========================================================= */
 
 function parseAmount(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return 0;
     }
 
@@ -571,26 +805,30 @@ function parseAmount(value) {
         return value;
     }
 
-    let text = String(value)
+    let text =
+        String(value)
         .replace(/₹/g, "")
         .replace(/,/g, "")
         .replace(/\s/g, "")
         .trim();
 
-    if (text === "") {
+    if (!text) {
         return 0;
     }
 
-    let number = parseFloat(text);
+    let number =
+        parseFloat(text);
 
-    return isNaN(number) ? 0 : number;
+    return isNaN(number)
+        ? 0
+        : number;
 
 }
 
 
-/* ============================================================
-   PARSE DATE
-   ============================================================ */
+/* =========================================================
+   DATE
+   ========================================================= */
 
 function parseDate(value) {
 
@@ -599,38 +837,43 @@ function parseDate(value) {
     }
 
 
-    /* Google Visualization Date(YYYY,M,D) */
+    /* Google Date format */
 
-    let googleDate =
+    let g =
         String(value).match(
             /Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)/
         );
 
-    if (googleDate) {
 
-        let year = Number(googleDate[1]);
-        let month = Number(googleDate[2]);
-        let day = Number(googleDate[3]);
+    if (g) {
 
-        return new Date(year, month, day);
+        return new Date(
+            Number(g[1]),
+            Number(g[2]),
+            Number(g[3])
+        );
 
     }
 
 
-    let text = String(value).trim();
+    let text =
+        String(value).trim();
 
 
     /* DD/MM/YYYY */
 
-    let match1 =
-        text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    let m1 =
+        text.match(
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+        );
 
-    if (match1) {
+
+    if (m1) {
 
         return new Date(
-            Number(match1[3]),
-            Number(match1[2]) - 1,
-            Number(match1[1])
+            Number(m1[3]),
+            Number(m1[2]) - 1,
+            Number(m1[1])
         );
 
     }
@@ -638,15 +881,18 @@ function parseDate(value) {
 
     /* DD-MM-YYYY */
 
-    let match2 =
-        text.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+    let m2 =
+        text.match(
+            /^(\d{1,2})-(\d{1,2})-(\d{4})$/
+        );
 
-    if (match2) {
+
+    if (m2) {
 
         return new Date(
-            Number(match2[3]),
-            Number(match2[2]) - 1,
-            Number(match2[1])
+            Number(m2[3]),
+            Number(m2[2]) - 1,
+            Number(m2[1])
         );
 
     }
@@ -654,26 +900,29 @@ function parseDate(value) {
 
     /* YYYY-MM-DD */
 
-    let match3 =
-        text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    let m3 =
+        text.match(
+            /^(\d{4})-(\d{1,2})-(\d{1,2})$/
+        );
 
-    if (match3) {
+
+    if (m3) {
 
         return new Date(
-            Number(match3[1]),
-            Number(match3[2]) - 1,
-            Number(match3[3])
+            Number(m3[1]),
+            Number(m3[2]) - 1,
+            Number(m3[3])
         );
 
     }
 
 
-    /* Normal JS date */
+    let d =
+        new Date(text);
 
-    let date = new Date(text);
 
-    if (!isNaN(date.getTime())) {
-        return date;
+    if (!isNaN(d.getTime())) {
+        return d;
     }
 
 
@@ -682,9 +931,9 @@ function parseDate(value) {
 }
 
 
-/* ============================================================
-   NORMALIZE DATE
-   ============================================================ */
+/* =========================================================
+   DATE ONLY
+   ========================================================= */
 
 function dateOnly(date) {
 
@@ -701,82 +950,152 @@ function dateOnly(date) {
 }
 
 
-/* ============================================================
-   FORMAT DATE FOR INPUT
-   ============================================================ */
+/* =========================================================
+   INPUT DATE
+   ========================================================= */
 
 function inputDate(date) {
 
-    let year = date.getFullYear();
+    let y =
+        date.getFullYear();
 
-    let month =
-        String(date.getMonth() + 1).padStart(2, "0");
+    let m =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
 
-    let day =
-        String(date.getDate()).padStart(2, "0");
+    let d =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${y}-${m}-${d}`;
 
 }
 
 
-/* ============================================================
-   GET GOOGLE SHEET DATA
-   ============================================================ */
+/* =========================================================
+   NORMALIZE HEADER
+   ========================================================= */
+
+function normalizeHeader(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+}
+
+
+/* =========================================================
+   CELL VALUE
+   ========================================================= */
+
+function cellValue(cell) {
+
+    if (!cell) {
+        return "";
+    }
+
+    if (
+        cell.v !== undefined &&
+        cell.v !== null
+    ) {
+        return cell.v;
+    }
+
+    if (
+        cell.f !== undefined &&
+        cell.f !== null
+    ) {
+        return cell.f;
+    }
+
+    return "";
+
+}
+
+
+/* =========================================================
+   LOAD ONE SHEET
+   ========================================================= */
 
 async function loadSheet(sheet) {
+
 
     /*
        IMPORTANT:
 
-       Row 3 is the header row.
-
-       Therefore we start the query from B3:D.
+       We are NOT assuming:
 
        B = Date
        D = Amount
 
-       No OFFSET is used.
+       Instead we read the entire sheet and
+       find the headers automatically.
     */
 
-    const query =
-        "select B,D where B is not null";
 
     const url =
         "https://docs.google.com/spreadsheets/d/" +
         SHEET_ID +
         "/gviz/tq" +
         "?gid=" + sheet.gid +
-        "&range=B3:D" +
-        "&headers=1" +
+        "&range=A1:Z" +
+        "&headers=0" +
         "&tqx=out:json" +
-        "&tq=" + encodeURIComponent(query);
+        "&tq=" +
+        encodeURIComponent(
+            "select *"
+        );
 
 
     try {
 
+
         const response =
             await fetch(url);
+
 
         const text =
             await response.text();
 
 
-        /*
-           Google returns:
+        const start =
+            text.indexOf("{");
 
-           google.visualization.Query.setResponse({...})
-        */
 
-        const jsonText =
-            text.substring(
-                text.indexOf("{"),
-                text.lastIndexOf("}") + 1
+        const end =
+            text.lastIndexOf("}");
+
+
+        if (
+            start === -1 ||
+            end === -1
+        ) {
+
+            throw new Error(
+                "Invalid Google response"
             );
+
+        }
 
 
         const json =
-            JSON.parse(jsonText);
+            JSON.parse(
+                text.substring(
+                    start,
+                    end + 1
+                )
+            );
 
 
         if (
@@ -785,7 +1104,7 @@ async function loadSheet(sheet) {
         ) {
 
             throw new Error(
-                "No data returned from " + sheet.name
+                "No rows found"
             );
 
         }
@@ -795,71 +1114,193 @@ async function loadSheet(sheet) {
             json.table.rows;
 
 
+        console.log(
+            "RAW " + sheet.name,
+            rows
+        );
+
+
+        /* =================================================
+           FIND HEADER ROW
+           ================================================= */
+
+        let headerRowIndex = -1;
+
+        let dateColumn = -1;
+
+        let amountColumn = -1;
+
+
+        for (
+            let r = 0;
+            r < rows.length;
+            r++
+        ) {
+
+
+            let row =
+                rows[r];
+
+
+            if (!row || !row.c) {
+                continue;
+            }
+
+
+            let headers =
+                row.c.map(
+                    cell => normalizeHeader(
+                        cellValue(cell)
+                    )
+                );
+
+
+            let dIndex =
+                headers.findIndex(
+                    h => h === "date"
+                );
+
+
+            let aIndex =
+                headers.findIndex(
+                    h =>
+                        sheet.amountHeaders
+                        .includes(h)
+                );
+
+
+            if (
+                dIndex !== -1 &&
+                aIndex !== -1
+            ) {
+
+                headerRowIndex =
+                    r;
+
+                dateColumn =
+                    dIndex;
+
+                amountColumn =
+                    aIndex;
+
+                break;
+
+            }
+
+        }
+
+
+        console.log(
+            sheet.name,
+            "Header row:",
+            headerRowIndex,
+            "Date column:",
+            dateColumn,
+            "Amount column:",
+            amountColumn
+        );
+
+
+        if (
+            headerRowIndex === -1
+        ) {
+
+            throw new Error(
+                "Date / Amount header not found in " +
+                sheet.name
+            );
+
+        }
+
+
+        /* =================================================
+           READ DATA BELOW HEADER
+           ================================================= */
+
         let result = [];
 
 
-        rows.forEach(row => {
+        for (
+            let r = headerRowIndex + 1;
+            r < rows.length;
+            r++
+        ) {
 
-            if (!row.c) {
-                return;
+
+            let row =
+                rows[r];
+
+
+            if (!row || !row.c) {
+                continue;
             }
 
 
             let dateCell =
-                row.c[0];
+                row.c[dateColumn];
+
 
             let amountCell =
-                row.c[1];
+                row.c[amountColumn];
 
 
             let rawDate =
-                dateCell
-                    ? (
-                        dateCell.f !== undefined
-                            ? dateCell.f
-                            : dateCell.v
-                    )
-                    : null;
+                cellValue(
+                    dateCell
+                );
 
 
             let rawAmount =
-                amountCell
-                    ? (
-                        amountCell.v !== undefined
-                            ? amountCell.v
-                            : amountCell.f
-                    )
-                    : null;
+                cellValue(
+                    amountCell
+                );
 
 
             let date =
-                parseDate(rawDate);
+                parseDate(
+                    rawDate
+                );
 
 
             let amount =
-                parseAmount(rawAmount);
+                parseAmount(
+                    rawAmount
+                );
 
 
-            if (date && !isNaN(date.getTime())) {
+            if (
+                date &&
+                !isNaN(
+                    date.getTime()
+                )
+            ) {
 
                 result.push({
 
-                    date: dateOnly(date),
+                    date:
+                        dateOnly(date),
 
-                    amount: amount
+                    amount:
+                        amount
 
                 });
 
             }
 
-        });
+        }
 
 
         console.log(
-            sheet.name,
-            "records:",
-            result.length,
+            sheet.name +
+            " FINAL DATA:",
             result
+        );
+
+
+        console.log(
+            sheet.name +
+            " TOTAL:",
+            sumData(result)
         );
 
 
@@ -868,10 +1309,13 @@ async function loadSheet(sheet) {
 
     } catch (error) {
 
+
         console.error(
-            "Error loading " + sheet.name,
+            "ERROR:",
+            sheet.name,
             error
         );
+
 
         throw error;
 
@@ -880,18 +1324,22 @@ async function loadSheet(sheet) {
 }
 
 
-/* ============================================================
-   LOAD ALL SHEETS
-   ============================================================ */
+/* =========================================================
+   LOAD ALL
+   ========================================================= */
 
 async function loadAllData() {
 
+
     const status =
-        document.getElementById("status");
+        document.getElementById(
+            "status"
+        );
 
 
     status.textContent =
         "Loading data from Google Sheets...";
+
 
     status.className =
         "status";
@@ -899,38 +1347,98 @@ async function loadAllData() {
 
     try {
 
+
         const results =
             await Promise.all([
 
-                loadSheet(SHEETS.buying),
+                loadSheet(
+                    SHEETS.buying
+                ),
 
-                loadSheet(SHEETS.cash),
+                loadSheet(
+                    SHEETS.cash
+                ),
 
-                loadSheet(SHEETS.employee),
+                loadSheet(
+                    SHEETS.employee
+                ),
 
-                loadSheet(SHEETS.cooking),
+                loadSheet(
+                    SHEETS.cooking
+                ),
 
-                loadSheet(SHEETS.misc),
+                loadSheet(
+                    SHEETS.misc
+                ),
 
-                loadSheet(SHEETS.supro)
+                loadSheet(
+                    SHEETS.supro
+                )
 
             ]);
 
 
-        DATA.buying = results[0];
+        DATA.buying =
+            results[0];
 
-        DATA.cash = results[1];
+        DATA.cash =
+            results[1];
 
-        DATA.employee = results[2];
+        DATA.employee =
+            results[2];
 
-        DATA.cooking = results[3];
+        DATA.cooking =
+            results[3];
 
-        DATA.misc = results[4];
+        DATA.misc =
+            results[4];
 
-        DATA.supro = results[5];
+        DATA.supro =
+            results[5];
 
 
-        console.log("ALL DATA", DATA);
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "ALL DASHBOARD DATA",
+            DATA
+        );
+
+        console.log(
+            "Buying:",
+            sumData(DATA.buying)
+        );
+
+        console.log(
+            "Cash:",
+            sumData(DATA.cash)
+        );
+
+        console.log(
+            "Employee:",
+            sumData(DATA.employee)
+        );
+
+        console.log(
+            "Cooking:",
+            sumData(DATA.cooking)
+        );
+
+        console.log(
+            "MISC:",
+            sumData(DATA.misc)
+        );
+
+        console.log(
+            "Supro:",
+            sumData(DATA.supro)
+        );
+
+        console.log(
+            "================================"
+        );
 
 
         updateOverall();
@@ -943,7 +1451,8 @@ async function loadAllData() {
 
 
         status.textContent =
-            "Data loaded successfully.";
+            "All data loaded successfully.";
+
 
         status.className =
             "status success";
@@ -951,11 +1460,15 @@ async function loadAllData() {
 
     } catch (error) {
 
-        console.error(error);
+
+        console.error(
+            error
+        );
 
 
         status.textContent =
-            "Unable to load data. Please check Google Sheet access and GID.";
+            "Some sheet data could not be loaded. Press F12 → Console to see the sheet name/error.";
+
 
         status.className =
             "status error";
@@ -965,44 +1478,70 @@ async function loadAllData() {
 }
 
 
-/* ============================================================
-   SUM DATA
-   ============================================================ */
+/* =========================================================
+   SUM
+   ========================================================= */
 
 function sumData(data) {
 
     return data.reduce(
-        (total, item) =>
-            total + (Number(item.amount) || 0),
+        (
+            total,
+            item
+        ) =>
+            total +
+            (
+                Number(
+                    item.amount
+                ) || 0
+            ),
         0
     );
 
 }
 
 
-/* ============================================================
-   OVERALL SUMMARY
-   ============================================================ */
+/* =========================================================
+   OVERALL
+   ========================================================= */
 
 function updateOverall() {
 
+
     const buying =
-        sumData(DATA.buying);
+        sumData(
+            DATA.buying
+        );
+
 
     const cash =
-        sumData(DATA.cash);
+        sumData(
+            DATA.cash
+        );
+
 
     const employee =
-        sumData(DATA.employee);
+        sumData(
+            DATA.employee
+        );
+
 
     const cooking =
-        sumData(DATA.cooking);
+        sumData(
+            DATA.cooking
+        );
+
 
     const misc =
-        sumData(DATA.misc);
+        sumData(
+            DATA.misc
+        );
+
 
     const supro =
-        sumData(DATA.supro);
+        sumData(
+            DATA.supro
+        );
 
 
     const expenditure =
@@ -1063,47 +1602,67 @@ function updateOverall() {
 }
 
 
-/* ============================================================
-   FIND LATEST DATE
-   ============================================================ */
+/* =========================================================
+   LATEST DATE
+   ========================================================= */
 
 function getLatestDate() {
 
-    let allDates = [];
+
+    let dates = [];
 
 
-    Object.values(DATA).forEach(data => {
+    Object.values(DATA)
+        .forEach(
+            data => {
 
-        data.forEach(item => {
+                data.forEach(
+                    item => {
 
-            if (item.date) {
-                allDates.push(item.date);
+                        if (
+                            item.date
+                        ) {
+
+                            dates.push(
+                                item.date
+                            );
+
+                        }
+
+                    }
+                );
+
             }
-
-        });
-
-    });
+        );
 
 
-    if (allDates.length === 0) {
+    if (
+        dates.length === 0
+    ) {
+
         return null;
+
     }
 
 
     return new Date(
         Math.max(
-            ...allDates.map(d => d.getTime())
+            ...dates.map(
+                d =>
+                    d.getTime()
+            )
         )
     );
 
 }
 
 
-/* ============================================================
-   SET LATEST DATE
-   ============================================================ */
+/* =========================================================
+   SET LATEST
+   ========================================================= */
 
 function setupLatestDate() {
+
 
     const latest =
         getLatestDate();
@@ -1128,50 +1687,73 @@ function setupLatestDate() {
 }
 
 
-/* ============================================================
-   FILTER DATA BY DATE
-   ============================================================ */
+/* =========================================================
+   FILTER
+   ========================================================= */
 
-function filterData(data, from, to) {
+function filterData(
+    data,
+    from,
+    to
+) {
 
-    if (!from || !to) {
+
+    if (
+        !from ||
+        !to
+    ) {
+
         return [];
+
     }
 
 
-    const start =
+    let start =
         dateOnly(from);
 
-    const end =
+
+    let end =
         dateOnly(to);
 
 
-    return data.filter(item => {
+    return data.filter(
+        item => {
 
-        if (!item.date) {
-            return false;
+            if (
+                !item.date
+            ) {
+
+                return false;
+
+            }
+
+
+            let d =
+                dateOnly(
+                    item.date
+                );
+
+
+            return (
+                d >= start &&
+                d <= end
+            );
+
         }
-
-
-        let d =
-            dateOnly(item.date);
-
-
-        return (
-            d >= start &&
-            d <= end
-        );
-
-    });
+    );
 
 }
 
 
-/* ============================================================
-   PERIOD SUMMARY
-   ============================================================ */
+/* =========================================================
+   PERIOD CALCULATION
+   ========================================================= */
 
-function calculatePeriod(from, to) {
+function calculatePeriod(
+    from,
+    to
+) {
+
 
     const buying =
         sumData(
@@ -1291,11 +1873,12 @@ function calculatePeriod(from, to) {
 }
 
 
-/* ============================================================
+/* =========================================================
    UPDATE PERIOD
-   ============================================================ */
+   ========================================================= */
 
 function updatePeriod() {
+
 
     const selected =
         document.getElementById(
@@ -1316,9 +1899,10 @@ function updatePeriod() {
     let to;
 
 
-    /* ================= LATEST DATE ================= */
+    if (
+        selected === "latest"
+    ) {
 
-    if (selected === "latest") {
 
         from =
             latest;
@@ -1329,15 +1913,20 @@ function updatePeriod() {
     }
 
 
-    /* ================= LAST 7 DAYS ================= */
+    else if (
+        selected === "7"
+    ) {
 
-    else if (selected === "7") {
 
         to =
             latest;
 
+
         from =
-            new Date(latest);
+            new Date(
+                latest
+            );
+
 
         from.setDate(
             from.getDate() - 6
@@ -1346,15 +1935,20 @@ function updatePeriod() {
     }
 
 
-    /* ================= LAST 15 DAYS ================= */
+    else if (
+        selected === "15"
+    ) {
 
-    else if (selected === "15") {
 
         to =
             latest;
 
+
         from =
-            new Date(latest);
+            new Date(
+                latest
+            );
+
 
         from.setDate(
             from.getDate() - 14
@@ -1363,32 +1957,43 @@ function updatePeriod() {
     }
 
 
-    /* ================= CUSTOM ================= */
+    else if (
+        selected === "custom"
+    ) {
 
-    else if (selected === "custom") {
 
-        const fromValue =
+        let fromValue =
             document.getElementById(
                 "fromDate"
             ).value;
 
 
-        const toValue =
+        let toValue =
             document.getElementById(
                 "toDate"
             ).value;
 
 
-        if (!fromValue || !toValue) {
+        if (
+            !fromValue ||
+            !toValue
+        ) {
+
             return;
+
         }
 
 
         from =
-            parseDate(fromValue);
+            parseDate(
+                fromValue
+            );
+
 
         to =
-            parseDate(toValue);
+            parseDate(
+                toValue
+            );
 
     }
 
@@ -1401,9 +2006,9 @@ function updatePeriod() {
 }
 
 
-/* ============================================================
-   PERIOD SELECT CHANGE
-   ============================================================ */
+/* =========================================================
+   PERIOD SELECT
+   ========================================================= */
 
 document.getElementById(
     "periodSelect"
@@ -1411,37 +2016,42 @@ document.getElementById(
     "change",
     function() {
 
-        const value =
-            this.value;
 
-
-        const fromBox =
+        let fromBox =
             document.getElementById(
                 "fromDateBox"
             );
 
 
-        const toBox =
+        let toBox =
             document.getElementById(
                 "toDateBox"
             );
 
 
-        if (value === "custom") {
+        if (
+            this.value === "custom"
+        ) {
+
 
             fromBox.classList.remove(
                 "hidden"
             );
 
+
             toBox.classList.remove(
                 "hidden"
             );
 
-        } else {
+        }
+
+        else {
+
 
             fromBox.classList.add(
                 "hidden"
             );
+
 
             toBox.classList.add(
                 "hidden"
@@ -1456,9 +2066,9 @@ document.getElementById(
 );
 
 
-/* ============================================================
-   CUSTOM DATE CHANGE
-   ============================================================ */
+/* =========================================================
+   DATE CHANGE
+   ========================================================= */
 
 document.getElementById(
     "fromDate"
@@ -1476,13 +2086,15 @@ document.getElementById(
 );
 
 
-/* ============================================================
+/* =========================================================
    START
-   ============================================================ */
+   ========================================================= */
 
 loadAllData();
+
 
 </script>
 
 </body>
+
 </html>
