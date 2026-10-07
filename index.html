@@ -1,23 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Stock Dashboard</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Dashboard</title>
+
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+
         body {
             font-family: Arial, Helvetica, sans-serif;
             background: #f5f7fb;
             color: #1f2937;
         }
+
 
         .container {
             width: 100%;
@@ -26,129 +35,198 @@
             padding: 25px;
         }
 
-        /* =========================
+
+        /* ==========================
            HEADER
-        ========================= */
+        ========================== */
 
         .header {
             background: white;
             padding: 22px;
             border-radius: 14px;
-            margin-bottom: 22px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.06);
         }
+
 
         .header h1 {
             font-size: 28px;
             margin-bottom: 6px;
         }
 
+
         .header p {
             color: #6b7280;
             font-size: 14px;
         }
 
-        /* =========================
+
+        /* ==========================
            MAIN CARDS
-        ========================= */
+        ========================== */
 
         .main-kpis {
+
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
             gap: 18px;
+
             margin-bottom: 28px;
         }
 
+
         .main-card {
+
             padding: 25px;
+
             border-radius: 15px;
+
             min-height: 130px;
 
             display: flex;
+
             flex-direction: column;
+
             justify-content: center;
         }
 
+
         .expense-card {
+
             background: #fff1f2;
-            border: 1px solid #fecdd3;
+
+            border:
+                1px solid #fecdd3;
         }
+
 
         .credit-card {
+
             background: #ecfdf5;
-            border: 1px solid #bbf7d0;
+
+            border:
+                1px solid #bbf7d0;
         }
 
+
         .main-title {
+
             font-size: 15px;
+
             color: #6b7280;
+
             margin-bottom: 10px;
         }
 
+
         .main-value {
+
             font-size: 32px;
+
             font-weight: bold;
         }
 
-        /* =========================
+
+        /* ==========================
            SECTION
-        ========================= */
+        ========================== */
 
         .section-title {
+
             font-size: 20px;
+
             margin-bottom: 15px;
         }
 
-        /* =========================
-           KPI CARDS
-        ========================= */
+
+        /* ==========================
+           KPI GRID
+        ========================== */
 
         .kpi-grid {
+
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+
+            grid-template-columns:
+                repeat(6, 1fr);
+
             gap: 12px;
         }
 
+
         .kpi-card {
+
             background: white;
+
             border-radius: 12px;
+
             padding: 16px;
+
             min-height: 105px;
 
-            box-shadow: 0 2px 9px rgba(0,0,0,0.06);
-            border: 1px solid #e5e7eb;
+            border:
+                1px solid #e5e7eb;
+
+            box-shadow:
+                0 2px 9px rgba(0,0,0,0.06);
 
             display: flex;
+
             flex-direction: column;
+
             justify-content: center;
         }
 
+
         .kpi-title {
+
             font-size: 13px;
+
             color: #6b7280;
+
             margin-bottom: 9px;
         }
 
+
         .kpi-value {
+
             font-size: 21px;
+
             font-weight: bold;
         }
 
-        /* =========================
-           STATUS
-        ========================= */
+
+        /* ==========================
+           LOADING
+        ========================== */
 
         .loading {
+
             text-align: center;
+
             padding: 25px;
+
             color: #6b7280;
         }
 
+
+        /* ==========================
+           ERROR
+        ========================== */
+
         .error {
+
             background: #fee2e2;
+
             color: #991b1b;
 
             padding: 15px;
+
             border-radius: 10px;
 
             margin-top: 20px;
@@ -156,104 +234,153 @@
             display: none;
 
             white-space: pre-line;
+
+            font-size: 14px;
         }
 
+
+        /* ==========================
+           SUCCESS
+        ========================== */
+
         .success {
+
             text-align: center;
-            padding: 12px;
+
             color: #15803d;
+
             font-size: 13px;
+
+            padding: 15px;
+
             display: none;
         }
 
-        /* =========================
+
+        /* ==========================
            FOOTER
-        ========================= */
+        ========================== */
 
         .footer {
-            margin-top: 30px;
+
+            margin-top: 25px;
+
             text-align: center;
+
             color: #9ca3af;
+
             font-size: 12px;
         }
 
-        /* =========================
+
+        /* ==========================
            TABLET
-        ========================= */
+        ========================== */
 
         @media (max-width: 1100px) {
 
             .kpi-grid {
-                grid-template-columns: repeat(3, 1fr);
+
+                grid-template-columns:
+                    repeat(3, 1fr);
             }
         }
 
-        /* =========================
+
+        /* ==========================
            MOBILE
-        ========================= */
+        ========================== */
 
         @media (max-width: 650px) {
 
             .container {
+
                 padding: 14px;
             }
 
+
             .header h1 {
+
                 font-size: 23px;
             }
 
+
             .main-kpis {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
             }
 
+
             .main-value {
+
                 font-size: 28px;
             }
 
+
             .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
                 gap: 10px;
             }
 
+
             .kpi-card {
+
                 padding: 13px;
+
                 min-height: 90px;
             }
 
+
             .kpi-title {
+
                 font-size: 12px;
             }
 
+
             .kpi-value {
+
                 font-size: 18px;
             }
         }
 
-        /* =========================
-           VERY SMALL SCREEN
-        ========================= */
+
+        /* ==========================
+           VERY SMALL MOBILE
+        ========================== */
 
         @media (max-width: 360px) {
 
             .kpi-grid {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
             }
         }
+
     </style>
+
 </head>
 
 
 <body>
 
+
 <div class="container">
 
-    <!-- =========================
+
+    <!-- ==========================
          HEADER
-    ========================= -->
+    ========================== -->
 
     <div class="header">
 
-        <h1>Expense Dashboard</h1>
+        <h1>
+            Expense Dashboard
+        </h1>
 
         <p>
             Live data from Google Sheets
@@ -262,11 +389,13 @@
     </div>
 
 
-    <!-- =========================
-         MAIN KPI
-    ========================= -->
+
+    <!-- ==========================
+         MAIN TOTALS
+    ========================== -->
 
     <div class="main-kpis">
+
 
         <div class="main-card expense-card">
 
@@ -284,6 +413,7 @@
         </div>
 
 
+
         <div class="main-card credit-card">
 
             <div class="main-title">
@@ -299,19 +429,26 @@
 
         </div>
 
+
     </div>
 
 
-    <!-- =========================
+
+    <!-- ==========================
          BREAKDOWN
-    ========================= -->
+    ========================== -->
 
     <div class="section-title">
+
         Expenditure Breakdown
+
     </div>
 
 
     <div class="kpi-grid">
+
+
+        <!-- BUYING -->
 
         <div class="kpi-card">
 
@@ -329,6 +466,9 @@
         </div>
 
 
+
+        <!-- EMPLOYEE -->
+
         <div class="kpi-card">
 
             <div class="kpi-title">
@@ -344,6 +484,9 @@
 
         </div>
 
+
+
+        <!-- COOKING -->
 
         <div class="kpi-card">
 
@@ -361,6 +504,9 @@
         </div>
 
 
+
+        <!-- MISC -->
+
         <div class="kpi-card">
 
             <div class="kpi-title">
@@ -376,6 +522,9 @@
 
         </div>
 
+
+
+        <!-- SUPRO -->
 
         <div class="kpi-card">
 
@@ -393,6 +542,9 @@
         </div>
 
 
+
+        <!-- CASH CREDIT -->
+
         <div class="kpi-card">
 
             <div class="kpi-title">
@@ -408,28 +560,44 @@
 
         </div>
 
+
     </div>
 
 
-    <!-- =========================
-         STATUS
-    ========================= -->
+
+    <!-- ==========================
+         LOADING
+    ========================== -->
 
     <div
         id="loading"
         class="loading"
     >
+
         Loading data from Google Sheets...
+
     </div>
 
+
+
+    <!-- ==========================
+         SUCCESS
+    ========================== -->
 
     <div
         id="success"
         class="success"
     >
+
         Data loaded successfully.
+
     </div>
 
+
+
+    <!-- ==========================
+         ERROR
+    ========================== -->
 
     <div
         id="error"
@@ -437,9 +605,13 @@
     ></div>
 
 
+
     <div class="footer">
+
         Data is fetched directly from Google Sheets
+
     </div>
+
 
 </div>
 
@@ -447,594 +619,526 @@
 
 <script>
 
+
 /* =========================================================
-   1. GOOGLE SPREADSHEET ID
+   GOOGLE SPREADSHEET ID
 ========================================================= */
 
 const SPREADSHEET_ID =
     "1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
 
 
+
 /* =========================================================
-   2. SHEET CONFIGURATION
+   SHEET CONFIGURATION
+=========================================================
+
+   IMPORTANT:
+
+   All six sheets have:
+
+   Row 3 = Header
+   Row 4 onward = Data
+   Amount = Column D
+
+   Therefore we directly read:
+
+   D4:D
+
+   We do NOT try to detect Date or Header.
+
 ========================================================= */
 
 const SHEETS = {
 
     Buying: {
-        gid: "2093020950"
+        gid: "2093020950",
+        range: "D4:D"
     },
 
     Cash_Flows: {
-        gid: "2100593426"
+        gid: "2100593426",
+        range: "D4:D"
     },
 
     Employee: {
-        gid: "1620505158"
+        gid: "1620505158",
+        range: "D4:D"
     },
 
     Cooking: {
-        gid: "1987654808"
+        gid: "1987654808",
+        range: "D4:D"
     },
 
     MISC: {
-        gid: "1505058386"
+        gid: "1505058386",
+        range: "D4:D"
     },
 
     Supro_Cars: {
-        gid: "1580668395"
+        gid: "1580668395",
+        range: "D4:D"
     }
 
 };
 
 
+
 /* =========================================================
-   3. GLOBAL CALLBACK COUNTER
+   CALLBACK COUNTER
 ========================================================= */
 
 let callbackCounter = 0;
 
 
+
 /* =========================================================
-   4. LOAD GOOGLE GVIZ DATA USING JSONP
+   LOAD ONE GOOGLE SHEET COLUMN
 ========================================================= */
 
-function loadSheetData(sheetName, gid) {
+function loadSheetAmount(
+    sheetName,
+    gid,
+    range
+) {
 
-    return new Promise((resolve, reject) => {
-
-        callbackCounter++;
-
-        const callbackName =
-            "gvizCallback_" +
-            callbackCounter;
-
-
-        /*
-           Create global callback
-        */
-
-        window[callbackName] = function(response) {
-
-            try {
-
-                /*
-                   Remove callback
-                */
-
-                delete window[callbackName];
+    return new Promise(
+        (resolve, reject) => {
 
 
-                /*
-                   Remove script
-                */
-
-                if (script.parentNode) {
-                    script.parentNode.removeChild(script);
-                }
+            callbackCounter++;
 
 
-                /*
-                   Check response
-                */
-
-                if (!response) {
-
-                    reject(
-                        new Error(
-                            sheetName +
-                            ": Empty response from Google Sheets."
-                        )
-                    );
-
-                    return;
-                }
+            const callbackName =
+                "googleSheetCallback_" +
+                callbackCounter;
 
 
-                /*
-                   Check Google response status
-                */
+
+            let finished = false;
+
+
+
+            /* ==========================
+               CLEANUP
+            ========================== */
+
+            function cleanup() {
 
                 if (
-                    response.status &&
-                    response.status !== "ok"
+                    window[callbackName]
                 ) {
 
-                    let message =
-                        sheetName +
-                        ": Google Sheet returned an error.";
+                    delete window[
+                        callbackName
+                    ];
 
-                    if (
-                        response.errors &&
-                        response.errors.length
-                    ) {
-
-                        message +=
-                            "\n" +
-                            response.errors
-                                .map(
-                                    e =>
-                                        e.message ||
-                                        e.detailed_message ||
-                                        ""
-                                )
-                                .join("\n");
-                    }
-
-                    reject(
-                        new Error(message)
-                    );
-
-                    return;
                 }
 
-
-                /*
-                   Check table
-                */
 
                 if (
-                    !response.table ||
-                    !response.table.rows
+                    script &&
+                    script.parentNode
                 ) {
 
-                    reject(
-                        new Error(
-                            sheetName +
-                            ": No table data received."
-                        )
-                    );
+                    script.parentNode
+                        .removeChild(script);
 
-                    return;
                 }
-
-
-                resolve(response.table);
 
             }
 
-            catch (error) {
+
+
+            /* ==========================
+               SUCCESS
+            ========================== */
+
+            function finishSuccess(
+                value
+            ) {
+
+                if (finished) {
+
+                    return;
+
+                }
+
+
+                finished = true;
+
+                clearTimeout(timeout);
+
+                cleanup();
+
+                resolve(value);
+
+            }
+
+
+
+            /* ==========================
+               ERROR
+            ========================== */
+
+            function finishError(
+                error
+            ) {
+
+                if (finished) {
+
+                    return;
+
+                }
+
+
+                finished = true;
+
+                clearTimeout(timeout);
+
+                cleanup();
 
                 reject(error);
 
             }
 
-        };
 
 
-        /*
-           Build Google GViz URL
+            /* ==========================
+               GLOBAL CALLBACK
+            ========================== */
 
-           headers=0 means we are reading the
-           actual sheet rows exactly as they are.
-
-           range=A1:Z means maximum 26 columns.
-        */
-
-        const params = new URLSearchParams();
-
-        params.set(
-            "gid",
-            gid
-        );
-
-        params.set(
-            "range",
-            "A1:Z"
-        );
-
-        params.set(
-            "headers",
-            "0"
-        );
-
-        params.set(
-            "tqx",
-            "out:json;responseHandler:" +
-            callbackName
-        );
+            window[callbackName] =
+                function(response) {
 
 
-        const url =
-            "https://docs.google.com/spreadsheets/d/" +
-            SPREADSHEET_ID +
-            "/gviz/tq?" +
-            params.toString();
+                    try {
 
 
-        /*
-           Create script element.
+                        if (!response) {
 
-           JSONP works through script loading,
-           so browser CORS restrictions do not
-           block this request.
-        */
+                            finishError(
 
-        const script =
-            document.createElement("script");
+                                new Error(
+                                    sheetName +
+                                    ": Empty response."
+                                )
+
+                            );
+
+                            return;
+
+                        }
 
 
-        script.src = url;
 
-        script.async = true;
+                        /*
+                           Google query error
+                        */
+
+                        if (
+                            response.status &&
+                            response.status !== "ok"
+                        ) {
+
+                            let message =
+                                sheetName +
+                                ": Google Sheets returned an error.";
 
 
-        /*
-           Error handling
-        */
+                            if (
+                                response.errors &&
+                                response.errors.length
+                            ) {
 
-        script.onerror = function() {
+                                message +=
+                                    "\n" +
+                                    response.errors
+                                        .map(
+                                            e =>
+                                                e.message ||
+                                                e.detailed_message ||
+                                                ""
+                                        )
+                                        .join(
+                                            "\n"
+                                        );
 
-            delete window[callbackName];
+                            }
 
-            if (script.parentNode) {
-                script.parentNode.removeChild(script);
-            }
 
-            reject(
-                new Error(
-                    sheetName +
-                    ": Could not access Google Sheet.\n" +
-                    "Please check that the sheet is shared as " +
-                    "\"Anyone with the link → Viewer\"."
-                )
+                            finishError(
+                                new Error(
+                                    message
+                                )
+                            );
+
+                            return;
+
+                        }
+
+
+
+                        /*
+                           Get rows
+                        */
+
+                        const rows =
+                            response.table &&
+                            response.table.rows
+                                ? response.table.rows
+                                : [];
+
+
+
+                        let total = 0;
+
+
+
+                        /*
+                           Every returned row contains
+                           one cell because we requested D4:D.
+                        */
+
+                        rows.forEach(
+                            row => {
+
+
+                                if (
+                                    !row ||
+                                    !row.c ||
+                                    !row.c[0]
+                                ) {
+
+                                    return;
+
+                                }
+
+
+
+                                const cell =
+                                    row.c[0];
+
+
+
+                                let value =
+                                    cell.v;
+
+
+
+                                /*
+                                   Number
+                                */
+
+                                if (
+                                    typeof value ===
+                                    "number"
+                                ) {
+
+                                    total += value;
+
+                                    return;
+
+                                }
+
+
+
+                                /*
+                                   Text number
+                                */
+
+                                if (
+                                    value !==
+                                    null &&
+                                    value !==
+                                    undefined &&
+                                    value !== ""
+                                ) {
+
+                                    const cleaned =
+                                        String(value)
+                                            .replace(
+                                                /₹/g,
+                                                ""
+                                            )
+                                            .replace(
+                                                /,/g,
+                                                ""
+                                            )
+                                            .trim();
+
+
+                                    const number =
+                                        parseFloat(
+                                            cleaned
+                                        );
+
+
+                                    if (
+                                        !isNaN(number)
+                                    ) {
+
+                                        total +=
+                                            number;
+
+                                    }
+
+                                }
+
+                            }
+                        );
+
+
+
+                        finishSuccess(
+                            total
+                        );
+
+
+                    }
+
+                    catch (error) {
+
+                        finishError(
+                            error
+                        );
+
+                    }
+
+                };
+
+
+
+            /* ==========================
+               GOOGLE GVIZ URL
+            ========================== */
+
+            const params =
+                new URLSearchParams();
+
+
+            params.set(
+                "gid",
+                gid
             );
 
-        };
+
+            params.set(
+                "range",
+                range
+            );
 
 
-        /*
-           Timeout protection
-        */
-
-        const timeout =
-            setTimeout(() => {
-
-                delete window[callbackName];
-
-                if (script.parentNode) {
-                    script.parentNode.removeChild(script);
-                }
-
-                reject(
-                    new Error(
-                        sheetName +
-                        ": Google Sheets request timed out."
-                    )
-                );
-
-            }, 15000);
+            params.set(
+                "headers",
+                "0"
+            );
 
 
-        /*
-           Wrap resolve/reject so timeout is cleared
-        */
-
-        const originalCallback =
-            window[callbackName];
-
-
-        window[callbackName] =
-            function(response) {
-
-                clearTimeout(timeout);
-
-                originalCallback(response);
-
-            };
+            params.set(
+                "tqx",
+                "out:json;responseHandler:" +
+                callbackName
+            );
 
 
-        /*
-           Add script to page
-        */
-
-        document.head.appendChild(script);
-
-    });
-
-}
+            const url =
+                "https://docs.google.com/spreadsheets/d/" +
+                SPREADSHEET_ID +
+                "/gviz/tq?" +
+                params.toString();
 
 
-/* =========================================================
-   5. NORMALIZE HEADER
-========================================================= */
 
-function normalizeHeader(value) {
+            /* ==========================
+               SCRIPT
+            ========================== */
 
-    return String(value || "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, "_");
-
-}
-
-
-/* =========================================================
-   6. GET CELL VALUE
-========================================================= */
-
-function getCellValue(cell) {
-
-    if (
-        !cell ||
-        cell.v === null ||
-        cell.v === undefined
-    ) {
-
-        return "";
-
-    }
-
-    return cell.v;
-
-}
-
-
-/* =========================================================
-   7. FIND DATE AND AMOUNT COLUMNS
-========================================================= */
-
-function findColumns(table, sheetName) {
-
-    /*
-       Row 3 = index 2
-
-       Row 1 → index 0
-       Row 2 → index 1
-       Row 3 → index 2
-    */
-
-    if (
-        !table.rows ||
-        table.rows.length < 3
-    ) {
-
-        throw new Error(
-            sheetName +
-            ": Row 3 header was not found."
-        );
-
-    }
-
-
-    const headerRow =
-        table.rows[2];
-
-
-    if (
-        !headerRow ||
-        !headerRow.c
-    ) {
-
-        throw new Error(
-            sheetName +
-            ": Header row is empty."
-        );
-
-    }
-
-
-    let dateColumn = -1;
-
-    let amountColumn = -1;
-
-
-    headerRow.c.forEach(
-        (cell, index) => {
-
-            const value =
-                normalizeHeader(
-                    getCellValue(cell)
+            const script =
+                document.createElement(
+                    "script"
                 );
 
 
-            if (value === "date") {
+            script.src = url;
 
-                dateColumn = index;
-
-            }
+            script.async = true;
 
 
-            if (value === "amount") {
 
-                amountColumn = index;
+            /* ==========================
+               NETWORK ERROR
+            ========================== */
 
-            }
+            script.onerror =
+                function() {
+
+                    finishError(
+
+                        new Error(
+
+                            sheetName +
+                            ": Could not connect to Google Sheets.\n\n" +
+                            "Please check Google Sheet sharing:\n" +
+                            "Anyone with the link → Viewer"
+
+                        )
+
+                    );
+
+                };
+
+
+
+            /* ==========================
+               TIMEOUT
+            ========================== */
+
+            const timeout =
+                setTimeout(
+                    function() {
+
+                        finishError(
+
+                            new Error(
+
+                                sheetName +
+                                ": Google Sheets request timed out."
+
+                            )
+
+                        );
+
+                    },
+                    20000
+                );
+
+
+
+            /* ==========================
+               SEND REQUEST
+            ========================== */
+
+            document.head.appendChild(
+                script
+            );
+
 
         }
     );
 
-
-    if (dateColumn === -1) {
-
-        throw new Error(
-            sheetName +
-            ": \"Date\" header not found in row 3."
-        );
-
-    }
-
-
-    if (amountColumn === -1) {
-
-        throw new Error(
-            sheetName +
-            ": \"Amount\" header not found in row 3."
-        );
-
-    }
-
-
-    return {
-        dateColumn,
-        amountColumn
-    };
-
 }
 
 
-/* =========================================================
-   8. CONVERT AMOUNT TO NUMBER
-========================================================= */
-
-function amountToNumber(value) {
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-
-        return 0;
-
-    }
-
-
-    /*
-       If Google returns a number,
-       use it directly.
-    */
-
-    if (typeof value === "number") {
-
-        return value;
-
-    }
-
-
-    /*
-       If Google returns formatted text,
-       remove currency symbols and commas.
-    */
-
-    const cleaned =
-        String(value)
-            .replace(/₹/g, "")
-            .replace(/,/g, "")
-            .trim();
-
-
-    const number =
-        Number(cleaned);
-
-
-    if (
-        Number.isNaN(number)
-    ) {
-
-        return 0;
-
-    }
-
-
-    return number;
-
-}
-
 
 /* =========================================================
-   9. SUM ONE SHEET
+   FORMAT RUPEE
 ========================================================= */
 
-async function getSheetTotal(
-    sheetName,
-    gid
+function formatRupee(
+    value
 ) {
-
-    const table =
-        await loadSheetData(
-            sheetName,
-            gid
-        );
-
-
-    const columns =
-        findColumns(
-            table,
-            sheetName
-        );
-
-
-    let total = 0;
-
-
-    /*
-       Row 4 onward = data
-
-       rows[0] → Row 1
-       rows[1] → Row 2
-       rows[2] → Row 3 Header
-       rows[3] → Row 4 Data
-    */
-
-    for (
-        let i = 3;
-        i < table.rows.length;
-        i++
-    ) {
-
-        const row =
-            table.rows[i];
-
-
-        if (
-            !row ||
-            !row.c
-        ) {
-
-            continue;
-
-        }
-
-
-        const amountCell =
-            row.c[
-                columns.amountColumn
-            ];
-
-
-        const value =
-            getCellValue(
-                amountCell
-            );
-
-
-        total +=
-            amountToNumber(value);
-
-    }
-
-
-    return total;
-
-}
-
-
-/* =========================================================
-   10. RUPEE FORMAT
-========================================================= */
-
-function formatRupee(value) {
 
     return "₹" +
         Number(value || 0)
@@ -1048,140 +1152,147 @@ function formatRupee(value) {
 }
 
 
+
 /* =========================================================
-   11. UPDATE HTML
+   UPDATE DASHBOARD
 ========================================================= */
 
-function updateDashboard(data) {
-
-    const buying =
-        data.Buying;
-
-    const cashFlow =
-        data.Cash_Flows;
-
-    const employee =
-        data.Employee;
-
-    const cooking =
-        data.Cooking;
-
-    const misc =
-        data.MISC;
-
-    const supro =
-        data.Supro_Cars;
+function updateDashboard(
+    values
+) {
 
 
     /*
-       TOTAL EXPENDITURE
+       EXPENDITURE
 
        Buying
        + Employee
        + Cooking
        + MISC
        + Supro Cars
-
-       Cash Flow is NOT included.
     */
 
     const totalExpenditure =
-        buying +
-        employee +
-        cooking +
-        misc +
-        supro;
+
+        values.Buying +
+
+        values.Employee +
+
+        values.Cooking +
+
+        values.MISC +
+
+        values.Supro_Cars;
+
 
 
     /*
-       TOTAL CREDIT
+       CREDIT
 
        Only Cash_Flows
     */
 
     const totalCredit =
-        cashFlow;
+        values.Cash_Flows;
 
 
-    /* =========================
-       MAIN CARDS
-    ========================= */
+
+    /* ==========================
+       MAIN TOTALS
+    ========================== */
 
     document.getElementById(
         "totalExpenditure"
     ).textContent =
+
         formatRupee(
             totalExpenditure
         );
 
 
+
     document.getElementById(
         "totalCredit"
     ).textContent =
+
         formatRupee(
             totalCredit
         );
 
 
-    /* =========================
-       BREAKDOWN
-    ========================= */
+
+    /* ==========================
+       INDIVIDUAL TOTALS
+    ========================== */
 
     document.getElementById(
         "buying"
     ).textContent =
+
         formatRupee(
-            buying
+            values.Buying
         );
+
 
 
     document.getElementById(
         "employee"
     ).textContent =
+
         formatRupee(
-            employee
+            values.Employee
         );
+
 
 
     document.getElementById(
         "cooking"
     ).textContent =
+
         formatRupee(
-            cooking
+            values.Cooking
         );
+
 
 
     document.getElementById(
         "misc"
     ).textContent =
+
         formatRupee(
-            misc
+            values.MISC
         );
+
 
 
     document.getElementById(
         "supro"
     ).textContent =
+
         formatRupee(
-            supro
+            values.Supro_Cars
         );
+
 
 
     document.getElementById(
         "cashFlow"
     ).textContent =
+
         formatRupee(
-            cashFlow
+            values.Cash_Flows
         );
 
 }
 
 
+
 /* =========================================================
-   12. LOAD ALL DATA
+   LOAD ALL SIX SHEETS
 ========================================================= */
 
 async function loadDashboard() {
+
 
     const loading =
         document.getElementById(
@@ -1203,76 +1314,101 @@ async function loadDashboard() {
 
     try {
 
+
         loading.style.display =
             "block";
 
+
         success.style.display =
             "none";
+
 
         errorBox.style.display =
             "none";
 
 
+
         /*
-           Load all 6 tabs together.
+           Load all six sheets.
+
+           Each sheet is read independently.
         */
 
         const results =
             await Promise.all([
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "Buying",
-                    SHEETS.Buying.gid
+                    SHEETS.Buying.gid,
+                    SHEETS.Buying.range
                 ),
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "Cash_Flows",
-                    SHEETS.Cash_Flows.gid
+                    SHEETS.Cash_Flows.gid,
+                    SHEETS.Cash_Flows.range
                 ),
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "Employee",
-                    SHEETS.Employee.gid
+                    SHEETS.Employee.gid,
+                    SHEETS.Employee.range
                 ),
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "Cooking",
-                    SHEETS.Cooking.gid
+                    SHEETS.Cooking.gid,
+                    SHEETS.Cooking.range
                 ),
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "MISC",
-                    SHEETS.MISC.gid
+                    SHEETS.MISC.gid,
+                    SHEETS.MISC.range
                 ),
 
-                getSheetTotal(
+
+                loadSheetAmount(
                     "Supro_Cars",
-                    SHEETS.Supro_Cars.gid
+                    SHEETS.Supro_Cars.gid,
+                    SHEETS.Supro_Cars.range
                 )
 
             ]);
 
 
+
         /*
-           Convert results into object.
+           Store results.
         */
 
-        const data = {
+        const values = {
+
 
             Buying:
                 results[0],
 
+
             Cash_Flows:
                 results[1],
+
 
             Employee:
                 results[2],
 
+
             Cooking:
                 results[3],
 
+
             MISC:
                 results[4],
+
 
             Supro_Cars:
                 results[5]
@@ -1280,16 +1416,28 @@ async function loadDashboard() {
         };
 
 
+
         /*
            Update dashboard.
         */
 
-        updateDashboard(data);
+        updateDashboard(
+            values
+        );
 
+
+
+        /*
+           Hide loading.
+        */
 
         loading.style.display =
             "none";
 
+
+        /*
+           Show success.
+        */
 
         success.style.display =
             "block";
@@ -1298,6 +1446,7 @@ async function loadDashboard() {
     }
 
     catch (error) {
+
 
         console.error(
             "Dashboard Error:",
@@ -1318,21 +1467,28 @@ async function loadDashboard() {
 
 
         errorBox.textContent =
+
             "Dashboard data load error:\n\n" +
+
             error.message;
+
 
     }
 
 }
 
 
+
 /* =========================================================
-   13. START DASHBOARD
+   START
 ========================================================= */
 
 loadDashboard();
 
+
 </script>
 
+
 </body>
+
 </html>
