@@ -1,1128 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Expense Dashboard</title>
 
-
 <style>
-
-/* =========================================================
-   BASIC
-========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
     background: #f5f7fb;
-
     color: #1f2937;
 }
 
-
-.container {
-
-    width: 100%;
-
-    max-width: 1400px;
-
-    margin: auto;
-
-    padding: 20px;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
+.container { width: 100%; max-width: 1400px; margin: auto; padding: 20px; }
 
 .header {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 14px;
-
-    margin-bottom: 18px;
-
-    box-shadow:
-        0 3px 12px rgba(0,0,0,0.06);
+    background: white; padding: 20px; border-radius: 14px; margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
+.header h1 { font-size: 28px; margin-bottom: 5px; }
+.header p { color: #6b7280; font-size: 14px; }
 
+.section-title { font-size: 19px; margin-bottom: 12px; font-weight: 600; }
 
-.header h1 {
-
-    font-size: 28px;
-
-    margin-bottom: 5px;
-}
-
-
-.header p {
-
-    color: #6b7280;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   SECTION TITLE
-========================================================= */
-
-.section-title {
-
-    font-size: 19px;
-
-    margin-bottom: 12px;
-
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   MAIN TOTAL CARDS
-========================================================= */
-
-.main-kpis {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 18px;
-
-    margin-bottom: 18px;
-}
-
-
+.main-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-bottom: 18px; }
 .main-card {
-
-    padding: 24px;
-
-    border-radius: 15px;
-
-    min-height: 125px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
+    padding: 24px; border-radius: 15px; min-height: 125px;
+    display: flex; flex-direction: column; justify-content: center;
 }
+.expense-card { background: #fff1f2; border: 1px solid #fecdd3; }
+.credit-card  { background: #ecfdf5; border: 1px solid #bbf7d0; }
+.main-title { font-size: 14px; color: #6b7280; margin-bottom: 9px; }
+.main-value { font-size: 31px; font-weight: bold; }
 
-
-.expense-card {
-
-    background: #fff1f2;
-
-    border:
-        1px solid #fecdd3;
-}
-
-
-.credit-card {
-
-    background: #ecfdf5;
-
-    border:
-        1px solid #bbf7d0;
-}
-
-
-.main-title {
-
-    font-size: 14px;
-
-    color: #6b7280;
-
-    margin-bottom: 9px;
-}
-
-
-.main-value {
-
-    font-size: 31px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   BREAKDOWN GRID
-========================================================= */
-
-.kpi-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(6, 1fr);
-
-    gap: 12px;
-
-    margin-bottom: 25px;
-}
-
-
+.kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 25px; }
 .kpi-card {
-
-    background: white;
-
-    border-radius: 12px;
-
-    padding: 15px;
-
-    min-height: 100px;
-
-    border:
-        1px solid #e5e7eb;
-
-    box-shadow:
-        0 2px 9px rgba(0,0,0,0.06);
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
+    background: white; border-radius: 12px; padding: 15px; min-height: 100px;
+    border: 1px solid #e5e7eb; box-shadow: 0 2px 9px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; justify-content: center;
 }
-
-
-.kpi-title {
-
-    font-size: 13px;
-
-    color: #6b7280;
-
-    margin-bottom: 8px;
-}
-
-
-.kpi-value {
-
-    font-size: 20px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   FILTER
-========================================================= */
+.kpi-title { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+.kpi-value { font-size: 20px; font-weight: bold; }
 
 .filter-box {
-
-    background: white;
-
-    border-radius: 14px;
-
-    padding: 18px;
-
-    margin-top: 5px;
-
-    margin-bottom: 22px;
-
-    border:
-        1px solid #e5e7eb;
-
-    box-shadow:
-        0 2px 10px rgba(0,0,0,0.05);
+    background: white; border-radius: 14px; padding: 18px; margin: 5px 0 22px;
+    border: 1px solid #e5e7eb; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
+.filter-title { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+.filter-row { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-group label { font-size: 12px; color: #6b7280; }
 
-
-.filter-title {
-
-    font-size: 17px;
-
-    font-weight: 600;
-
-    margin-bottom: 12px;
+select, input[type="date"] {
+    height: 40px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 11px;
+    background: white; font-size: 14px; color: #1f2937; min-width: 190px; outline: none;
 }
+select:focus, input[type="date"]:focus { border-color: #6b7280; }
 
-
-.filter-row {
-
-    display: flex;
-
-    align-items: end;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
-
-.filter-group {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
-}
-
-
-.filter-group label {
-
-    font-size: 12px;
-
-    color: #6b7280;
-}
-
-
-select,
-input[type="date"] {
-
-    height: 40px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius: 8px;
-
-    padding: 0 11px;
-
-    background: white;
-
-    font-size: 14px;
-
-    color: #1f2937;
-
-    min-width: 190px;
-
-    outline: none;
-}
-
-
-select:focus,
-input[type="date"]:focus {
-
-    border-color: #6b7280;
-}
-
-
-.date-range {
-
-    display: none;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
+.date-range { display: none; gap: 10px; flex-wrap: wrap; }
 
 .apply-btn {
-
-    height: 40px;
-
-    padding: 0 20px;
-
-    border: none;
-
-    border-radius: 8px;
-
-    background: #1f2937;
-
-    color: white;
-
-    font-size: 14px;
-
-    cursor: pointer;
+    height: 40px; padding: 0 20px; border: none; border-radius: 8px;
+    background: #1f2937; color: white; font-size: 14px; cursor: pointer;
 }
+.apply-btn:hover { opacity: 0.9; }
 
+.selected-period { margin-top: 12px; font-size: 12px; color: #6b7280; }
+.selected-period strong { color: #1f2937; }
 
-.apply-btn:hover {
+.period-summary { margin-top: 5px; padding-top: 5px; }
+.period-summary-title { font-size: 19px; font-weight: 600; margin-bottom: 12px; }
 
-    opacity: 0.9;
-}
-
-
-.selected-period {
-
-    margin-top: 12px;
-
-    font-size: 12px;
-
-    color: #6b7280;
-}
-
-
-.selected-period strong {
-
-    color: #1f2937;
-}
-
-
-/* =========================================================
-   PERIOD SUMMARY
-========================================================= */
-
-.period-summary {
-
-    margin-top: 5px;
-
-    padding-top: 5px;
-}
-
-
-.period-summary-title {
-
-    font-size: 19px;
-
-    font-weight: 600;
-
-    margin-bottom: 12px;
-}
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.loading {
-
-    text-align: center;
-
-    padding: 20px;
-
-    color: #6b7280;
-}
-
-
-.success {
-
-    text-align: center;
-
-    color: #15803d;
-
-    font-size: 13px;
-
-    padding: 14px;
-
-    display: none;
-}
-
-
+.loading { text-align: center; padding: 20px; color: #6b7280; }
+.success { text-align: center; color: #15803d; font-size: 13px; padding: 14px; display: none; }
 .error {
-
-    background: #fee2e2;
-
-    color: #991b1b;
-
-    padding: 15px;
-
-    border-radius: 10px;
-
-    margin-top: 18px;
-
-    display: none;
-
-    white-space: pre-line;
-
-    font-size: 14px;
+    background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 10px;
+    margin-top: 18px; display: none; white-space: pre-line; font-size: 14px;
+}
+.warning {
+    background: #fef9c3; color: #854d0e; padding: 15px; border-radius: 10px;
+    margin-top: 18px; display: none; white-space: pre-line; font-size: 14px;
 }
 
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.footer {
-
-    margin-top: 22px;
-
-    text-align: center;
-
-    color: #9ca3af;
-
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
+.footer { margin-top: 22px; text-align: center; color: #9ca3af; font-size: 12px; }
 
 @media (max-width: 1100px) {
-
-    .kpi-grid {
-
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
 }
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
 
 @media (max-width: 650px) {
-
-    .container {
-
-        padding: 12px;
-    }
-
-
-    .header h1 {
-
-        font-size: 23px;
-    }
-
-
-    .main-kpis {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .main-value {
-
-        font-size: 28px;
-    }
-
-
-    .filter-row {
-
-        flex-direction: column;
-
-        align-items: stretch;
-    }
-
-
-    .filter-group,
-    .date-range {
-
-        width: 100%;
-    }
-
-
-    select,
-    input[type="date"] {
-
-        width: 100%;
-    }
-
-
-    .date-range {
-
-        flex-direction: column;
-    }
-
-
-    .apply-btn {
-
-        width: 100%;
-    }
-
-
-    .kpi-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 9px;
-    }
-
-
-    .kpi-card {
-
-        padding: 12px;
-
-        min-height: 88px;
-    }
-
-
-    .kpi-title {
-
-        font-size: 12px;
-    }
-
-
-    .kpi-value {
-
-        font-size: 18px;
-    }
+    .container { padding: 12px; }
+    .header h1 { font-size: 23px; }
+    .main-kpis { grid-template-columns: 1fr; }
+    .main-value { font-size: 28px; }
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .filter-group, .date-range { width: 100%; }
+    select, input[type="date"] { width: 100%; }
+    .date-range { flex-direction: column; }
+    .apply-btn { width: 100%; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .kpi-card { padding: 12px; min-height: 88px; }
+    .kpi-title { font-size: 12px; }
+    .kpi-value { font-size: 18px; }
 }
-
-
-/* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
 
 @media (max-width: 360px) {
-
-    .kpi-grid {
-
-        grid-template-columns:
-            1fr;
-    }
+    .kpi-grid { grid-template-columns: 1fr; }
 }
-
 </style>
-
 </head>
 
-
 <body>
-
-
 <div class="container">
 
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
-<div class="header">
-
-    <h1>
-        Expense Dashboard
-    </h1>
-
-    <p>
-        Live data from Google Sheets
-    </p>
-
-</div>
-
-
-
-<!-- =====================================================
-     OVERALL SUMMARY
-===================================================== -->
-
-<div class="section-title">
-
-    Overall Summary
-
-</div>
-
-
-<!-- OVERALL TOTAL -->
-
-<div class="main-kpis">
-
-
-    <div class="main-card expense-card">
-
-        <div class="main-title">
-            Total Expenditure
-        </div>
-
-        <div
-            class="main-value"
-            id="overallExpenditure"
-        >
-            ₹0
-        </div>
-
+    <div class="header">
+        <h1>Expense Dashboard</h1>
+        <p>Live data from Google Sheets</p>
     </div>
 
-
-
-    <div class="main-card credit-card">
-
-        <div class="main-title">
-            Total Credit
-        </div>
-
-        <div
-            class="main-value"
-            id="overallCredit"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-</div>
-
-
-
-<!-- OVERALL BREAKDOWN -->
-
-<div class="kpi-grid">
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Total Buy
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallBuying"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Employee
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallEmployee"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Cooking
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallCooking"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Miscellaneous
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallMisc"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Supro Cars
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallSupro"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-title">
-            Cash Credit
-        </div>
-
-        <div
-            class="kpi-value"
-            id="overallCash"
-        >
-            ₹0
-        </div>
-
-    </div>
-
-
-</div>
-
-
-
-<!-- =====================================================
-     FILTER
-===================================================== -->
-
-<div class="filter-box">
-
-
-    <div class="filter-title">
-
-        Period / Date Filter
-
-    </div>
-
-
-    <div class="filter-row">
-
-
-        <div class="filter-group">
-
-            <label for="periodSelect">
-                Select Period
-            </label>
-
-
-            <select
-                id="periodSelect"
-            >
-
-                <option value="lastDate">
-                    Last Date Entry
-                </option>
-
-                <option value="last7">
-                    Last 7 Days
-                </option>
-
-                <option value="last15">
-                    Last 15 Days
-                </option>
-
-                <option value="range">
-                    Date Range
-                </option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- DATE RANGE -->
-
-        <div
-            id="dateRange"
-            class="date-range"
-        >
-
-
-            <div class="filter-group">
-
-                <label for="fromDate">
-                    From Date
-                </label>
-
-                <input
-                    type="date"
-                    id="fromDate"
-                >
-
-            </div>
-
-
-
-            <div class="filter-group">
-
-                <label for="toDate">
-                    To Date
-                </label>
-
-                <input
-                    type="date"
-                    id="toDate"
-                >
-
-            </div>
-
-
-        </div>
-
-
-
-        <button
-            id="applyBtn"
-            class="apply-btn"
-        >
-            Apply
-        </button>
-
-
-    </div>
-
-
-
-    <div
-        id="selectedPeriod"
-        class="selected-period"
-    >
-
-        Selected Period:
-        <strong>Loading...</strong>
-
-    </div>
-
-
-</div>
-
-
-
-<!-- =====================================================
-     SELECTED PERIOD SUMMARY
-===================================================== -->
-
-<div class="period-summary">
-
-
-    <div class="period-summary-title">
-
-        Selected Period Summary
-
-    </div>
-
-
-
-    <!-- PERIOD TOTALS -->
+    <!-- OVERALL -->
+    <div class="section-title">Overall Summary</div>
 
     <div class="main-kpis">
-
-
         <div class="main-card expense-card">
-
-            <div class="main-title">
-                Period Expenditure
-            </div>
-
-            <div
-                class="main-value"
-                id="periodExpenditure"
-            >
-                ₹0
-            </div>
-
+            <div class="main-title">Total Expenditure</div>
+            <div class="main-value" id="overallExpenditure">₹0</div>
         </div>
-
-
-
         <div class="main-card credit-card">
-
-            <div class="main-title">
-                Period Credit
-            </div>
-
-            <div
-                class="main-value"
-                id="periodCredit"
-            >
-                ₹0
-            </div>
-
+            <div class="main-title">Total Credit</div>
+            <div class="main-value" id="overallCredit">₹0</div>
         </div>
-
-
     </div>
-
-
-
-    <!-- PERIOD BREAKDOWN -->
-
-    <div class="section-title">
-
-        Selected Period Breakdown
-
-    </div>
-
-
 
     <div class="kpi-grid">
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Total Buy
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodBuying"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Employee
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodEmployee"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Cooking
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodCooking"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Miscellaneous
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodMisc"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Supro Cars
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodSupro"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
-
-        <div class="kpi-card">
-
-            <div class="kpi-title">
-                Cash Credit
-            </div>
-
-            <div
-                class="kpi-value"
-                id="periodCash"
-            >
-                ₹0
-            </div>
-
-        </div>
-
-
+        <div class="kpi-card"><div class="kpi-title">Total Buy</div><div class="kpi-value" id="overallBuying">₹0</div></div>
+        <div class="kpi-card"><div class="kpi-title">Employee</div><div class="kpi-value" id="overallEmployee">₹0</div></div>
+        <div class="kpi-card"><div class="kpi-title">Cooking</div><div class="kpi-value" id="overallCooking">₹0</div></div>
+        <div class="kpi-card"><div class="kpi-title">Miscellaneous</div><div class="kpi-value" id="overallMisc">₹0</div></div>
+        <div class="kpi-card"><div class="kpi-title">Supro Cars</div><div class="kpi-value" id="overallSupro">₹0</div></div>
+        <div class="kpi-card"><div class="kpi-title">Cash Credit</div><div class="kpi-value" id="overallCash">₹0</div></div>
     </div>
 
+    <!-- FILTER -->
+    <div class="filter-box">
+        <div class="filter-title">Period / Date Filter</div>
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="periodSelect">Select Period</label>
+                <select id="periodSelect">
+                    <option value="lastDate">Last Date Entry</option>
+                    <option value="last7">Last 7 Days</option>
+                    <option value="last15">Last 15 Days</option>
+                    <option value="range">Date Range</option>
+                </select>
+            </div>
+
+            <div id="dateRange" class="date-range">
+                <div class="filter-group">
+                    <label for="fromDate">From Date</label>
+                    <input type="date" id="fromDate">
+                </div>
+                <div class="filter-group">
+                    <label for="toDate">To Date</label>
+                    <input type="date" id="toDate">
+                </div>
+            </div>
+
+            <button id="applyBtn" class="apply-btn">Apply</button>
+        </div>
+
+        <div id="selectedPeriod" class="selected-period">
+            Selected Period: <strong>Loading...</strong>
+        </div>
+    </div>
+
+    <!-- PERIOD SUMMARY -->
+    <div class="period-summary">
+        <div class="period-summary-title">Selected Period Summary</div>
+
+        <div class="main-kpis">
+            <div class="main-card expense-card">
+                <div class="main-title">Period Expenditure</div>
+                <div class="main-value" id="periodExpenditure">₹0</div>
+            </div>
+            <div class="main-card credit-card">
+                <div class="main-title">Period Credit</div>
+                <div class="main-value" id="periodCredit">₹0</div>
+            </div>
+        </div>
+
+        <div class="section-title">Selected Period Breakdown</div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-title">Total Buy</div><div class="kpi-value" id="periodBuying">₹0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Employee</div><div class="kpi-value" id="periodEmployee">₹0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Cooking</div><div class="kpi-value" id="periodCooking">₹0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Miscellaneous</div><div class="kpi-value" id="periodMisc">₹0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Supro Cars</div><div class="kpi-value" id="periodSupro">₹0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Cash Credit</div><div class="kpi-value" id="periodCash">₹0</div></div>
+        </div>
+    </div>
+
+    <!-- STATUS -->
+    <div id="loading" class="loading">Loading data from Google Sheets...</div>
+    <div id="success" class="success">Data loaded successfully.</div>
+    <div id="warning" class="warning"></div>
+    <div id="error" class="error"></div>
+
+    <div class="footer">Data is fetched directly from Google Sheets</div>
 
 </div>
-
-
-
-<!-- =====================================================
-     STATUS
-===================================================== -->
-
-<div
-    id="loading"
-    class="loading"
->
-
-    Loading data from Google Sheets...
-
-</div>
-
-
-
-<div
-    id="success"
-    class="success"
->
-
-    Data loaded successfully.
-
-</div>
-
-
-
-<div
-    id="error"
-    class="error"
-></div>
-
-
-
-<div class="footer">
-
-    Data is fetched directly from Google Sheets
-
-</div>
-
-
-</div>
-
 
 
 <script>
-
 
 /* =========================================================
    GOOGLE SPREADSHEET ID
 ========================================================= */
 
-const SPREADSHEET_ID =
-    "1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
-
+const SPREADSHEET_ID = "1SXWgzfINs6TGt3G-AF25-O_TJq0xYsRPQns_P0x5xFs";
 
 
 /* =========================================================
@@ -1130,1396 +229,456 @@ const SPREADSHEET_ID =
 ========================================================= */
 
 const SHEETS = {
-
-    Buying: {
-        gid: "2093020950"
-    },
-
-    Cash_Flows: {
-        gid: "2100593426"
-    },
-
-    Employee: {
-        gid: "1620505158"
-    },
-
-    Cooking: {
-        gid: "1987654808"
-    },
-
-    MISC: {
-        gid: "1505058386"
-    },
-
-    Supro_Cars: {
-        gid: "1580668395"
-    }
-
+    Buying:     { gid: "2093020950" },
+    Cash_Flows: { gid: "2100593426" },
+    Employee:   { gid: "1620505158" },
+    Cooking:    { gid: "1987654808" },
+    MISC:       { gid: "1505058386" },
+    Supro_Cars: { gid: "1580668395" }
 };
 
+/*
+   Sheet layout (same for all sheets):
+   Range B4:D  ->  index 0 = B (Date)
+                   index 1 = C
+                   index 2 = D (Amount)
+*/
+const DATE_INDEX = 0;
+const AMOUNT_INDEX = 2;
 
-
-/* =========================================================
-   ALL DATA
-========================================================= */
 
 let allData = {
-
     Buying: [],
-
     Cash_Flows: [],
-
     Employee: [],
-
     Cooking: [],
-
     MISC: [],
-
     Supro_Cars: []
-
 };
-
 
 let callbackCounter = 0;
 
 
-
 /* =========================================================
-   GOOGLE GVIZ LOADER
+   GOOGLE GVIZ LOADER (no query -> no INVALID_QUERY)
 ========================================================= */
 
-function loadSheetData(
-    sheetName,
-    gid
-) {
+function loadSheetData(sheetName, gid) {
 
+    return new Promise((resolve, reject) => {
 
-    return new Promise(
-        (resolve, reject) => {
+        callbackCounter++;
 
+        const callbackName = "gvizCallback_" + callbackCounter;
 
-            callbackCounter++;
+        let script = null;
+        let timeout = null;
+        let finished = false;
 
-
-            const callbackName =
-                "gvizCallback_" +
-                callbackCounter;
-
-
-            let script = null;
-
-            let timeout = null;
-
-            let finished = false;
-
-
-
-            function cleanup() {
-
-                if (
-                    window[callbackName]
-                ) {
-
-                    delete window[
-                        callbackName
-                    ];
-
-                }
-
-
-                if (
-                    script &&
-                    script.parentNode
-                ) {
-
-                    script.parentNode
-                        .removeChild(script);
-
-                }
-
+        function cleanup() {
+            if (window[callbackName]) {
+                delete window[callbackName];
             }
-
-
-
-            function fail(error) {
-
-                if (finished) {
-                    return;
-                }
-
-
-                finished = true;
-
-
-                clearTimeout(
-                    timeout
-                );
-
-
-                cleanup();
-
-
-                reject(error);
-
+            if (script && script.parentNode) {
+                script.parentNode.removeChild(script);
             }
-
-
-
-            function done(data) {
-
-                if (finished) {
-                    return;
-                }
-
-
-                finished = true;
-
-
-                clearTimeout(
-                    timeout
-                );
-
-
-                cleanup();
-
-
-                resolve(data);
-
-            }
-
-
-
-            window[callbackName] =
-                function(response) {
-
-
-                    try {
-
-
-                        if (!response) {
-
-                            fail(
-                                new Error(
-                                    sheetName +
-                                    ": Empty Google Sheets response."
-                                )
-                            );
-
-                            return;
-
-                        }
-
-
-
-                        if (
-                            response.status &&
-                            response.status !== "ok"
-                        ) {
-
-
-                            let message =
-                                sheetName +
-                                ": Google Sheets returned an error.";
-
-
-                            if (
-                                response.errors &&
-                                response.errors.length
-                            ) {
-
-                                message +=
-                                    "\n" +
-                                    response.errors
-                                        .map(
-                                            e =>
-                                                e.message ||
-                                                e.detailed_message ||
-                                                ""
-                                        )
-                                        .join(
-                                            "\n"
-                                        );
-
-                            }
-
-
-                            fail(
-                                new Error(
-                                    message
-                                )
-                            );
-
-                            return;
-
-                        }
-
-
-
-                        const rows =
-                            response.table &&
-                            response.table.rows
-                                ? response.table.rows
-                                : [];
-
-
-                        done(rows);
-
-                    }
-
-                    catch(error) {
-
-                        fail(error);
-
-                    }
-
-                };
-
-
-
-            /*
-               IMPORTANT:
-
-               Range = B4:D
-
-               Within this range:
-
-               A = original B = Date
-               B = original C
-               C = original D = Amount
-
-               Query:
-               select A,C where A is not null
-
-               Date is formatted as dd/MM/yyyy.
-            */
-
-            const query =
-                "select A,C " +
-                "where A is not null " +
-                "format A 'dd/MM/yyyy'";
-
-
-            const params =
-                new URLSearchParams();
-
-
-            params.set(
-                "gid",
-                gid
-            );
-
-
-            params.set(
-                "range",
-                "B4:D"
-            );
-
-
-            params.set(
-                "headers",
-                "0"
-            );
-
-
-            params.set(
-                "tq",
-                query
-            );
-
-
-            params.set(
-                "tqx",
-                "out:json;responseHandler:" +
-                callbackName
-            );
-
-
-
-            const url =
-                "https://docs.google.com/spreadsheets/d/" +
-                SPREADSHEET_ID +
-                "/gviz/tq?" +
-                params.toString();
-
-
-
-            script =
-                document.createElement(
-                    "script"
-                );
-
-
-            script.src =
-                url;
-
-
-            script.async =
-                true;
-
-
-
-            script.onerror =
-                function() {
-
-                    fail(
-
-                        new Error(
-
-                            sheetName +
-                            ": Could not connect to Google Sheets.\n\n" +
-                            "Check: Anyone with the link → Viewer"
-
-                        )
-
-                    );
-
-                };
-
-
-
-            timeout =
-                setTimeout(
-                    function() {
-
-                        fail(
-
-                            new Error(
-
-                                sheetName +
-                                ": Google Sheets request timed out."
-
-                            )
-
-                        );
-
-                    },
-                    20000
-                );
-
-
-
-            document.head.appendChild(
-                script
-            );
-
         }
-    );
 
+        function fail(error) {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timeout);
+            cleanup();
+            reject(error);
+        }
+
+        function done(data) {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timeout);
+            cleanup();
+            resolve(data);
+        }
+
+        window[callbackName] = function (response) {
+
+            try {
+
+                if (!response) {
+                    fail(new Error(sheetName + ": Empty Google Sheets response."));
+                    return;
+                }
+
+                if (response.status && response.status !== "ok") {
+
+                    let message = sheetName + ": Google Sheets returned an error.";
+
+                    if (response.errors && response.errors.length) {
+                        message += "\n" + response.errors
+                            .map(e => e.detailed_message || e.message || "")
+                            .join("\n");
+                    }
+
+                    fail(new Error(message));
+                    return;
+                }
+
+                const rows =
+                    response.table && response.table.rows
+                        ? response.table.rows
+                        : [];
+
+                done(rows);
+
+            } catch (error) {
+                fail(error);
+            }
+        };
+
+        const params = new URLSearchParams();
+
+        params.set("gid", gid);
+        params.set("range", "B4:D");
+        params.set("headers", "0");
+        params.set("tqx", "out:json;responseHandler:" + callbackName);
+
+        const url =
+            "https://docs.google.com/spreadsheets/d/" +
+            SPREADSHEET_ID +
+            "/gviz/tq?" +
+            params.toString();
+
+        script = document.createElement("script");
+        script.src = url;
+        script.async = true;
+
+        script.onerror = function () {
+            fail(new Error(
+                sheetName + ": Could not connect to Google Sheets.\n" +
+                "Check: Share -> Anyone with the link -> Viewer"
+            ));
+        };
+
+        timeout = setTimeout(function () {
+            fail(new Error(sheetName + ": Google Sheets request timed out."));
+        }, 20000);
+
+        document.head.appendChild(script);
+    });
 }
-
 
 
 /* =========================================================
    PARSE DATE
+   Handles:
+   1) Real date  -> value = "Date(2026,7,1)"  (month is 0-based)
+   2) Text date  -> "dd/mm/yyyy" (also - or . separator)
 ========================================================= */
 
-function parseDate(
-    value,
-    formatted
-) {
+function parseDate(value, formatted) {
 
+    // 1) Real Google date
+    if (typeof value === "string") {
 
-    /*
-       Preferred:
+        const m = value.match(/^Date\((\d+),\s*(\d+),\s*(\d+)/);
 
-       formatted = dd/MM/yyyy
-    */
-
-    if (formatted) {
-
-
-        const text =
-            String(formatted)
-                .trim();
-
-
-        const match =
-            text.match(
-                /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
-            );
-
-
-        if (match) {
-
-            return new Date(
-
-                Number(match[3]),
-
-                Number(match[2]) - 1,
-
-                Number(match[1])
-
-            );
-
+        if (m) {
+            return new Date(Number(m[1]), Number(m[2]), Number(m[3]));
         }
-
     }
 
+    // 2) Text date dd/mm/yyyy
+    const candidates = [formatted, value];
 
+    for (const c of candidates) {
 
-    /*
-       Backup:
+        if (c === null || c === undefined || c === "") continue;
 
-       Date(2026,7,1)
-    */
+        const text = String(c).trim();
 
-    if (
-        typeof value === "string"
-    ) {
+        const m = text.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
 
+        if (m) {
 
-        const match =
-            value.match(
-                /^Date\((\d+),(\d+),(\d+)/
-            );
+            let year = Number(m[3]);
 
+            if (year < 100) year += 2000;
 
-        if (match) {
+            const day = Number(m[1]);
+            const month = Number(m[2]) - 1;
 
-            return new Date(
+            if (month < 0 || month > 11 || day < 1 || day > 31) continue;
 
-                Number(match[1]),
-
-                Number(match[2]),
-
-                Number(match[3])
-
-            );
-
+            return new Date(year, month, day);
         }
-
     }
-
-
 
     return null;
-
 }
-
 
 
 /* =========================================================
    PARSE AMOUNT
 ========================================================= */
 
-function parseAmount(
-    value
-) {
+function parseAmount(value) {
 
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-
+    if (value === null || value === undefined || value === "") {
         return 0;
-
     }
 
-
-    if (
-        typeof value === "number"
-    ) {
-
+    if (typeof value === "number") {
         return value;
-
     }
 
+    const cleaned = String(value)
+        .replace(/₹/g, "")
+        .replace(/,/g, "")
+        .trim();
 
-    const cleaned =
-        String(value)
+    const number = parseFloat(cleaned);
 
-            .replace(
-                /₹/g,
-                ""
-            )
-
-            .replace(
-                /,/g,
-                ""
-            )
-
-            .trim();
-
-
-    const number =
-        parseFloat(
-            cleaned
-        );
-
-
-    return isNaN(number)
-        ? 0
-        : number;
-
+    return isNaN(number) ? 0 : number;
 }
-
 
 
 /* =========================================================
-   DATE ONLY
+   DATE HELPERS
 ========================================================= */
 
-function dateOnly(
-    date
-) {
-
-    return new Date(
-
-        date.getFullYear(),
-
-        date.getMonth(),
-
-        date.getDate()
-
-    );
-
+function dateOnly(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function formatDisplayDate(date) {
+
+    if (!date) return "";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+
+    return day + "/" + month + "/" + date.getFullYear();
+}
+
+function formatInputDate(date) {
+
+    return (
+        date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2, "0") + "-" +
+        String(date.getDate()).padStart(2, "0")
+    );
+}
 
 
 /* =========================================================
    LOAD ONE SHEET
 ========================================================= */
 
-async function loadOneSheet(
-    sheetName,
-    gid
-) {
+async function loadOneSheet(sheetName, gid) {
 
-
-    const rows =
-        await loadSheetData(
-            sheetName,
-            gid
-        );
-
+    const rows = await loadSheetData(sheetName, gid);
 
     const records = [];
 
+    rows.forEach(row => {
 
-    rows.forEach(
-        row => {
+        if (!row || !row.c) return;
 
+        const dateCell = row.c[DATE_INDEX];
+        const amountCell = row.c[AMOUNT_INDEX];
 
-            if (
-                !row ||
-                !row.c
-            ) {
+        if (!dateCell) return;
 
-                return;
+        const date = parseDate(dateCell.v, dateCell.f);
 
-            }
+        // Header / total / blank rows have no valid date -> skipped
+        if (!date) return;
 
+        const amount = amountCell ? parseAmount(amountCell.v) : 0;
 
-            /*
-               Query result:
-
-               c[0] = Date
-               c[1] = Amount
-            */
-
-            const dateCell =
-                row.c[0];
-
-
-            const amountCell =
-                row.c[1];
-
-
-            if (!dateCell) {
-
-                return;
-
-            }
-
-
-            const date =
-                parseDate(
-
-                    dateCell.v,
-
-                    dateCell.f
-
-                );
-
-
-            if (!date) {
-
-                return;
-
-            }
-
-
-            const amount =
-                amountCell
-                    ? parseAmount(
-                        amountCell.v
-                    )
-                    : 0;
-
-
-            records.push({
-
-                date:
-                    dateOnly(
-                        date
-                    ),
-
-                amount:
-                    amount
-
-            });
-
-        }
-    );
-
+        records.push({
+            date: dateOnly(date),
+            amount: amount
+        });
+    });
 
     return records;
-
 }
 
 
-
 /* =========================================================
-   GET LATEST DATE
+   LATEST DATE
 ========================================================= */
 
 function getLatestDate() {
 
-
     let latest = null;
 
+    Object.values(allData).forEach(records => {
 
-    Object.values(
-        allData
-    ).forEach(
-        records => {
+        records.forEach(record => {
 
-
-            records.forEach(
-                record => {
-
-
-                    if (
-                        !latest ||
-                        record.date >
-                        latest
-                    ) {
-
-                        latest =
-                            dateOnly(
-                                record.date
-                            );
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
+            if (!latest || record.date > latest) {
+                latest = dateOnly(record.date);
+            }
+        });
+    });
 
     return latest;
-
 }
 
 
-
 /* =========================================================
-   DISPLAY DATE
-========================================================= */
-
-function formatDisplayDate(
-    date
-) {
-
-
-    if (!date) {
-        return "";
-    }
-
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const year =
-        date.getFullYear();
-
-
-    return (
-        day +
-        "/" +
-        month +
-        "/" +
-        year
-    );
-
-}
-
-
-
-/* =========================================================
-   INPUT DATE
-========================================================= */
-
-function formatInputDate(
-    date
-) {
-
-
-    return (
-
-        date.getFullYear() +
-
-        "-" +
-
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        "-" +
-
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        )
-
-    );
-
-}
-
-
-
-/* =========================================================
-   GET FILTER RANGE
+   FILTER RANGE
 ========================================================= */
 
 function getSelectedRange() {
 
+    const selection = document.getElementById("periodSelect").value;
 
-    const selection =
-        document.getElementById(
-            "periodSelect"
-        ).value;
-
-
-    const latest =
-        getLatestDate();
-
+    const latest = getLatestDate();
 
     if (!latest) {
-
-        throw new Error(
-            "No valid date was found in Google Sheets."
-        );
-
+        throw new Error("No valid date was found in Google Sheets.");
     }
 
-
-
-    /* =====================================================
-       LAST DATE
-    ===================================================== */
-
-    if (
-        selection ===
-        "lastDate"
-    ) {
+    if (selection === "lastDate") {
 
         return {
-
-            from:
-                latest,
-
-            to:
-                latest,
-
-            label:
-                "Last Date Entry — " +
-                formatDisplayDate(
-                    latest
-                )
-
+            from: latest,
+            to: latest,
+            label: "Last Date Entry — " + formatDisplayDate(latest)
         };
-
     }
 
+    if (selection === "last7") {
 
-
-    /* =====================================================
-       LAST 7 DAYS
-    ===================================================== */
-
-    if (
-        selection ===
-        "last7"
-    ) {
-
-
-        const from =
-            new Date(
-                latest
-            );
-
-
-        from.setDate(
-            from.getDate() - 6
-        );
-
+        const from = new Date(latest);
+        from.setDate(from.getDate() - 6);
 
         return {
-
-            from:
-                dateOnly(
-                    from
-                ),
-
-            to:
-                latest,
-
+            from: dateOnly(from),
+            to: latest,
             label:
                 "Last 7 Days — " +
-                formatDisplayDate(
-                    from
-                ) +
-                " to " +
-                formatDisplayDate(
-                    latest
-                )
-
+                formatDisplayDate(from) + " to " + formatDisplayDate(latest)
         };
-
     }
 
+    if (selection === "last15") {
 
-
-    /* =====================================================
-       LAST 15 DAYS
-    ===================================================== */
-
-    if (
-        selection ===
-        "last15"
-    ) {
-
-
-        const from =
-            new Date(
-                latest
-            );
-
-
-        from.setDate(
-            from.getDate() - 14
-        );
-
+        const from = new Date(latest);
+        from.setDate(from.getDate() - 14);
 
         return {
-
-            from:
-                dateOnly(
-                    from
-                ),
-
-            to:
-                latest,
-
+            from: dateOnly(from),
+            to: latest,
             label:
                 "Last 15 Days — " +
-                formatDisplayDate(
-                    from
-                ) +
-                " to " +
-                formatDisplayDate(
-                    latest
-                )
-
+                formatDisplayDate(from) + " to " + formatDisplayDate(latest)
         };
-
     }
 
+    if (selection === "range") {
 
+        const fromValue = document.getElementById("fromDate").value;
+        const toValue = document.getElementById("toDate").value;
 
-    /* =====================================================
-       DATE RANGE
-    ===================================================== */
-
-    if (
-        selection ===
-        "range"
-    ) {
-
-
-        const fromValue =
-            document.getElementById(
-                "fromDate"
-            ).value;
-
-
-        const toValue =
-            document.getElementById(
-                "toDate"
-            ).value;
-
-
-        if (
-            !fromValue ||
-            !toValue
-        ) {
-
-            throw new Error(
-                "Please select both From Date and To Date."
-            );
-
+        if (!fromValue || !toValue) {
+            throw new Error("Please select both From Date and To Date.");
         }
 
+        const fp = fromValue.split("-").map(Number);
+        const tp = toValue.split("-").map(Number);
 
-        const fromParts =
-            fromValue
-                .split("-")
-                .map(Number);
+        const from = new Date(fp[0], fp[1] - 1, fp[2]);
+        const to = new Date(tp[0], tp[1] - 1, tp[2]);
 
-
-        const toParts =
-            toValue
-                .split("-")
-                .map(Number);
-
-
-        const from =
-            new Date(
-
-                fromParts[0],
-
-                fromParts[1] - 1,
-
-                fromParts[2]
-
-            );
-
-
-        const to =
-            new Date(
-
-                toParts[0],
-
-                toParts[1] - 1,
-
-                toParts[2]
-
-            );
-
-
-        if (
-            from > to
-        ) {
-
-            throw new Error(
-                "From Date cannot be later than To Date."
-            );
-
+        if (from > to) {
+            throw new Error("From Date cannot be later than To Date.");
         }
-
 
         return {
-
-            from:
-                dateOnly(
-                    from
-                ),
-
-            to:
-                dateOnly(
-                    to
-                ),
-
+            from: dateOnly(from),
+            to: dateOnly(to),
             label:
                 "Date Range — " +
-                formatDisplayDate(
-                    from
-                ) +
-                " to " +
-                formatDisplayDate(
-                    to
-                )
-
+                formatDisplayDate(from) + " to " + formatDisplayDate(to)
         };
-
     }
 
-
-
-    throw new Error(
-        "Invalid filter selection."
-    );
-
+    throw new Error("Invalid filter selection.");
 }
-
-
-
-/* =========================================================
-   CHECK DATE
-========================================================= */
-
-function isDateInRange(
-    date,
-    from,
-    to
-) {
-
-
-    const current =
-        dateOnly(
-            date
-        );
-
-
-    const start =
-        dateOnly(
-            from
-        );
-
-
-    const end =
-        dateOnly(
-            to
-        );
-
-
-    return (
-
-        current >= start &&
-        current <= end
-
-    );
-
-}
-
 
 
 /* =========================================================
    CALCULATE TOTALS
 ========================================================= */
 
-function calculateTotals(
-    range
-) {
-
+function calculateTotals(range) {
 
     const totals = {
-
         Buying: 0,
-
         Cash_Flows: 0,
-
         Employee: 0,
-
         Cooking: 0,
-
         MISC: 0,
-
         Supro_Cars: 0
-
     };
 
+    Object.keys(allData).forEach(sheetName => {
 
-    Object.keys(
-        allData
-    ).forEach(
-        sheetName => {
+        allData[sheetName].forEach(record => {
 
-
-            allData[
-                sheetName
-            ].forEach(
-                record => {
-
-
-                    if (
-                        isDateInRange(
-
-                            record.date,
-
-                            range.from,
-
-                            range.to
-
-                        )
-                    ) {
-
-
-                        totals[
-                            sheetName
-                        ] +=
-                            record.amount;
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
+            if (record.date >= range.from && record.date <= range.to) {
+                totals[sheetName] += record.amount;
+            }
+        });
+    });
 
     return totals;
-
 }
 
 
-
 /* =========================================================
-   RUPEE
+   FORMAT RUPEE
 ========================================================= */
 
-function formatRupee(
-    value
-) {
+function formatRupee(value) {
 
-
-    return "₹" +
-
-        Number(
-            value || 0
-        ).toLocaleString(
-
-            "en-IN",
-
-            {
-                maximumFractionDigits: 2
-            }
-
-        );
-
+    return "₹" + Number(value || 0).toLocaleString(
+        "en-IN",
+        { maximumFractionDigits: 2 }
+    );
 }
 
 
-
 /* =========================================================
-   UPDATE OVERALL
+   UPDATE UI (prefix = "overall" or "period")
 ========================================================= */
 
-function updateOverall(
-    totals
-) {
+function setText(id, value) {
+    document.getElementById(id).textContent = formatRupee(value);
+}
 
+function updateCards(prefix, totals) {
 
     const expenditure =
-
         totals.Buying +
-
         totals.Employee +
-
         totals.Cooking +
-
         totals.MISC +
-
         totals.Supro_Cars;
 
-
-    const credit =
-        totals.Cash_Flows;
-
-
-
-    document.getElementById(
-        "overallExpenditure"
-    ).textContent =
-
-        formatRupee(
-            expenditure
-        );
-
-
-    document.getElementById(
-        "overallCredit"
-    ).textContent =
-
-        formatRupee(
-            credit
-        );
-
-
-    document.getElementById(
-        "overallBuying"
-    ).textContent =
-
-        formatRupee(
-            totals.Buying
-        );
-
-
-    document.getElementById(
-        "overallEmployee"
-    ).textContent =
-
-        formatRupee(
-            totals.Employee
-        );
-
-
-    document.getElementById(
-        "overallCooking"
-    ).textContent =
-
-        formatRupee(
-            totals.Cooking
-        );
-
-
-    document.getElementById(
-        "overallMisc"
-    ).textContent =
-
-        formatRupee(
-            totals.MISC
-        );
-
-
-    document.getElementById(
-        "overallSupro"
-    ).textContent =
-
-        formatRupee(
-            totals.Supro_Cars
-        );
-
-
-    document.getElementById(
-        "overallCash"
-    ).textContent =
-
-        formatRupee(
-            totals.Cash_Flows
-        );
-
+    setText(prefix + "Expenditure", expenditure);
+    setText(prefix + "Credit", totals.Cash_Flows);
+    setText(prefix + "Buying", totals.Buying);
+    setText(prefix + "Employee", totals.Employee);
+    setText(prefix + "Cooking", totals.Cooking);
+    setText(prefix + "Misc", totals.MISC);
+    setText(prefix + "Supro", totals.Supro_Cars);
+    setText(prefix + "Cash", totals.Cash_Flows);
 }
-
-
-
-/* =========================================================
-   UPDATE PERIOD
-========================================================= */
-
-function updatePeriod(
-    totals
-) {
-
-
-    const expenditure =
-
-        totals.Buying +
-
-        totals.Employee +
-
-        totals.Cooking +
-
-        totals.MISC +
-
-        totals.Supro_Cars;
-
-
-    const credit =
-        totals.Cash_Flows;
-
-
-
-    document.getElementById(
-        "periodExpenditure"
-    ).textContent =
-
-        formatRupee(
-            expenditure
-        );
-
-
-    document.getElementById(
-        "periodCredit"
-    ).textContent =
-
-        formatRupee(
-            credit
-        );
-
-
-    document.getElementById(
-        "periodBuying"
-    ).textContent =
-
-        formatRupee(
-            totals.Buying
-        );
-
-
-    document.getElementById(
-        "periodEmployee"
-    ).textContent =
-
-        formatRupee(
-            totals.Employee
-        );
-
-
-    document.getElementById(
-        "periodCooking"
-    ).textContent =
-
-        formatRupee(
-            totals.Cooking
-        );
-
-
-    document.getElementById(
-        "periodMisc"
-    ).textContent =
-
-        formatRupee(
-            totals.MISC
-        );
-
-
-    document.getElementById(
-        "periodSupro"
-    ).textContent =
-
-        formatRupee(
-            totals.Supro_Cars
-        );
-
-
-    document.getElementById(
-        "periodCash"
-    ).textContent =
-
-        formatRupee(
-            totals.Cash_Flows
-        );
-
-}
-
 
 
 /* =========================================================
@@ -2528,390 +687,146 @@ function updatePeriod(
 
 function applyFilter() {
 
-
-    const errorBox =
-        document.getElementById(
-            "error"
-        );
-
+    const errorBox = document.getElementById("error");
 
     try {
 
+        errorBox.style.display = "none";
 
-        errorBox.style.display =
-            "none";
+        const range = getSelectedRange();
 
+        const totals = calculateTotals(range);
 
-        const range =
-            getSelectedRange();
+        updateCards("period", totals);
 
+        document.getElementById("selectedPeriod").innerHTML =
+            "Selected Period: <strong>" + range.label + "</strong>";
 
-        const totals =
-            calculateTotals(
-                range
-            );
+    } catch (error) {
 
-
-        updatePeriod(
-            totals
-        );
-
-
-        document.getElementById(
-            "selectedPeriod"
-        ).innerHTML =
-
-            "Selected Period: " +
-
-            "<strong>" +
-
-            range.label +
-
-            "</strong>";
-
+        errorBox.style.display = "block";
+        errorBox.textContent = error.message;
     }
-
-    catch(error) {
-
-
-        errorBox.style.display =
-            "block";
-
-
-        errorBox.textContent =
-            error.message;
-
-    }
-
 }
 
 
-
 /* =========================================================
-   SHOW/HIDE DATE RANGE
+   SHOW / HIDE DATE RANGE
 ========================================================= */
 
 function handlePeriodChange() {
 
+    const selection = document.getElementById("periodSelect").value;
 
-    const selection =
-        document.getElementById(
-            "periodSelect"
-        ).value;
-
-
-    const dateRange =
-        document.getElementById(
-            "dateRange"
-        );
-
-
-    if (
-        selection ===
-        "range"
-    ) {
-
-        dateRange.style.display =
-            "flex";
-
-    }
-
-    else {
-
-        dateRange.style.display =
-            "none";
-
-    }
-
+    document.getElementById("dateRange").style.display =
+        selection === "range" ? "flex" : "none";
 }
 
 
-
 /* =========================================================
-   LOAD ALL DATA
+   LOAD DASHBOARD
 ========================================================= */
 
 async function loadDashboard() {
 
-
-    const loading =
-        document.getElementById(
-            "loading"
-        );
-
-
-    const success =
-        document.getElementById(
-            "success"
-        );
-
-
-    const errorBox =
-        document.getElementById(
-            "error"
-        );
-
+    const loading = document.getElementById("loading");
+    const success = document.getElementById("success");
+    const warning = document.getElementById("warning");
+    const errorBox = document.getElementById("error");
 
     try {
 
+        loading.style.display = "block";
+        success.style.display = "none";
+        warning.style.display = "none";
+        errorBox.style.display = "none";
 
-        loading.style.display =
-            "block";
+        const names = Object.keys(SHEETS);
 
-
-        success.style.display =
-            "none";
-
-
-        errorBox.style.display =
-            "none";
-
-
-
-        /* =================================================
-           LOAD SIX SHEETS
-        ================================================= */
-
-        const results =
-            await Promise.all([
-
-
-                loadOneSheet(
-                    "Buying",
-                    SHEETS.Buying.gid
-                ),
-
-
-                loadOneSheet(
-                    "Cash_Flows",
-                    SHEETS.Cash_Flows.gid
-                ),
-
-
-                loadOneSheet(
-                    "Employee",
-                    SHEETS.Employee.gid
-                ),
-
-
-                loadOneSheet(
-                    "Cooking",
-                    SHEETS.Cooking.gid
-                ),
-
-
-                loadOneSheet(
-                    "MISC",
-                    SHEETS.MISC.gid
-                ),
-
-
-                loadOneSheet(
-                    "Supro_Cars",
-                    SHEETS.Supro_Cars.gid
-                )
-
-            ]);
-
-
-
-        /* =================================================
-           SAVE DATA
-        ================================================= */
-
-        allData.Buying =
-            results[0];
-
-
-        allData.Cash_Flows =
-            results[1];
-
-
-        allData.Employee =
-            results[2];
-
-
-        allData.Cooking =
-            results[3];
-
-
-        allData.MISC =
-            results[4];
-
-
-        allData.Supro_Cars =
-            results[5];
-
-
-
-        /* =================================================
-           OVERALL TOTALS
-        =================================================
-
-           We calculate Overall directly from
-           ALL loaded records.
-
-        ================================================= */
-
-        const overallRange = {
-
-            from:
-                new Date(
-                    2000,
-                    0,
-                    1
-                ),
-
-            to:
-                new Date(
-                    2100,
-                    11,
-                    31
-                )
-
-        };
-
-
-        const overallTotals =
-            calculateTotals(
-                overallRange
-            );
-
-
-        updateOverall(
-            overallTotals
+        // allSettled: one failing sheet will NOT break the others
+        const settled = await Promise.allSettled(
+            names.map(n => loadOneSheet(n, SHEETS[n].gid))
         );
 
+        const failed = [];
 
+        settled.forEach((res, i) => {
 
-        /* =================================================
-           LATEST DATE
-        ================================================= */
+            if (res.status === "fulfilled") {
+                allData[names[i]] = res.value;
+            } else {
+                allData[names[i]] = [];
+                failed.push(res.reason && res.reason.message
+                    ? res.reason.message
+                    : names[i] + ": Unknown error");
+            }
+        });
 
-        const latest =
-            getLatestDate();
-
-
-        if (!latest) {
-
-            throw new Error(
-                "No valid date was found in Google Sheets."
-            );
-
+        if (failed.length === names.length) {
+            throw new Error(failed.join("\n\n"));
         }
 
+        // Overall totals = all records
+        const overallRange = {
+            from: new Date(2000, 0, 1),
+            to: new Date(2100, 11, 31)
+        };
 
+        updateCards("overall", calculateTotals(overallRange));
 
-        /* =================================================
-           DEFAULT DATE RANGE VALUES
-        ================================================= */
+        // Default date range inputs
+        const latest = getLatestDate();
 
-        document.getElementById(
-            "fromDate"
-        ).value =
-            formatInputDate(
-                latest
-            );
+        if (!latest) {
+            throw new Error("No valid date was found in Google Sheets.");
+        }
 
+        document.getElementById("fromDate").value = formatInputDate(latest);
+        document.getElementById("toDate").value = formatInputDate(latest);
 
-        document.getElementById(
-            "toDate"
-        ).value =
-            formatInputDate(
-                latest
-            );
-
-
-
-        /* =================================================
-           DEFAULT FILTER
-        ================================================= */
-
-        document.getElementById(
-            "periodSelect"
-        ).value =
-            "lastDate";
-
+        // Default filter
+        document.getElementById("periodSelect").value = "lastDate";
 
         handlePeriodChange();
-
-
         applyFilter();
 
+        loading.style.display = "none";
 
+        if (failed.length) {
+            warning.style.display = "block";
+            warning.textContent =
+                "Some sheets could not be loaded:\n\n" + failed.join("\n\n");
+        } else {
+            success.style.display = "block";
+        }
 
-        loading.style.display =
-            "none";
+    } catch (error) {
 
+        console.error("Dashboard Error:", error);
 
-        success.style.display =
-            "block";
+        loading.style.display = "none";
+        success.style.display = "none";
 
-    }
-
-    catch(error) {
-
-
-        console.error(
-            "Dashboard Error:",
-            error
-        );
-
-
-        loading.style.display =
-            "none";
-
-
-        success.style.display =
-            "none";
-
-
-        errorBox.style.display =
-            "block";
-
-
+        errorBox.style.display = "block";
         errorBox.textContent =
-
-            "Dashboard data load error:\n\n" +
-
-            error.message;
-
+            "Dashboard data load error:\n\n" + error.message;
     }
-
 }
 
 
-
 /* =========================================================
-   EVENTS
+   EVENTS + START
 ========================================================= */
 
-document.getElementById(
-    "periodSelect"
-).addEventListener(
-    "change",
-    handlePeriodChange
-);
+document.getElementById("periodSelect")
+    .addEventListener("change", handlePeriodChange);
 
-
-document.getElementById(
-    "applyBtn"
-).addEventListener(
-    "click",
-    applyFilter
-);
-
-
-
-/* =========================================================
-   START
-========================================================= */
+document.getElementById("applyBtn")
+    .addEventListener("click", applyFilter);
 
 loadDashboard();
 
 </script>
 
-
 </body>
-
 </html>
