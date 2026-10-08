@@ -86,6 +86,19 @@ main { margin-top: -50px; padding: 0 20px 30px; }
 .stock-note { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
 .stock-empty { background: var(--card); border: 1px dashed var(--line); border-radius: 10px; padding: 18px; color: var(--muted); font-size: 14px; text-align: center; }
 #stockError { background: #fee2e2; color: #991b1b; }
+/* Item Rate Movement */
+:root { --olive: #4d5f1f; }
+.rate-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+#rateChart { width: 100%; }
+#rateChart svg { display: block; width: 100%; height: auto; }
+.rate-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
+.rate-stat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.rate-stat .t { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+.rate-stat .v { font-size: 18px; font-weight: 800; color: var(--ink); overflow-wrap: anywhere; }
+.rate-stat .v small { font-size: 12px; font-weight: 700; }
+.rate-up { color: var(--spend) !important; }
+.rate-down { color: var(--credit) !important; }
+#rateMsg { background: var(--card); border: 1px dashed var(--line); color: var(--muted); font-size: 14px; text-align: center; padding: 18px; margin-top: 0; }
 /* Cash Credit card (light blue) - ADJUST HERE */
 .kpi.credit { background: #e8f3fc; border-color: #b9d9f2; }
 .kpi.credit .v { color: #1e6fb8; }
@@ -98,6 +111,7 @@ main { margin-top: -50px; padding: 0 20px 30px; }
 .footer { text-align: center; color: var(--muted); font-size: 12px; padding-bottom: 24px; }
 
 @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px) { .rate-stats { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
 @media (max-width: 650px) {
     .top { padding: 20px 14px 70px; }
@@ -151,6 +165,8 @@ body { overflow-x: hidden; }
     .item-row { font-size: 13px; flex-wrap: wrap; }
     .item-row b { font-size: 17px; }
     .stock-note { font-size: 11px; line-height: 1.4; }
+    .rate-card { padding: 10px; }
+    .rate-stat .v { font-size: 16px; }
 
     .msg { font-size: 13px; padding: 12px; }
     .footer { font-size: 11px; }
@@ -240,6 +256,24 @@ body { overflow-x: hidden; }
       <div class="stock-note" id="stockNote"></div>
       <div class="item-grid" id="stockGrid"></div>
       <div class="msg" id="stockError"></div>
+    </div>
+
+    <div class="sec" id="rateSection">
+      <div class="sec-title">Item Rate Movement</div>
+      <div class="filter-box">
+        <div class="filter">
+          <div class="fg">
+            <label for="rateItem">Item</label>
+            <select id="rateItem"><option value="">Loading items...</option></select>
+          </div>
+        </div>
+        <div id="rateInfo" class="stock-note" style="margin:12px 0 0"></div>
+      </div>
+      <div id="rateMsg" class="msg" style="display:block">Loading rates...</div>
+      <div class="rate-card" id="rateCard" style="display:none">
+        <div class="rate-stats" id="rateStats"></div>
+        <div id="rateChart"></div>
+      </div>
     </div>
 
     <div id="loading" class="msg">Loading data from Google Sheets...</div>
@@ -558,6 +592,7 @@ async function loadStock() {
         find("item",   [/^item\s*(name)?$/, /^item(?!.*(amount|qty|quantity|price|unit|wise))/, /product|particular|description|name/]);
         find("qty",    [/qty|quantity/, /weight/]);
         find("unit",   [/^units?$|uom|unit of/]);
+        find("rate",   [/^rate/, /rate|price|per\s*(kg|unit)/]);
 
         const missing = ["date", "item", "qty", "amount"].filter(k => col[k] === undefined);
         if (missing.length) {
@@ -568,13 +603,13 @@ async function loadStock() {
             );
         }
 
-        const names = ["date", "item", "qty", "unit", "amount"].filter(k => col[k] !== undefined)
+        const names = ["date", "item", "qty", "unit", "amount", "rate"].filter(k => col[k] !== undefined)
             .map(k => k + " = " + (labels[col[k]] || "col " + (col[k] + 1)));
-        $id("stockNote").textContent = "Columns used: " + names.join(", ") + ". Kg and Gram are added together in Kg.";
+        $id("stockNote").textContent = "Columns used: " + names.join(", ") + ". Kg and Gram are added together in Kg." + (col.rate === undefined ? " Rate = Amount ÷ Quantity." : "");
 
         stockRecords = [];
 
-        rows.forEach(r => {
+        rows.forEach((r, ri) => {
             if (!r || !r.c) return;
             const dc = r.c[col.date], ic = r.c[col.item];
             if (!dc || !ic) return;
@@ -601,7 +636,15 @@ async function loadStock() {
 
             const nu = normUnit(unitText);
 
+            /* rate: from Rate column if present, else Amount / Quantity */
+            const rc = col.rate !== undefined ? r.c[col.rate] : null;
+            let rate = null;
+            if (rc && rc.v !== null && rc.v !== undefined && rc.v !== "") rate = parseAmount(rc.v);
+            else if (qty * nu.factor > 0) rate = (ac ? parseAmount(ac.v) : 0) / (qty * nu.factor);
+
             stockRecords.push({
+                idx: ri,
+                rate: rate,
                 date: dateOnly(d),
                 key: name.toLowerCase(),
                 item: name,
@@ -618,6 +661,8 @@ async function loadStock() {
         $id("stockItem").innerHTML = '<option value="__all">All Items</option>' +
             items.map(it => '<option value="' + esc(it[0]) + '">' + esc(it[1]) + '</option>').join("");
 
+        populateRateItems(items);
+
         /* default dates */
         let latest = null;
         stockRecords.forEach(r => { if (!latest || r.date > latest) latest = r.date; });
@@ -633,6 +678,7 @@ async function loadStock() {
         err.style.display = "block";
         err.textContent = e.message;
         $id("stockSelected").innerHTML = "Selected period: <strong>—</strong>";
+        if ($id("rateMsg")) { $id("rateMsg").style.display = "block"; $id("rateMsg").textContent = "Item_Stock data could not be loaded (see error under Item Stock)."; }
     }
 }
 
@@ -707,6 +753,154 @@ $id("stockPeriod").addEventListener("change", () => {
 });
 $id("stockApply").addEventListener("click", renderStock);
 $id("stockItem").addEventListener("change", renderStock);
+
+/* =====================================================
+   ITEM RATE MOVEMENT
+   - last 10 entries where the RATE CHANGED (same rate as previous entry is skipped)
+   - line graph, deep olive green, line width 3.5
+===================================================== */
+const RATE_POINTS = 10;
+const RATE_LINE_COLOR = "#4d5f1f";   // deep olive green
+const RATE_LINE_WIDTH = 3.5;         // 3 - 4
+
+let ratePoints = [];
+
+function populateRateItems(items) {
+    $id("rateItem").innerHTML = items.map(it => '<option value="' + esc(it[0]) + '">' + esc(it[1]) + '</option>').join("");
+    renderRate();
+}
+
+function getRatePoints(key) {
+    const list = stockRecords
+        .filter(r => r.key === key && r.rate !== null && isFinite(r.rate) && r.rate > 0)
+        .sort((a, b) => (a.date - b.date) || (a.idx - b.idx));
+
+    const changes = [];
+    let prev = null;
+    list.forEach(r => {
+        const rt = Math.round(r.rate * 100) / 100;
+        if (prev === null || Math.abs(rt - prev) > 0.005) {
+            changes.push({ date: r.date, rate: rt });
+            prev = rt;
+        }
+    });
+    return changes.slice(-RATE_POINTS);
+}
+
+const fmtRate = v => "₹" + Number(v).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+
+function renderRate() {
+    const msg = $id("rateMsg"), card = $id("rateCard");
+    const key = $id("rateItem").value;
+
+    if (!key) {
+        card.style.display = "none";
+        msg.style.display = "block";
+        msg.textContent = "No items found in Item_Stock.";
+        return;
+    }
+
+    ratePoints = getRatePoints(key);
+
+    if (!ratePoints.length) {
+        card.style.display = "none";
+        msg.style.display = "block";
+        msg.textContent = "No rate found for this item.";
+        $id("rateInfo").textContent = "";
+        return;
+    }
+
+    msg.style.display = "none";
+    card.style.display = "block";
+
+    const n = ratePoints.length;
+    $id("rateInfo").textContent = "Showing last " + n + " rate change" + (n > 1 ? "s" : "") +
+        " (entries where the rate stayed the same are skipped).";
+
+    const last = ratePoints[n - 1], prev = n > 1 ? ratePoints[n - 2] : null;
+    const rates = ratePoints.map(p => p.rate);
+    let change = '<div class="v">—</div>';
+    if (prev) {
+        const d = last.rate - prev.rate, pct = (d / prev.rate) * 100;
+        const cls = d > 0 ? "rate-up" : "rate-down";
+        change = '<div class="v ' + cls + '">' + (d > 0 ? "▲ +" : "▼ −") + fmtRate(Math.abs(d)) +
+                 ' <small>(' + (d > 0 ? "+" : "−") + Math.abs(pct).toFixed(1) + '%)</small></div>';
+    }
+
+    $id("rateStats").innerHTML =
+        '<div class="rate-stat"><div class="t">Latest Rate</div><div class="v">' + fmtRate(last.rate) + '</div></div>' +
+        '<div class="rate-stat"><div class="t">Change vs Previous</div>' + change + '</div>' +
+        '<div class="rate-stat"><div class="t">Lowest</div><div class="v">' + fmtRate(Math.min.apply(null, rates)) + '</div></div>' +
+        '<div class="rate-stat"><div class="t">Highest</div><div class="v">' + fmtRate(Math.max.apply(null, rates)) + '</div></div>';
+
+    drawRateChart();
+}
+
+function drawRateChart() {
+    const box = $id("rateChart");
+    if (!ratePoints.length || !box.offsetParent) return;
+
+    const pts = ratePoints, n = pts.length;
+    const W = Math.max(box.clientWidth, 260);
+    const H = W < 500 ? 250 : 300;
+    const m = { l: W < 500 ? 50 : 62, r: 18, t: 30, b: 40 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+
+    let lo = Math.min.apply(null, pts.map(p => p.rate));
+    let hi = Math.max.apply(null, pts.map(p => p.rate));
+    if (hi === lo) { hi += 1; lo -= 1; }
+    const pad = (hi - lo) * 0.15;
+    lo = Math.max(0, lo - pad); hi = hi + pad;
+
+    const X = i => n === 1 ? m.l + iw / 2 : m.l + (iw * i) / (n - 1);
+    const Y = v => m.t + ih - ((v - lo) / (hi - lo)) * ih;
+
+    const step = n > 1 ? iw / (n - 1) : iw;
+    const every = step >= 56 ? 1 : (step >= 30 ? 2 : 3);
+    const show = i => (n - 1 - i) % every === 0;
+
+    let g = "";
+
+    /* grid + y labels */
+    for (let k = 0; k <= 4; k++) {
+        const v = lo + ((hi - lo) * k) / 4, y = Y(v);
+        g += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y + '" y2="' + y + '" stroke="#d3e9da" stroke-width="1"/>';
+        g += '<text x="' + (m.l - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" font-weight="700" fill="#5f7468">' +
+             Number(v).toLocaleString("en-IN", { maximumFractionDigits: 0 }) + '</text>';
+    }
+
+    /* line */
+    if (n > 1) {
+        g += '<polyline fill="none" stroke="' + RATE_LINE_COLOR + '" stroke-width="' + RATE_LINE_WIDTH +
+             '" stroke-linecap="round" stroke-linejoin="round" points="' +
+             pts.map((p, i) => X(i).toFixed(1) + "," + Y(p.rate).toFixed(1)).join(" ") + '"/>';
+    }
+
+    /* points, value labels, date labels */
+    pts.forEach((p, i) => {
+        const x = X(i), y = Y(p.rate), isLast = i === n - 1;
+        g += '<circle cx="' + x + '" cy="' + y + '" r="' + (isLast ? 6 : 5) + '" fill="' + (isLast ? RATE_LINE_COLOR : "#fff") +
+             '" stroke="' + RATE_LINE_COLOR + '" stroke-width="3"><title>' + showDate(p.date) + " — " + fmtRate(p.rate) + '</title></circle>';
+        if (show(i)) {
+            g += '<text x="' + x + '" y="' + (y - 12) + '" text-anchor="middle" font-size="12" font-weight="800" fill="#17261e">' +
+                 Number(p.rate).toLocaleString("en-IN", { maximumFractionDigits: 2 }) + '</text>';
+            g += '<text x="' + x + '" y="' + (H - m.b + 20) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#5f7468">' +
+                 pad2(p.date.getDate()) + "/" + pad2(p.date.getMonth() + 1) + '</text>';
+        }
+    });
+
+    box.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Rate movement line graph">' + g + '</svg>';
+}
+
+const pad2 = n => String(n).padStart(2, "0");
+
+$id("rateItem").addEventListener("change", renderRate);
+
+let rateResizeTimer = null;
+window.addEventListener("resize", () => {
+    clearTimeout(rateResizeTimer);
+    rateResizeTimer = setTimeout(drawRateChart, 150);
+});
 
 loadStock();
 </script>
