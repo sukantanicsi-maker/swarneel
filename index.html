@@ -77,6 +77,8 @@ main { margin-top: -50px; padding: 0 20px 30px; }
 #stockSection, #stockSection * { font-weight: 700; }
 #stockSection .item-name, #stockSection .item-row b { font-weight: 800; }
 /* Item Stock cards */
+.item-row.stk b { color: var(--credit); }
+.item-row b.neg { color: var(--spend) !important; }
 .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .item-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
 .item-name { font-size: 15px; font-weight: 800; color: var(--forest); padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
@@ -309,6 +311,29 @@ const ITEMS = [
 let allData = {};
 Object.keys(SHEETS).forEach(k => allData[k] = []);
 let cb = 0;
+let stockRecords = [];        // rows of the Item_Buy tab
+let sellRecords = [];         // rows of the Item_Sell tab
+let dashboardReady = false;   // true after the 6 expense sheets are loaded
+
+/* =====================================================
+   LAST DATE ENTRY
+   = the newest date whose row has an AMOUNT filled in.
+   Rows that only have a date (amount blank / 0) are ignored,
+   so pre-filled future dates do not count.
+   Checked in: Buying, Cash_Flows, Employee, Cooking, MISC, Supro_Cars
+   (+ Item_Buy / Item_Sell rows that have an amount, if flag below is true)
+===================================================== */
+const INCLUDE_ITEM_TABS_IN_LAST_DATE = true;
+
+function globalLatest() {
+    let latest = getLatestDate();       // expense sheets (already amount-filled rows only)
+    if (INCLUDE_ITEM_TABS_IN_LAST_DATE) {
+        stockRecords.concat(sellRecords).forEach(r => {
+            if (r.hasEntry && (!latest || r.date > latest)) latest = r.date;
+        });
+    }
+    return latest;
+}
 
 /* ---------- build card markup ---------- */
 function buildSection(prefix) {
@@ -410,7 +435,11 @@ async function loadOneSheet(name, gid) {
         if (!dc) return;
         const d = parseDate(dc.v, dc.f);
         if (!d) return;
-        out.push({ date: dateOnly(d), amount: ac ? parseAmount(ac.v) : 0 });
+        /* a row counts only if the Amount cell is filled (blank / 0 = no entry) */
+        if (!ac || ac.v === null || ac.v === undefined || ac.v === "") return;
+        const amt = parseAmount(ac.v);
+        if (!amt) return;
+        out.push({ date: dateOnly(d), amount: amt });
     });
     return out;
 }
@@ -426,7 +455,7 @@ function getLatestDate() {
 
 function getSelectedRange() {
     const sel = document.getElementById("periodSelect").value;
-    const latest = getLatestDate();
+    const latest = globalLatest();
     if (!latest) throw new Error("No valid date was found in Google Sheets.");
 
     if (sel === "lastDate")
@@ -512,13 +541,14 @@ async function loadDashboard() {
 
         updateCards("overall", calculateTotals({ from: new Date(2000, 0, 1), to: new Date(2100, 11, 31) }));
 
-        const latest = getLatestDate();
+        const latest = globalLatest();
         if (!latest) throw new Error("No valid date was found in Google Sheets.");
 
         $("fromDate").value = inputDate(latest);
         $("toDate").value = inputDate(latest);
         $("periodSelect").value = "lastDate";
         handlePeriodChange();
+        dashboardReady = true;
         applyFilter();
 
         $("loading").style.display = "none";
@@ -542,16 +572,15 @@ document.getElementById("applyBtn").addEventListener("click", applyFilter);
 loadDashboard();
 
 /* =====================================================
-   ITEM STOCK  (tab: "Item_Stock")
+   ITEM STOCK  (tab: "Item_Buy")
    - Header row = first row of STOCK_RANGE
    - Columns are found by heading name (Date, Item, Quantity, Unit, Amount)
    - If headings differ, set STOCK_COLUMNS manually (0 = first column of range)
 ===================================================== */
-const STOCK_SHEET_NAME = "Item_Stock";
+const STOCK_SHEET_NAME = "Item_Buy";
+const SELL_SHEET_NAME  = "Item_Sell";
 const STOCK_RANGE = "B3:Z";
 const STOCK_COLUMNS = {};   // example: { date: 0, item: 1, qty: 2, unit: 3, amount: 4 }
-
-let stockRecords = [];
 
 const $id = id => document.getElementById(id);
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -569,106 +598,142 @@ function normUnit(u) {
 
 const fmtQty = q => (Math.round(q * 1000) / 1000).toLocaleString("en-IN", { maximumFractionDigits: 3 });
 
+/* Read one tab (Item_Buy or Item_Sell). Same table layout in both. */
+async function readItemTab(tab) {
+    const rows = await loadSheetData(tab, null, { sheet: tab, range: STOCK_RANGE, headers: 1 });
+    const labels = (rows.cols || []).map(c => String(c.label || "").trim().toLowerCase());
+
+    const col = Object.assign({}, STOCK_COLUMNS);
+    const used = new Set(Object.values(col));
+    const find = (key, list) => {
+        if (col[key] !== undefined) return;
+        for (const re of list) {
+            const i = labels.findIndex((l, idx) => !used.has(idx) && re.test(l));
+            if (i >= 0) { col[key] = i; used.add(i); return; }
+        }
+    };
+    /* Amount first, so "Item Wise Amount" is never mistaken for the Item column */
+    find("amount", [/amount/, /total|cost|price|value/]);
+    find("date",   [/date/]);
+    find("item",   [/^item\s*(name)?$/, /^item(?!.*(amount|qty|quantity|price|unit|wise))/, /product|particular|description|name/]);
+    find("qty",    [/qty|quantity/, /weight/]);
+    find("unit",   [/^units?$|uom|unit of/]);
+    find("rate",   [/^rate/, /rate|price|per\s*(kg|unit)/]);
+
+    const missing = ["date", "item", "qty"].filter(k => col[k] === undefined);
+    if (missing.length) {
+        throw new Error(
+            tab + ": could not find column(s): " + missing.join(", ") + ".\n" +
+            "Headings found in row 3: " + (labels.filter(Boolean).join(" | ") || "(none)") + "\n" +
+            "Fix: change STOCK_RANGE / STOCK_COLUMNS in the code."
+        );
+    }
+
+    const names = ["date", "item", "qty", "unit", "amount", "rate"].filter(k => col[k] !== undefined)
+        .map(k => k + " = " + (labels[col[k]] || "col " + (col[k] + 1)));
+
+    const records = [];
+
+    rows.forEach((r, ri) => {
+        if (!r || !r.c) return;
+        const dc = r.c[col.date], ic = r.c[col.item];
+        if (!dc || !ic) return;
+
+        const d = parseDate(dc.v, dc.f);
+        if (!d) return;
+
+        const name = String(ic.v !== null && ic.v !== undefined ? ic.v : (ic.f || "")).trim();
+        if (!name || /^select\b/i.test(name)) return;      // "Select" = no entry that day
+
+        const qc = r.c[col.qty], ac = col.amount !== undefined ? r.c[col.amount] : null;
+        const uc = col.unit !== undefined ? r.c[col.unit] : null;
+
+        let unitText = uc ? String(uc.v !== null && uc.v !== undefined ? uc.v : (uc.f || "")) : "";
+        let qty = 0;
+
+        if (qc) {
+            if (typeof qc.v === "number") qty = qc.v;
+            else {
+                const m = String(qc.v !== null && qc.v !== undefined ? qc.v : (qc.f || "")).replace(/,/g, "").match(/^\s*(-?[\d.]+)\s*([a-zA-Z]*)/);
+                if (m) { qty = parseFloat(m[1]) || 0; if (!unitText) unitText = m[2]; }
+            }
+        }
+
+        const nu = normUnit(unitText);
+        const amount = ac ? parseAmount(ac.v) : 0;
+
+        /* rate: from Rate column if present, else Amount / Quantity */
+        const rc = col.rate !== undefined ? r.c[col.rate] : null;
+        let rate = null;
+        if (rc && rc.v !== null && rc.v !== undefined && rc.v !== "") rate = parseAmount(rc.v);
+        else if (qty * nu.factor > 0) rate = amount / (qty * nu.factor);
+
+        const hasEntry = col.amount !== undefined ? amount > 0 : qty > 0;
+
+        records.push({
+            hasEntry: hasEntry,
+            idx: ri, rate: rate, date: dateOnly(d),
+            key: name.toLowerCase(), item: name,
+            qty: qty * nu.factor, unit: nu.unit, amount: amount
+        });
+    });
+
+    return { records: records, names: names };
+}
+
 async function loadStock() {
     const err = $id("stockError");
     try {
         err.style.display = "none";
 
-        const rows = await loadSheetData(STOCK_SHEET_NAME, null, { sheet: STOCK_SHEET_NAME, range: STOCK_RANGE, headers: 1 });
-        const labels = (rows.cols || []).map(c => String(c.label || "").trim().toLowerCase());
+        const res = await Promise.allSettled([
+            readItemTab(STOCK_SHEET_NAME),
+            readItemTab(SELL_SHEET_NAME)
+        ]);
 
-        const col = Object.assign({}, STOCK_COLUMNS);
-        const used = new Set(Object.values(col));
-        const find = (key, list) => {
-            if (col[key] !== undefined) return;
-            for (const re of list) {
-                const i = labels.findIndex((l, idx) => !used.has(idx) && re.test(l));
-                if (i >= 0) { col[key] = i; used.add(i); return; }
-            }
-        };
-        /* Amount first, so "Item Wise Amount" is never mistaken for the Item column */
-        find("amount", [/amount/, /total|cost|price|value/]);
-        find("date",   [/date/]);
-        find("item",   [/^item\s*(name)?$/, /^item(?!.*(amount|qty|quantity|price|unit|wise))/, /product|particular|description|name/]);
-        find("qty",    [/qty|quantity/, /weight/]);
-        find("unit",   [/^units?$|uom|unit of/]);
-        find("rate",   [/^rate/, /rate|price|per\s*(kg|unit)/]);
+        if (res[0].status === "rejected") throw res[0].reason;
 
-        const missing = ["date", "item", "qty", "amount"].filter(k => col[k] === undefined);
-        if (missing.length) {
-            throw new Error(
-                "Item_Stock: could not find column(s): " + missing.join(", ") + ".\n" +
-                "Headings found in row 3: " + (labels.filter(Boolean).join(" | ") || "(none)") + "\n" +
-                "Fix: change STOCK_RANGE / STOCK_COLUMNS in the code."
-            );
-        }
+        stockRecords = res[0].value.records;      // Item_Buy
+        sellRecords = [];
+        let warn = "";
 
-        const names = ["date", "item", "qty", "unit", "amount", "rate"].filter(k => col[k] !== undefined)
-            .map(k => k + " = " + (labels[col[k]] || "col " + (col[k] + 1)));
-        $id("stockNote").textContent = "Columns used: " + names.join(", ") + ". Kg and Gram are added together in Kg." + (col.rate === undefined ? " Rate = Amount ÷ Quantity." : "");
+        if (res[1].status === "fulfilled") sellRecords = res[1].value.records;   // Item_Sell
+        else warn = "\n\nWARNING: " + SELL_SHEET_NAME + " could not be read, so nothing was subtracted.\n" +
+                    (res[1].reason && res[1].reason.message ? res[1].reason.message : "");
 
-        stockRecords = [];
+        $id("stockNote").textContent =
+            "Stock = " + STOCK_SHEET_NAME + " − " + SELL_SHEET_NAME + " (date wise). " +
+            STOCK_SHEET_NAME + " columns: " + res[0].value.names.join(", ") + ". " +
+            (res[1].status === "fulfilled" ? SELL_SHEET_NAME + " columns: " + res[1].value.names.join(", ") + ". " : "") +
+            "Kg and Gram are added together in Kg.";
 
-        rows.forEach((r, ri) => {
-            if (!r || !r.c) return;
-            const dc = r.c[col.date], ic = r.c[col.item];
-            if (!dc || !ic) return;
+        if (warn) { err.style.display = "block"; err.textContent = warn.trim(); }
 
-            const d = parseDate(dc.v, dc.f);
-            if (!d) return;
+        /* item dropdowns */
+        const seen = new Map(), seenBuy = new Map();
+        stockRecords.forEach(r => { if (!seenBuy.has(r.key)) seenBuy.set(r.key, r.item); if (!seen.has(r.key)) seen.set(r.key, r.item); });
+        sellRecords.forEach(r => { if (!seen.has(r.key)) seen.set(r.key, r.item); });
+        const byName = (x, y) => x[1].localeCompare(y[1]);
+        const items = Array.from(seen.entries()).sort(byName);
+        const buyItems = Array.from(seenBuy.entries()).sort(byName);
 
-            const name = String(ic.v !== null && ic.v !== undefined ? ic.v : (ic.f || "")).trim();
-            if (!name || /^select\b/i.test(name)) return;      // "Select" = no entry that day
-
-            const qc = r.c[col.qty], ac = r.c[col.amount];
-            const uc = col.unit !== undefined ? r.c[col.unit] : null;
-
-            let unitText = uc ? String(uc.v !== null && uc.v !== undefined ? uc.v : (uc.f || "")) : "";
-            let qty = 0;
-
-            if (qc) {
-                if (typeof qc.v === "number") qty = qc.v;
-                else {
-                    const m = String(qc.v !== null && qc.v !== undefined ? qc.v : (qc.f || "")).replace(/,/g, "").match(/^\s*(-?[\d.]+)\s*([a-zA-Z]*)/);
-                    if (m) { qty = parseFloat(m[1]) || 0; if (!unitText) unitText = m[2]; }
-                }
-            }
-
-            const nu = normUnit(unitText);
-
-            /* rate: from Rate column if present, else Amount / Quantity */
-            const rc = col.rate !== undefined ? r.c[col.rate] : null;
-            let rate = null;
-            if (rc && rc.v !== null && rc.v !== undefined && rc.v !== "") rate = parseAmount(rc.v);
-            else if (qty * nu.factor > 0) rate = (ac ? parseAmount(ac.v) : 0) / (qty * nu.factor);
-
-            stockRecords.push({
-                idx: ri,
-                rate: rate,
-                date: dateOnly(d),
-                key: name.toLowerCase(),
-                item: name,
-                qty: qty * nu.factor,
-                unit: nu.unit,
-                amount: ac ? parseAmount(ac.v) : 0
-            });
-        });
-
-        /* item dropdown */
-        const seen = new Map();
-        stockRecords.forEach(r => { if (!seen.has(r.key)) seen.set(r.key, r.item); });
-        const items = Array.from(seen.entries()).sort((a, b) => a[1].localeCompare(b[1]));
         $id("stockItem").innerHTML = '<option value="__all">All Items</option>' +
             items.map(it => '<option value="' + esc(it[0]) + '">' + esc(it[1]) + '</option>').join("");
 
-        populateRateItems(items);
+        populateRateItems(buyItems);      // rate movement uses purchase rates
 
-        /* default dates */
-        let latest = null;
-        stockRecords.forEach(r => { if (!latest || r.date > latest) latest = r.date; });
-        if (latest) {
-            $id("stockFrom").value = inputDate(latest);
-            $id("stockTo").value = inputDate(latest);
+        /* default dates = newest date in any sheet */
+        const gl = globalLatest();
+        if (gl) {
+            $id("stockFrom").value = inputDate(gl);
+            $id("stockTo").value = inputDate(gl);
+            if (dashboardReady) {
+                if ($id("periodSelect").value !== "range") {
+                    $id("fromDate").value = inputDate(gl);
+                    $id("toDate").value = inputDate(gl);
+                }
+                applyFilter();      // "Last Date Entry" may have moved because of Item_Buy / Item_Sell
+            }
         }
 
         renderStock();
@@ -678,7 +743,7 @@ async function loadStock() {
         err.style.display = "block";
         err.textContent = e.message;
         $id("stockSelected").innerHTML = "Selected period: <strong>—</strong>";
-        if ($id("rateMsg")) { $id("rateMsg").style.display = "block"; $id("rateMsg").textContent = "Item_Stock data could not be loaded (see error under Item Stock)."; }
+        if ($id("rateMsg")) { $id("rateMsg").style.display = "block"; $id("rateMsg").textContent = "Item_Buy data could not be loaded (see error under Item Stock)."; }
     }
 }
 
@@ -686,9 +751,8 @@ function stockRange() {
     const sel = $id("stockPeriod").value;
     if (sel === "all") return { from: null, to: null, label: "All Dates" };
 
-    let latest = null;
-    stockRecords.forEach(r => { if (!latest || r.date > latest) latest = r.date; });
-    if (!latest) throw new Error("No valid stock entry date was found.");
+    const latest = globalLatest();
+    if (!latest) throw new Error("No valid date was found.");
 
     if (sel === "lastDate")
         return { from: latest, to: latest, label: "Last Date Entry — " + showDate(latest) };
@@ -711,31 +775,44 @@ function stockRange() {
 function renderStock() {
     const err = $id("stockError");
     try {
-        err.style.display = "none";
+        const keepWarn = /^WARNING/.test(err.textContent || "");
+        if (!keepWarn) err.style.display = "none";
 
         const range = stockRange();
         const itemKey = $id("stockItem").value;
         const map = new Map();
 
-        stockRecords.forEach(r => {
+        const add = (r, kind) => {
             if (range.from && (r.date < range.from || r.date > range.to)) return;
             if (itemKey !== "__all" && r.key !== itemKey) return;
-
             let it = map.get(r.key);
-            if (!it) { it = { name: r.item, amount: 0, units: {} }; map.set(r.key, it); }
-            it.amount += r.amount;
-            it.units[r.unit] = (it.units[r.unit] || 0) + r.qty;
-        });
+            if (!it) { it = { name: r.item, units: {} }; map.set(r.key, it); }
+            const u = it.units[r.unit] || (it.units[r.unit] = { buy: 0, sell: 0, buyAmt: 0 });
+            if (kind === "buy") { u.buy += r.qty; u.buyAmt += r.amount; }
+            else u.sell += r.qty;
+        };
+        stockRecords.forEach(r => add(r, "buy"));
+        sellRecords.forEach(r => add(r, "sell"));
 
         const list = Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
 
+        const txt = (units, fn) => Object.keys(units).map(u => fmtQty(fn(units[u])) + (u ? " " + u : "")).join(" + ");
+
         $id("stockGrid").innerHTML = list.length
             ? list.map(it => {
-                const qtyText = Object.keys(it.units).map(u => fmtQty(it.units[u]) + (u ? " " + u : "")).join(" + ");
+                const U = it.units;
+                let value = 0;
+                Object.keys(U).forEach(k => {
+                    const x = U[k];
+                    if (x.buy > 0) value += (x.buy - x.sell) * (x.buyAmt / x.buy);   // net qty x average buy rate
+                });
+                const neg = Object.keys(U).some(k => U[k].buy - U[k].sell < -0.0005);
                 return '<div class="item-card">' +
                     '<div class="item-name">' + esc(it.name) + '</div>' +
-                    '<div class="item-row"><span>Total Quantity</span><b class="num">' + esc(qtyText) + '</b></div>' +
-                    '<div class="item-row amt"><span>Total Amount</span><b class="num">' + rupee(it.amount) + '</b></div>' +
+                    '<div class="item-row"><span>Bought</span><b class="num">' + esc(txt(U, x => x.buy)) + '</b></div>' +
+                    '<div class="item-row"><span>Sold</span><b class="num">' + esc(txt(U, x => x.sell)) + '</b></div>' +
+                    '<div class="item-row stk"><span>In Stock</span><b class="num' + (neg ? " neg" : "") + '">' + esc(txt(U, x => x.buy - x.sell)) + '</b></div>' +
+                    '<div class="item-row amt"><span>Stock Value</span><b class="num">' + rupee(value) + '</b></div>' +
                   '</div>';
               }).join("")
             : '<div class="stock-empty">No stock entries in this period.</div>';
@@ -796,7 +873,7 @@ function renderRate() {
     if (!key) {
         card.style.display = "none";
         msg.style.display = "block";
-        msg.textContent = "No items found in Item_Stock.";
+        msg.textContent = "No items found in Item_Buy.";
         return;
     }
 
