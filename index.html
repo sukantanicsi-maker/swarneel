@@ -46,14 +46,14 @@ select, input[type=date] {
 }
 select:focus, input:focus, button:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
 input[type=date] { color-scheme: light; }
-#dateRange, #stockDateRange { display: none; gap: 10px; flex-wrap: wrap; }
+#dateRange, #stockDateRange, #empDateRange { display: none; gap: 10px; flex-wrap: wrap; }
 button {
     height: 40px; padding: 0 22px; border: 0; border-radius: 8px; cursor: pointer;
     background: var(--leaf); color: #fff; font-size: 14px; font-weight: 600;
 }
 button:hover { background: #33865a; }
-#selectedPeriod, #stockSelected { margin-top: 12px; font-size: 13px; color: var(--muted); }
-#selectedPeriod strong, #stockSelected strong { color: var(--forest); font-weight: 600; }
+#selectedPeriod, #stockSelected, #empSelected { margin-top: 12px; font-size: 13px; color: var(--muted); }
+#selectedPeriod strong, #stockSelected strong, #empSelected strong { color: var(--forest); font-weight: 600; }
 
 /* MAIN */
 main { margin-top: -50px; padding: 0 20px 30px; }
@@ -88,6 +88,19 @@ main { margin-top: -50px; padding: 0 20px 30px; }
 .stock-note { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
 .stock-empty { background: var(--card); border: 1px dashed var(--line); border-radius: 10px; padding: 18px; color: var(--muted); font-size: 14px; text-align: center; }
 #stockError { background: #fee2e2; color: #991b1b; }
+/* Employee segment */
+.emp-total { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 8px; }
+.emp-link-row { margin: 4px 2px 0; }
+#empDetailsLink { display: inline-block; color: var(--leaf); font-weight: 700; font-size: 14px; text-decoration: underline; padding: 6px 0; }
+#empDetailsLink:hover { color: var(--forest); }
+.emp-total .kpi .v { font-size: 22px; }
+.emp-table-wrap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-top: 14px; overflow-x: auto; }
+.emp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.emp-table th { text-align: left; background: var(--mint); color: var(--forest); padding: 10px 12px; font-weight: 700; white-space: nowrap; }
+.emp-table td { padding: 9px 12px; border-top: 1px solid var(--line); }
+.emp-table td.r, .emp-table th.r { text-align: right; }
+.emp-table tfoot td { font-weight: 800; background: var(--paper); }
+#empError { background: #fee2e2; color: #991b1b; }
 /* Item Rate Movement */
 :root { --olive: #4d5f1f; }
 .rate-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
@@ -120,7 +133,7 @@ main { margin-top: -50px; padding: 0 20px 30px; }
     main { padding: 0 14px 24px; }
     .filter { flex-direction: column; align-items: stretch; }
     select, input[type=date], button { width: 100%; }
-    #dateRange, #stockDateRange { flex-direction: column; }
+    #dateRange, #stockDateRange, #empDateRange { flex-direction: column; }
     .big .v { font-size: 28px; }
     .big .t { font-size: 14px; }
     .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
@@ -278,6 +291,39 @@ body { overflow-x: hidden; }
       </div>
     </div>
 
+    <div class="sec" id="empSection">
+      <div class="sec-title">Employee</div>
+      <div class="filter-box">
+        <div class="filter">
+          <div class="fg">
+            <label for="empName">Employee</label>
+            <select id="empName"><option value="__all">All Employees</option></select>
+          </div>
+          <div class="fg">
+            <label for="empPeriod">Select period</label>
+            <select id="empPeriod">
+              <option value="lastDate">Last Date Entry</option>
+              <option value="last7">Last 7 Days</option>
+              <option value="last15">Last 15 Days</option>
+              <option value="all">All Dates</option>
+              <option value="range">Date Range</option>
+            </select>
+          </div>
+          <div id="empDateRange">
+            <div class="fg"><label for="empFrom">From date</label><input type="date" id="empFrom"></div>
+            <div class="fg"><label for="empTo">To date</label><input type="date" id="empTo"></div>
+          </div>
+          <button id="empApply">Apply</button>
+        </div>
+        <div id="empSelected">Selected period: <strong>Loading...</strong></div>
+      </div>
+      <div class="stock-note" id="empNote"></div>
+      <div class="emp-total" id="empTotal"></div>
+      <div class="emp-link-row"><a href="#" id="empDetailsLink" role="button">View details</a></div>
+      <div class="emp-table-wrap" id="empTableWrap" style="display:none"></div>
+      <div class="msg" id="empError"></div>
+    </div>
+
     <div id="loading" class="msg">Loading data from Google Sheets...</div>
     <div id="success" class="msg">Data loaded successfully.</div>
     <div id="warning" class="msg"></div>
@@ -313,6 +359,8 @@ Object.keys(SHEETS).forEach(k => allData[k] = []);
 let cb = 0;
 let stockRecords = [];        // rows of the Item_Buy tab
 let sellRecords = [];         // rows of the Item_Sell tab
+let empRecords = [];          // rows of the Employee tab (detailed)
+let empLoaded = false;
 let dashboardReady = false;   // true after the 6 expense sheets are loaded
 
 /* =====================================================
@@ -550,6 +598,11 @@ async function loadDashboard() {
         handlePeriodChange();
         dashboardReady = true;
         applyFilter();
+        if (empLoaded) {
+            $("empFrom").value = inputDate(latest);
+            $("empTo").value = inputDate(latest);
+            renderEmployee();
+        }
 
         $("loading").style.display = "none";
 
@@ -733,6 +786,7 @@ async function loadStock() {
                     $id("toDate").value = inputDate(gl);
                 }
                 applyFilter();      // "Last Date Entry" may have moved because of Item_Buy / Item_Sell
+                if (empLoaded) renderEmployee();
             }
         }
 
@@ -980,6 +1034,210 @@ window.addEventListener("resize", () => {
 });
 
 loadStock();
+
+/* =====================================================
+   EMPLOYEE  (tab: "Employee", gid from SHEETS)
+   - Table starts at B3 (heading row), same as other tabs
+   - Headings are matched by name (Date, Name/Employee, Amount, ...)
+   - If a heading is not found: B = Date, C = Name/Details, D = Amount
+   - Only rows with an Amount entry are counted
+===================================================== */
+const EMP_RANGE = "B3:Z";
+const EMP_COLUMNS = {};     // example: { date: 0, name: 1, amount: 2 }  (0 = column B)
+
+async function loadEmployee() {
+    const err = $id("empError");
+    try {
+        err.style.display = "none";
+
+        const rows = await loadSheetData("Employee", SHEETS.Employee, { range: EMP_RANGE, headers: 1 });
+        const labels = (rows.cols || []).map(c => String(c.label || "").trim().toLowerCase());
+
+        const col = Object.assign({}, EMP_COLUMNS);
+        const used = new Set(Object.values(col));
+        const find = (key, list) => {
+            if (col[key] !== undefined) return;
+            for (const re of list) {
+                const i = labels.findIndex((l, idx) => !used.has(idx) && re.test(l));
+                if (i >= 0) { col[key] = i; used.add(i); return; }
+            }
+        };
+        find("amount", [/amount/, /total|salary|paid|payment/]);
+        find("date",   [/date/]);
+        find("name",   [/employee|staff|worker|^name/, /name|particular|description|details/]);
+
+        let guessed = [];
+        if (col.date === undefined)   { col.date = 0;   guessed.push("date"); }
+        if (col.name === undefined)   { col.name = 1;   guessed.push("name"); }
+        if (col.amount === undefined) { col.amount = 2; guessed.push("amount"); }
+
+        /* every other filled column is shown as extra detail in the table */
+        const extraCols = [];
+        labels.forEach((l, i) => {
+            if (l && !/remark/.test(l) && i !== col.date && i !== col.name && i !== col.amount) extraCols.push({ i: i, label: (rows.cols[i].label || "").trim() });
+        });
+        empExtra = extraCols.slice(0, 2);
+
+        const lab = k => labels[col[k]] || ("column " + String.fromCharCode(66 + col[k]));
+        $id("empNote").textContent = "Columns used: date = " + lab("date") + ", name = " + lab("name") + ", amount = " + lab("amount") +
+            (guessed.length ? " (" + guessed.join(", ") + " guessed by position: B = date, C = name, D = amount)" : "") +
+            ". Only rows with an amount are counted.";
+
+        empRecords = [];
+
+        rows.forEach(r => {
+            if (!r || !r.c) return;
+            const dc = r.c[col.date], nc = r.c[col.name], ac = r.c[col.amount];
+            if (!dc || !ac || ac.v === null || ac.v === undefined || ac.v === "") return;
+
+            const d = parseDate(dc.v, dc.f);
+            if (!d) return;
+
+            const amount = parseAmount(ac.v);
+            if (!amount) return;
+
+            let nm = nc ? String(nc.v !== null && nc.v !== undefined ? nc.v : (nc.f || "")).trim() : "";
+            if (/^select\b/i.test(nm)) return;
+            if (!nm) nm = "(No name)";
+
+            const extra = empExtra.map(x => {
+                const c = r.c[x.i];
+                return c ? String(c.f !== null && c.f !== undefined ? c.f : (c.v !== null && c.v !== undefined ? c.v : "")) : "";
+            });
+
+            empRecords.push({ date: dateOnly(d), key: nm.toLowerCase(), name: nm, amount: amount, extra: extra });
+        });
+
+        empLoaded = true;
+
+        /* employee dropdown */
+        const seen = new Map();
+        empRecords.forEach(r => { if (!seen.has(r.key)) seen.set(r.key, r.name); });
+        const names = Array.from(seen.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+        $id("empName").innerHTML = '<option value="__all">All Employees</option>' +
+            names.map(n => '<option value="' + esc(n[0]) + '">' + esc(n[1]) + '</option>').join("");
+
+        const gl = globalLatest();
+        if (gl) { $id("empFrom").value = inputDate(gl); $id("empTo").value = inputDate(gl); }
+
+        renderEmployee();
+
+    } catch (e) {
+        console.error("Employee Error:", e);
+        err.style.display = "block";
+        err.textContent = e.message;
+        $id("empSelected").innerHTML = "Selected period: <strong>—</strong>";
+    }
+}
+let empExtra = [];
+let empShowDetails = false;
+
+function empRange() {
+    const sel = $id("empPeriod").value;
+    if (sel === "all") return { from: null, to: null, label: "All Dates" };
+
+    const latest = globalLatest();
+    if (!latest) throw new Error("No valid date was found.");
+
+    if (sel === "lastDate")
+        return { from: latest, to: latest, label: "Last Date Entry — " + showDate(latest) };
+
+    if (sel === "last7" || sel === "last15") {
+        const days = sel === "last7" ? 7 : 15;
+        const from = new Date(latest);
+        from.setDate(from.getDate() - (days - 1));
+        return { from: dateOnly(from), to: latest, label: "Last " + days + " Days — " + showDate(from) + " to " + showDate(latest) };
+    }
+
+    const fv = $id("empFrom").value, tv = $id("empTo").value;
+    if (!fv || !tv) throw new Error("Please select both From Date and To Date.");
+    const f = fv.split("-").map(Number), t = tv.split("-").map(Number);
+    const from = new Date(f[0], f[1] - 1, f[2]), to = new Date(t[0], t[1] - 1, t[2]);
+    if (from > to) throw new Error("From Date cannot be later than To Date.");
+    return { from, to, label: "Date Range — " + showDate(from) + " to " + showDate(to) };
+}
+
+function renderEmployee() {
+    const err = $id("empError");
+    if (!empLoaded) return;
+
+    /* "Last Date / Last 7 / 15 Days" need the main sheets to be loaded first */
+    if (!dashboardReady && $id("empPeriod").value !== "all" && $id("empPeriod").value !== "range") return;
+
+    try {
+        err.style.display = "none";
+
+        const range = empRange();
+        const key = $id("empName").value;
+        const map = new Map();
+        const picked = [];
+
+        empRecords.forEach(r => {
+            if (range.from && (r.date < range.from || r.date > range.to)) return;
+            if (key !== "__all" && r.key !== key) return;
+            picked.push(r);
+            let e = map.get(r.key);
+            if (!e) { e = { name: r.name, amount: 0, count: 0, last: r.date }; map.set(r.key, e); }
+            e.amount += r.amount;
+            e.count += 1;
+            if (r.date > e.last) e.last = r.date;
+        });
+
+        const list = Array.from(map.values());
+        const total = list.reduce((s, e) => s + e.amount, 0);
+        const entries = list.reduce((s, e) => s + e.count, 0);
+        const who = key === "__all" ? "All Employees" : (list[0] ? list[0].name : $id("empName").options[$id("empName").selectedIndex].text);
+
+        $id("empTotal").innerHTML =
+            '<div class="kpi"><div class="t">Total Amount — ' + esc(who) + '</div><div class="v num">' + rupee(total) + '</div></div>';
+
+        const link = $id("empDetailsLink");
+        link.textContent = (empShowDetails ? "Hide details" : "View details") + " (" + entries + " entr" + (entries === 1 ? "y" : "ies") + ")";
+
+        /* entry-wise table (date wise) */
+        const wrap = $id("empTableWrap");
+        if (empShowDetails && picked.length) {
+            picked.sort((a, b) => (b.date - a.date) || a.name.localeCompare(b.name));
+            const showName = key === "__all";
+            wrap.style.display = "block";
+            wrap.innerHTML = '<table class="emp-table"><thead><tr><th>Date</th>' +
+                (showName ? '<th>Employee</th>' : '') +
+                empExtra.map(x => '<th>' + esc(x.label) + '</th>').join("") +
+                '<th class="r">Amount</th></tr></thead><tbody>' +
+                picked.map(r => '<tr><td>' + showDate(r.date) + '</td>' +
+                    (showName ? '<td>' + esc(r.name) + '</td>' : '') +
+                    r.extra.map(v => '<td>' + esc(v) + '</td>').join("") +
+                    '<td class="r num">' + rupee(r.amount) + '</td></tr>').join("") +
+                '</tbody><tfoot><tr><td colspan="' + (1 + (showName ? 1 : 0) + empExtra.length) + '">Total</td><td class="r num">' + rupee(total) + '</td></tr></tfoot></table>';
+        } else if (empShowDetails) {
+            wrap.style.display = "block";
+            wrap.innerHTML = '<div class="stock-empty" style="border:0">No employee entries in this period.</div>';
+        } else {
+            wrap.style.display = "none";
+            wrap.innerHTML = "";
+        }
+
+        $id("empSelected").innerHTML = "Selected period: <strong>" + esc(range.label) + "</strong>";
+
+    } catch (e) {
+        err.style.display = "block";
+        err.textContent = e.message;
+    }
+}
+
+$id("empPeriod").addEventListener("change", () => {
+    $id("empDateRange").style.display = $id("empPeriod").value === "range" ? "flex" : "none";
+});
+$id("empApply").addEventListener("click", renderEmployee);
+$id("empDetailsLink").addEventListener("click", ev => {
+    ev.preventDefault();
+    empShowDetails = !empShowDetails;
+    renderEmployee();
+    if (empShowDetails) $id("empTableWrap").scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+$id("empName").addEventListener("change", renderEmployee);
+
+loadEmployee();
 </script>
 </body>
 </html>
